@@ -9,7 +9,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // todo： 线上还要改
 export const defaultDomain =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:7279"
+        ? "http://localhost:7198"
         : "http://xxx:7279";
 
 const service = axios.create({

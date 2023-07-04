@@ -2,14 +2,14 @@
 <template>
   <div id="login">
     <!-- PARTICLE SYSTEM -->
-    <div class="page-bg bg-blur"></div>
+<!--    <div class="page-bg bg-blur"></div>-->
 
-    <div class="animation-wrapper">
-      <div class="particle particle-1"></div>
-      <div class="particle particle-2"></div>
-      <div class="particle particle-3"></div>
-      <div class="particle particle-4"></div>
-    </div>
+<!--    <div class="animation-wrapper">-->
+<!--      <div class="particle particle-1"></div>-->
+<!--      <div class="particle particle-2"></div>-->
+<!--      <div class="particle particle-3"></div>-->
+<!--      <div class="particle particle-4"></div>-->
+<!--    </div>-->
 
     <!--登录框-->
     <div class="login-area">
@@ -84,6 +84,7 @@
 <script setup>
 import HuashangLogo from '../assets/login/HuashangLogo.png'
 import {doLogin} from "@/api/login";
+// import axios from "axios";
 
   // name: "Login",
 const loginImages = [
@@ -113,7 +114,6 @@ const login = () => {
         console.log(err);
       })
 }
-
 
 
   // // 生命周期 - 创建完成（可以访问当前this实例）

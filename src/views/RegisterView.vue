@@ -2,14 +2,14 @@
 <template>
   <div id="login">
     <!-- PARTICLE SYSTEM -->
-    <div class="page-bg bg-blur"></div>
+<!--    <div class="page-bg bg-blur"></div>-->
 
-    <div class="animation-wrapper">
-      <div class="particle particle-1"></div>
-      <div class="particle particle-2"></div>
-      <div class="particle particle-3"></div>
-      <div class="particle particle-4"></div>
-    </div>
+<!--    <div class="animation-wrapper">-->
+<!--      <div class="particle particle-1"></div>-->
+<!--      <div class="particle particle-2"></div>-->
+<!--      <div class="particle particle-3"></div>-->
+<!--      <div class="particle particle-4"></div>-->
+<!--    </div>-->
 
     <!--登录框-->
     <div class="login-area">
@@ -68,7 +68,7 @@
               />
             </form>
 
-
+            <div v-if="showError" style="color:red;">两次输入的密码不一致！</div>
 
             <!--登录按钮-->
             <div
@@ -88,6 +88,7 @@
 
 <script setup>
 import HuashangLogo from '../assets/login/HuashangLogo.png'
+import {computed, ref} from "vue";
 
 // name: "Login",
 const loginImages = [
@@ -96,12 +97,15 @@ const loginImages = [
   // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/goose-goose-leads-an-eco-friendly-lifestyle-and-grows-apple-trees-in-the-orchard-2.png"
   "./assets/login/HuashangLogo.png", // TODO: 临时使用，后续需要改成本地图片
 ];
-let RegisterForm = {
+let RegisterForm = ref({
   username: "",
   password: "",
-};
-let passwordConfirm = "";
+});
+let passwordConfirm = ref("");
 
+let showError = computed(() => {
+  return passwordConfirm.value !== RegisterForm.value.password && passwordConfirm.value > 0;
+});
 // //方法集合
 // methods: {
 // },
@@ -116,6 +120,8 @@ let passwordConfirm = "";
 //         console.log(err);
 //       })
 // }
+
+
 
 
 
