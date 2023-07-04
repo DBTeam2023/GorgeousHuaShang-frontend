@@ -26,35 +26,35 @@
         <el-menu-item index="4">我的订单</el-menu-item>
       </el-menu>
       <div class="banner">
-        <img src="../assets/logo.png" alt="banner" />
+        <img src="../assets/login/HuashangLogo.png" alt="banner" />
       </div>
       <div class="recommend">
         <h2>推荐商品</h2>
         <el-row>
           <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <div class="item">
-              <img src="../assets/logo.png" alt="item" />
+              <img src="../assets/login/HuashangLogo.png" alt="item" />
               <p class="name">商品名称</p>
               <p class="price">¥100</p>
             </div>
           </el-col>
           <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <div class="item">
-              <img src="../assets/logo.png" alt="item" />
+              <img src="../assets/login/HuashangLogo.png" alt="item" />
               <p class="name">商品名称</p>
               <p class="price">¥200</p>
             </div>
           </el-col>
           <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <div class="item">
-              <img src="../assets/logo.png" alt="item" />
+              <img src="../assets/login/HuashangLogo.png" alt="item" />
               <p class="name">商品名称</p>
               <p class="price">¥300</p>
             </div>
           </el-col>
           <el-col :xs="24" :sm="12" :md="8" :lg="6">
             <div class="item">
-              <img src="../assets/logo.png" alt="item" />
+              <img src="../assets/login/HuashangLogo.png" alt="item" />
               <p class="name">商品名称</p>
               <p class="price">¥400</p>
             </div>
