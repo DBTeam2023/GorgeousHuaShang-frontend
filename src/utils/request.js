@@ -10,7 +10,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 export const defaultDomain =
     process.env.NODE_ENV === "development"
         ? "http://localhost:7198"
-        : "http://xxx:7279";
+        : "http://xxx:7198";
 
 const service = axios.create({
     baseURL: defaultDomain,
@@ -21,7 +21,6 @@ const service = axios.create({
     crossDomain: true,
 });
 
-// todo: content-type为什么是空的？
 // request interceptor请求拦截器
 service.interceptors.request.use(
     (config) => {

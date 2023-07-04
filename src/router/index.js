@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import HomePageView from "@/views/HomePageView.vue";
+// import store from "@/store";
 
 const routes = [
   {
@@ -32,4 +33,14 @@ const router = createRouter({
   routes
 })
 
+// router.beforeEach(async (to, from, next) => {
+//   console.log(to.path);
+//   from;
+//   next();
+//
+//   const {isLogin} = await store.dispatch("getUserInfo");
+//   console.log(isLogin);
+// })
+
 export default router
+
