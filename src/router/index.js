@@ -5,6 +5,7 @@ import RegisterView from "@/views/RegisterView.vue";
 import HomePageView from "@/views/HomePageView.vue";
 import ShopSelectView from "@/views/ShopSelectView.vue";
 import ShopManageView from "@/views/ShopManageView.vue";
+import ShopView from "@/views/ShopView.vue";
 // import store from "@/store";
 
 const routes =
@@ -15,6 +16,7 @@ const routes =
       {path : '/register/', name : 'Register', component : RegisterView},
       {path : '/shopselect/', name : 'ShopSelect', component : ShopSelectView},
       {path : '/shopmanage/', name : 'ShopManage', component : ShopManageView},
+      {path : '/shop/', name : 'Shop', component : ShopView},
     ]
 
     const router = createRouter({history : createWebHistory(), routes})
