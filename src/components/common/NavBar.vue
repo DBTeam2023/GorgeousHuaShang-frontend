@@ -16,9 +16,9 @@
 
     <el-sub-menu index="2">
       <template #title>个人信息</template>
-      <el-menu-item :index="showRegister ? '2-1' : '2-0'" v-if="showRegister">注册</el-menu-item>
-      <el-menu-item :index="showRegister ? '2-2' : '2-0'" v-if="showRegister">登录</el-menu-item>
-      <el-menu-item :index="'2-3'" v-if="!showRegister">item three</el-menu-item>
+      <el-menu-item :index="!store.state.user.isLogin ? '2-1' : '2-0'" v-if="!store.state.user.isLogin">注册</el-menu-item>
+      <el-menu-item :index="!store.state.user.isLogin ? '2-2' : '2-0'" v-if="!store.state.user.isLogin">登录</el-menu-item>
+      <el-menu-item :index="'2-3'" v-if="store.state.user.isLogin">退出登录</el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
@@ -26,8 +26,9 @@
 <script setup>
 import { ref } from 'vue'
 import router from "@/router";
+import store from "@/store";
 
-let showRegister = ref(true);
+// let showRegister = ref(store.state.user.isLogin);
 const activeIndex = ref('1')
 const handleSelect = (key, keyPath) => {
   keyPath; // 用不到但是要写
@@ -38,10 +39,19 @@ const handleSelect = (key, keyPath) => {
   } else if (key === '2-2') {
     router.push('/login/');
   } else if (key === '2-3') {
-    router.push('/item-three/');
+    logout();
   }
-
 }
+
+const logout = () => {
+  store.commit("setIsLogin", false);
+  store.commit("setToken", "");
+  if (localStorage.getItem("jwtToken") != null) {
+    localStorage.removeItem("jwtToken");
+  }
+  router.push('/');
+}
+
 </script>
 
 <style>
