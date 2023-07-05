@@ -75,7 +75,7 @@
                 class="btn effect01"
                 target="_blank"
                 style="margin-top: 20%"
-                @click="login"
+                @click="register"
             >
               <span style="margin-left: 40%; font-size: 1.3em">注册</span>
             </div>
@@ -88,14 +88,14 @@
 
 <script setup>
 import HuashangLogo from '../assets/login/HuashangLogo.png'
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
+import {doRegister} from "@/api/login";
+import {ElMessage} from "element-plus";
+import store from "@/store";
+// import store from "@/store";
 
-// name: "Login",
 const loginImages = [
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/abstract-lovely-deers-in-the-forest.png",
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/pale-604.png",
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/goose-goose-leads-an-eco-friendly-lifestyle-and-grows-apple-trees-in-the-orchard-2.png"
-  "./assets/login/HuashangLogo.png", // TODO: 临时使用，后续需要改成本地图片
+  "./assets/login/HuashangLogo.png",
 ];
 let RegisterForm = ref({
   username: "",
@@ -106,36 +106,29 @@ let passwordConfirm = ref("");
 let showError = computed(() => {
   return passwordConfirm.value !== RegisterForm.value.password && passwordConfirm.value > 0;
 });
-// //方法集合
-// methods: {
-// },
-// const login = () => {
-//   doLogin(RegisterForm)
-//       .then((resp) => {
-//         console.log(RegisterForm);
-//         console.log(resp);
-//       })
-//       .catch((err) => {
-//         console.log(RegisterForm);
-//         console.log(err);
-//       })
-// }
 
+onMounted(() => {
+  console.log(store.state.user);
+})
 
+// todo: 后端判断还是前端判断
+const register = () => {
+  if (showError.value) {
+    ElMessage('两次密码不同！');
+    return;
+  }
 
+  doRegister(RegisterForm)
+      .then(resp => {
+        console.log(RegisterForm);
+        console.log(resp);
+      })
+      .catch(resp => {
+        console.log(RegisterForm);
+        console.log(resp);
+      })
+}
 
-
-// // 生命周期 - 创建完成（可以访问当前this实例）
-// created() {
-//   if (localStorage.getItem("username") != null) {
-//     this.RegisterForm.userName = localStorage.getItem("username");
-//     this.RegisterForm.passWord = localStorage.getItem("password");
-//   }
-//   // 检查记住密码
-//   if (localStorage.getItem("rememberPassWord") !== null) {
-//     this.checkPassword = localStorage.getItem("checkPassWord");
-//   }
-// }
 </script>
 
 <style lang="scss" scoped>

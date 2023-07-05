@@ -84,30 +84,53 @@
 <script setup>
 import HuashangLogo from '../assets/login/HuashangLogo.png'
 import {doLogin} from "@/api/login";
-// import axios from "axios";
+import store from "@/store";
+import {onMounted, ref} from "vue";
+import {ElMessage} from "element-plus";
+import router from "@/router";
 
-  // name: "Login",
+onMounted(() => {
+  console.log(store.state.user);
+})
+
 const loginImages = [
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/abstract-lovely-deers-in-the-forest.png",
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/pale-604.png",
-  // "https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/goose-goose-leads-an-eco-friendly-lifestyle-and-grows-apple-trees-in-the-orchard-2.png"
-  "./assets/login/HuashangLogo.png", // TODO: 临时使用，后续需要改成本地图片
+  "./assets/login/HuashangLogo.png",
 ];
-let loginForm = {
+let loginForm = ref({
   username: "",
   password: "",
-};
+});
 
-let checkPassword = true;
+let checkPassword = ref(true);
 
-  // //方法集合
-  // methods: {
-  // },
 const login = () => {
-  doLogin(loginForm)
+  doLogin(loginForm.value)
       .then((resp) => {
-        console.log(loginForm);
+        ElMessage({
+          message: '登录成功',
+          type: 'success',
+        })
+
+        console.log(loginForm.value);
         console.log(resp);
+
+        // todo: userId, token 还没做
+        store.dispatch("setUser", {
+          username: loginForm.value.username,
+          isLogin: true,
+        });
+
+        if (checkPassword.value) {
+          localStorage.setItem("username", loginForm.value.username);
+          localStorage.setItem("password", loginForm.value.password);
+        } else {
+          localStorage.removeItem("username");
+          localStorage.removeItem("password");
+        }
+
+        router.push({
+          path: "/",
+        });
       })
       .catch((err) => {
         console.log(loginForm);
@@ -115,18 +138,16 @@ const login = () => {
       })
 }
 
+// 生命周期 - 创建完成
+onMounted(() => {
+  if (localStorage.getItem("username") != null) {
+    loginForm.value.username = localStorage.getItem("username");
+    loginForm.value.password = localStorage.getItem("password");
+  }
+})
 
-  // // 生命周期 - 创建完成（可以访问当前this实例）
-  // created() {
-  //   if (localStorage.getItem("username") != null) {
-  //     this.loginForm.userName = localStorage.getItem("username");
-  //     this.loginForm.passWord = localStorage.getItem("password");
-  //   }
-  //   // 检查记住密码
-  //   if (localStorage.getItem("rememberPassWord") !== null) {
-  //     this.checkPassword = localStorage.getItem("checkPassWord");
-  //   }
-  // }
+
+
 </script>
 
 <style lang="scss" scoped>
