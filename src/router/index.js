@@ -7,6 +7,7 @@ import ShopSelectView from "@/views/ShopSelectView.vue";
 import ShopManageView from "@/views/ShopManageView.vue";
 import ShopView from "@/views/ShopView.vue";
 import CartView from "@/views/cart/CartView.vue";
+import GoodsdetailView from "@/views/GoodsdetailView.vue";
 // import store from "@/store";
 
 const routes =
@@ -18,7 +19,9 @@ const routes =
       {path : '/shopselect/', name : 'ShopSelect', component : ShopSelectView},
       {path : '/shopmanage/', name : 'ShopManage', component : ShopManageView},
       {path : '/shop/', name : 'Shop', component : ShopView},
-      {path: '/cart', name: 'Cart', component: CartView}
+      {path: '/cart/', name: 'Cart', component: CartView},
+        // todo: /goodsdetail/ 这个url还要加参数的，因为有不同的商品
+        {path: '/goodsdetail/', name: 'Goodsdetail', component: GoodsdetailView},
     ]
 
     const router = createRouter({history : createWebHistory(), routes})
