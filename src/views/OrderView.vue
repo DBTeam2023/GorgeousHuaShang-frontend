@@ -284,12 +284,13 @@
                     </div>
                 </el-main>
                 <el-footer>
+                    <!-- 分页栏 -->
                     <el-row>
                         <el-col :span="12">
                             <div class="demo-pagination-block">
                                 <el-pagination
-                                v-model:current-page="currentPage3"
-                                v-model:page-size="pageSize3"
+                                v-model:current-page="currentPage"
+                                v-model:page-size="pageSize"
                                 :small="small"
                                 :disabled="disabled"
                                 :background="background"
@@ -312,7 +313,7 @@
 
 <script>
 import userInfoMenu from "../components/common/userInfoMenu.vue"
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
 
@@ -326,6 +327,7 @@ export default defineComponent({
     ElHeader
   },
   setup() {
+
     const activeIndex = ref('1');
     const handleSelect = function(index) {
       activeIndex.value = index;
@@ -523,12 +525,13 @@ export default defineComponent({
       confirmOrder,
       commentOrder,
       moreOrder,
-      deleteOrder
+      deleteOrder,
     }
   }
 });
 
 </script>
+
 
   <!--CSS风格-->
   <style scoped>
