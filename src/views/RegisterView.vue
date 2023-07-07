@@ -2,14 +2,14 @@
 <template>
   <div id="login">
     <!-- PARTICLE SYSTEM -->
-<!--    <div class="page-bg bg-blur"></div>-->
+    <div class="page-bg bg-blur"></div>
 
-<!--    <div class="animation-wrapper">-->
-<!--      <div class="particle particle-1"></div>-->
-<!--      <div class="particle particle-2"></div>-->
-<!--      <div class="particle particle-3"></div>-->
-<!--      <div class="particle particle-4"></div>-->
-<!--    </div>-->
+    <div class="animation-wrapper">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+    </div>
 
     <!--登录框-->
     <div class="login-area">
@@ -70,6 +70,13 @@
 
             <div v-if="showError" style="color:red;">两次输入的密码不一致！</div>
 
+            <div class="mb-2 flex items-center text-sm">
+              <el-radio-group v-model="radio1" class="ml-4">
+                <el-radio label="1" size="large">商家</el-radio>
+                <el-radio label="2" size="large">买家</el-radio>
+              </el-radio-group>
+            </div>
+
             <!--登录按钮-->
             <div
                 class="btn effect01"
@@ -93,6 +100,7 @@ import {doRegister} from "@/api/login";
 import {ElMessage} from "element-plus";
 import store from "@/store";
 // import store from "@/store";
+let radio1 = ref('2');
 
 const loginImages = [
   "./assets/login/HuashangLogo.png",
@@ -100,6 +108,7 @@ const loginImages = [
 let RegisterForm = ref({
   username: "",
   password: "",
+  roleId: radio1.value,
 });
 let passwordConfirm = ref("");
 
@@ -118,13 +127,11 @@ const register = () => {
     return;
   }
 
-  doRegister(RegisterForm)
+  doRegister(RegisterForm.value)
       .then(resp => {
-        console.log(RegisterForm);
         console.log(resp);
       })
       .catch(resp => {
-        console.log(RegisterForm);
         console.log(resp);
       })
 }
@@ -309,7 +316,7 @@ input {
   align-items: flex-start;
   justify-content: space-between;
   width: 50vw;
-  height: 25vw;
+  height: 28vw;
   min-width: 600px;
   min-height: 320px;
   border-radius: 10px;
@@ -319,15 +326,15 @@ input {
   transition: transform 0.4s;
 }
 
-//.login-block:hover{
-//
-//  z-index: 999;
-//  -webkit-transition: all 400ms ease-in;
-//  transform: translateY(-10px);
-//  /* 0.4s完成transform移动效果*/
-//  transition: transform 0.4s;
-//
-//}
+.login-block:hover{
+
+  z-index: 999;
+  -webkit-transition: all 400ms ease-in;
+  transform: translateY(-10px);
+  /* 0.4s完成transform移动效果*/
+  transition: transform 0.4s;
+
+}
 
 .side-block {
   display: flex;
@@ -335,8 +342,8 @@ input {
   width: 70%;
   height: 100%;
   border-radius: 10px;
-  background: url("https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/98C45201DA08BE5437F7FBFCAC1BEAFA.png")
-  no-repeat;
+  //background: url("https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/98C45201DA08BE5437F7FBFCAC1BEAFA.png")
+  //no-repeat;
   background-size: cover;
 }
 
@@ -399,6 +406,7 @@ body {
 .page-bg,
 .animation-wrapper {
   position: fixed;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100%;
@@ -406,8 +414,8 @@ body {
 }
 
 .page-bg {
-  //background: $color-bg url("../assets/img/background_petro.jpg") no-repeat top
-  //center;
+  background: $color-bg url("../assets/login/LoginBG.jpg") no-repeat top
+  center;
   background-size: cover;
   z-index: -1;
 }
@@ -501,5 +509,15 @@ body {
   text-align: center;
   color: #fff;
   z-index: 2;
+}
+
+
+#login {
+  height: 88vh; /* Decrease the height to 90% of the viewport height */
+}
+
+.login-area {
+  height: 100%; /* Make the login area occupy 100% of the #login container */
+  /* Other styles for the login area */
 }
 </style>

@@ -1,12 +1,16 @@
 import {doLogin, getUserInfo} from "@/api/login";
 import {ElMessage} from "element-plus";
+import {decodeToken} from "@/utils/jwtHelper";
+import router from "@/router";
 
 export default {
     state: {
         userId: "",
         username: "",
+        userPhoto: "",
         token: "", // todo: jwt token
         isLogin: false,
+        roleId: null,
     },
     getters: {
     },
@@ -23,6 +27,12 @@ export default {
         setIsLogin(state, isLogin) {
             state.isLogin = isLogin;
         },
+        setRoleId(state, roleId) {
+            state.roleId = roleId;
+        },
+        setUserPhoto(state, userPhoto) {
+            state.userPhoto = userPhoto;
+        },
     },
     actions: {
         setUser(context, data) {
@@ -36,26 +46,23 @@ export default {
         doLogin(context, data) {
             doLogin(data)
                 .then(resp => {
-                    if (data.msg === 'success') {
+                    if (resp.msg === 'success') {
                         ElMessage({
                             message: '登录成功',
                             type: 'success',
                         })
 
-                        console.log(data);
-                        console.log(resp);
-
-                        const token = resp.data;
-                        localStorage.setItem("jwtToken", token);
-
-                        context.commit("setToken", token);
-                        context.commit("setIsLogin", true);
-
-                        context.dispatch("setUserInfo");
+                        localStorage.setItem("jwtToken",  resp.data);
+                        context.commit("setToken", resp.data);
+                    }
+                    else {
+                        // todo: 不同的错误
+                        ElMessage.error('登录错误');
                     }
                 })
                 .catch(resp => {
                     console.log(resp);
+                    ElMessage.error('登录异常');
                 })
         },
 
