@@ -1,15 +1,15 @@
 <!--  -->
 <template>
   <div id="login">
-    <!-- PARTICLE SYSTEM -->
-<!--    <div class="page-bg bg-blur"></div>-->
+<!--     PARTICLE SYSTEM-->
+    <div class="page-bg bg-blur"></div>
 
-<!--    <div class="animation-wrapper">-->
-<!--      <div class="particle particle-1"></div>-->
-<!--      <div class="particle particle-2"></div>-->
-<!--      <div class="particle particle-3"></div>-->
-<!--      <div class="particle particle-4"></div>-->
-<!--    </div>-->
+    <div class="animation-wrapper">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+    </div>
 
     <!--登录框-->
     <div class="login-area">
@@ -83,7 +83,7 @@
 
 <script setup>
 import HuashangLogo from '../assets/login/HuashangLogo.png'
-import {doLogin} from "@/api/login";
+import {doLogin, getUserInfo, getUserRoleId} from "@/api/login";
 import store from "@/store";
 import {onMounted, ref} from "vue";
 import {ElMessage} from "element-plus";
@@ -103,22 +103,59 @@ let loginForm = ref({
 
 let checkPassword = ref(true);
 
+// const login = () => {
+//   doLogin(loginForm.value)
+//       .then((resp) => {
+//         ElMessage({
+//           message: '登录成功',
+//           type: 'success',
+//         })
+//
+//         console.log(loginForm.value);
+//         console.log(resp);
+//
+//         // todo: userId, token 还没做
+//         store.dispatch("setUser", {
+//           username: loginForm.value.username,
+//           isLogin: true,
+//         });
+//
+//         if (checkPassword.value) {
+//           localStorage.setItem("username", loginForm.value.username);
+//           localStorage.setItem("password", loginForm.value.password);
+//         } else {
+//           localStorage.removeItem("username");
+//           localStorage.removeItem("password");
+//         }
+//
+//         router.push({
+//           path: "/",
+//         });
+//       })
+//       .catch((err) => {
+//         console.log(loginForm);
+//         console.log(err);
+//       })
+// }
+
 const login = () => {
-  doLogin(loginForm.value)
-      .then((resp) => {
-        ElMessage({
-          message: '登录成功',
-          type: 'success',
-        })
+  store.dispatch("doLogin", loginForm.value)
+      .then(() => {
+        // 有token返回就跳转到首页
+        router.push("/");
 
-        console.log(loginForm.value);
-        console.log(resp);
-
-        // todo: userId, token 还没做
-        store.dispatch("setUser", {
-          username: loginForm.value.username,
-          isLogin: true,
-        });
+        // 获取用户信息
+        // getUserInfo()
+        //     .then(resp => {
+        //       store.commit("setIsLogin", true);
+        //       store.commit("setUsername", resp.data.username);
+        //       store.commit("setUserId", resp.data.userId);
+        //       store.commit("setUserPhoto", resp.data.userPhoto);
+        //     })
+        //     .catch(resp => {
+        //       console.log(resp);
+        //       console.log("获取用户信息错误");
+        //     });
 
         if (checkPassword.value) {
           localStorage.setItem("username", loginForm.value.username);
@@ -127,15 +164,23 @@ const login = () => {
           localStorage.removeItem("username");
           localStorage.removeItem("password");
         }
+      })
+      .then(() => {
+        // 获取用户角色ID
+        // getUserRoleId()
+        //     .then(resp => {
+        //       console.log(resp);
+        //     })
+        //     .catch(resp => {
+        //       console.log(resp);
+        //       console.log("获取角色id错误");
+        //     })
+      })
+      .catch((resp) => {
+        console.log(resp);
+        console.log("登录后错误");
+      });
 
-        router.push({
-          path: "/",
-        });
-      })
-      .catch((err) => {
-        console.log(loginForm);
-        console.log(err);
-      })
 }
 
 // 生命周期 - 创建完成
@@ -338,15 +383,15 @@ input {
   transition: transform 0.4s;
 }
 
-//.login-block:hover{
-//
-//  z-index: 999;
-//  -webkit-transition: all 400ms ease-in;
-//  transform: translateY(-10px);
-//  /* 0.4s完成transform移动效果*/
-//  transition: transform 0.4s;
-//
-//}
+.login-block:hover{
+
+  z-index: 999;
+  -webkit-transition: all 400ms ease-in;
+  transform: translateY(-10px);
+  /* 0.4s完成transform移动效果*/
+  transition: transform 0.4s;
+
+}
 
 .side-block {
   display: flex;
@@ -354,8 +399,8 @@ input {
   width: 70%;
   height: 100%;
   border-radius: 10px;
-  background: url("https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/98C45201DA08BE5437F7FBFCAC1BEAFA.png")
-  no-repeat;
+  //background: url("https://joes-bucket.oss-cn-shanghai.aliyuncs.com/img/98C45201DA08BE5437F7FBFCAC1BEAFA.png")
+  //no-repeat;
   background-size: cover;
 }
 
@@ -418,6 +463,7 @@ body {
 .page-bg,
 .animation-wrapper {
   position: fixed;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100%;
@@ -425,8 +471,8 @@ body {
 }
 
 .page-bg {
-  //background: $color-bg url("../assets/img/background_petro.jpg") no-repeat top
-  //center;
+  background: $color-bg url("../assets/login/LoginBG.jpg") no-repeat top
+  center;
   background-size: cover;
   z-index: -1;
 }
@@ -441,7 +487,7 @@ body {
   -moz-filter: blur(5px);
   -o-filter: blur(5px);
   -ms-filter: blur(5px);
-  filter: blur(5px);
+  filter: blur(2px);
 }
 
 .particle,
@@ -520,5 +566,15 @@ body {
   text-align: center;
   color: #fff;
   z-index: 2;
+}
+
+
+#login {
+  height: 88vh; /* Decrease the height to 90% of the viewport height */
+}
+
+.login-area {
+  height: 100%; /* Make the login area occupy 100% of the #login container */
+  /* Other styles for the login area */
 }
 </style>

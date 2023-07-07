@@ -9,6 +9,7 @@ import ShopView from "@/views/ShopView.vue";
 import CartView from "@/views/cart/CartView.vue";
 import OrderDetailView from "@/views/OrderDetailView.vue";
 import OrderView from "@/views/OrderView.vue";
+import GoodsdetailView from "@/views/GoodsdetailView.vue";
 // import store from "@/store";
 
 const routes =
@@ -23,6 +24,8 @@ const routes =
       {path: '/cart', name: 'Cart', component: CartView},
       {path : '/orderdetail/', name : 'OrderDetail', component : OrderDetailView},
       {path : '/order/', name : 'Order', component : OrderView},
+        // todo: /goodsdetail/ 这个url还要加参数的，因为有不同的商品
+        {path: '/goodsdetail/', name: 'Goodsdetail', component: GoodsdetailView},
     ]
 
     const router = createRouter({history : createWebHistory(), routes})
