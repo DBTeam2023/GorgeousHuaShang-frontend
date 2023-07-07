@@ -1,5 +1,5 @@
 <template>
-  <GoodsdetailView />
+  <NavBar />
   <router-view />
 </template>
 
@@ -7,5 +7,5 @@
 </style>
 
 <script setup>
-import GoodsdetailView from "@/views/GoodsdetailView.vue";
+import NavBar from "@/components/common/NavBar.vue";
 </script>
