@@ -1,84 +1,149 @@
-<template>
-    <el-header class="header" >
-        <div class="demo-basic--circle" >
-            <div class="block" ><!--用户头像-->
-                <el-avatar :size="100" :src="circleUrl " />
-            </div>
-            <p class="name">userName</p><!--用户姓名-->
-        </div>
-    </el-header>
-    <el-main class="asideMenu"><!--个人中心-->
-        <el-row class="tac">
-            <el-col :span="18">
-                <h5 class="mb-2">个人中心</h5>
-                <el-menu
-                    default-active="2"
-                    class="el-menu-vertical-demo" 
-                    @open="handleOpen"
-                     @close="handleClose"
-                >
-                <el-sub-menu index="1">
-                    <template #title>
-                        <el-icon><location /></el-icon>
-                        <span>全部</span>
-                    </template>
-                    <el-menu-item index="1-1">个人信息</el-menu-item>
-                    <el-menu-item index="1-2">我的收藏</el-menu-item>
-                    <el-menu-item index="1-3">关注店铺</el-menu-item>
-                    <el-menu-item index="1-4">我的订单</el-menu-item>
-                    <el-menu-item index="1-5">足迹</el-menu-item>
-                    <el-menu-item index="1-6">钱包</el-menu-item>
-                </el-sub-menu>
-                 <el-menu-item index="2">
-                    <el-icon><setting /></el-icon>
-                    <span>账号设置</span>
-                </el-menu-item>
-            </el-menu>
-        </el-col>
-    </el-row>
-    </el-main>
-</template>
-
 <script setup>
-import { reactive, toRefs } from 'vue'
-import {
-  Setting,
-} from '@element-plus/icons-vue'
+    import { reactive} from 'vue'
+    import {
+        Setting,User,Tickets,CollectionTag,Goods,Wallet,Position,
+    } from '@element-plus/icons-vue'
+    import { defineEmits, defineProps} from 'vue';
 
-const handleOpen = (key, keyPath) => {
-  console.log(key, keyPath)
-}
+    const info=reactive({
+        avatarUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+        userName:'userName',
+    })
 
-const handleClose = (key, keyPath) => {
-  console.log(key, keyPath)
-}
+    const handleOpen = (key, keyPath) => {
+    console.log(key, keyPath)
+    }
 
+    const handleClose = (key, keyPath) => {
+    console.log(key, keyPath)
+    }
 
-const state = reactive({
-  circleUrl:
-    'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-  
-})
+    const props=defineProps(['selectedMenuItem'])  //选中的菜单项
+    const handleMenuSelect = (menuItem) =>{
+        props.selectedMenuItem = menuItem;
+    }
 
-const { circleUrl } = toRefs(state)
 </script>
 
+<template>
+    <el-container class="container">
+        <el-header class="header" >
+            <!--用户头像-->
+            <el-row class="avatar-row">
+                <el-avatar :size="100" :src="info.avatarUrl" />            
+            </el-row>
+            <!--用户姓名-->
+            <el-row class="name-row">{{ info.userName }}</el-row>
+        </el-header>
+    <!--个人中心菜单栏-->
+        <el-row class="menu-row">
+            <el-col :span="24" backgroundColor="#545c64">
+                <el-menu
+                    style="height:100%"
+                    active-text-color="#ffd04b"
+                    background-color="#545c64"
+                    class="el-menu-vertical-demo"
+                    text-color="#fff"
+                    default-active="basicInfo"
+                    @selected="handleMenuSelect"
+                    @open="handleOpen"
+                    @close="handleClose"
+                >
+                    <el-menu-item index="basciInfo" class="menu-item">
+                        <span>
+                            <el-icon><User /></el-icon>
+                            <span style="margin-left:10px">个人信息</span>
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="collectedItem" class="menu-item">
+                        <span>
+                            <el-icon><Goods /></el-icon>
+                            <span style="margin-left:10px">我的收藏</span>
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="followedShop" class="menu-item">
+                        <span>
+                            <el-icon><CollectionTag /></el-icon>
+                            <span style="margin-left:10px">关注店铺</span>
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="myOrder" class="menu-item">
+                        <span>
+                            <el-icon><Tickets /></el-icon>
+                            <span style="margin-left:10px">我的订单</span>
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="footprint" class="menu-item">
+                        <span>
+                            <el-icon><Position /></el-icon>
+                            <span style="margin-left:10px">我的足迹</span>
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="myWallet" class="menu-item">
+                        <span>
+                            <el-icon><Wallet /></el-icon>
+                            <span style="margin-left:10px">我的钱包</span>
+                            
+                        </span>
+                    </el-menu-item>
+                    <el-menu-item index="accountSetting" class="menu-item">
+                        <span>
+                            <el-icon><setting /></el-icon>
+                            <span style="margin-left:10px">账号设置</span>
+                            
+                        </span>
+                    </el-menu-item>
+                </el-menu>
+            </el-col>
+        </el-row>
+    </el-container>
+</template>
+
+
+
 <style scoped>
-    .header {
-        background-color: #fff;
-        display: flex;
-        width: 50;
-        border: 1px solid #d7d4d4;
-        justify-content: space-between;/*子元素沿着主轴等间距地分布，并且第一个子元素和最后一个子元素分别对齐容器的起始端和末尾端 */
-        align-items: center;/*子元素在垂直方向上居中对齐 */
-        padding: 80px 85px; 
+
+    .container{
+        background-color:#545c64;
+        width:250px;
+        /* height:100%; */
     }
-    .asideMenu {
-        background-color: #fff;
-        border: 1px solid #d7d4d4;
-        height: 550px;
-        justify-content: space-between;/*子元素沿着主轴等间距地分布，并且第一个子元素和最后一个子元素分别对齐容器的起始端和末尾端 */
-        align-items: center;/*子元素在垂直方向上居中对齐 */
+    .header {
+        /* background-color: #fff; */
+        /* width: 300px; */
+        background-color: #393f44;
+        padding-top:20px;
+        height:180px;
+        display: flex;
+        flex-direction:column;
+        align-items: center;
+    }
+
+
+    .menu-row {
+        margin-left:0;
+    }
+
+    .menu-item{
+        display: flex;
+        align-items: center;
+    }
+
+    .menu-item span{
+        margin:0 25%;
+    }
+
+    
+
+    /* 头像和用户名上下居中显示 */
+    .header .avartar-row,
+    .header .name-row{
+        align-self: center;
+        padding-top: 10px;
+    }
+
+    .header .name-row{
+        color:white;
     }
 
 </style>
