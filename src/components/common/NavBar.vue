@@ -5,9 +5,11 @@
       mode="horizontal"
       :ellipsis="false"
       @select="handleSelect"
+      style="background-color: transparent;"
   >
     <el-menu-item index="0" style="height: 4em;">
-      <img src="../../assets/login/HuashangLogo.png" style="width: 4em; height: 4em;">
+<!--      <img src="../../assets/login/HuashangLogo.png" style="width: 4em; height: 4em;">-->
+      首页
     </el-menu-item>
     <div class="flex-grow" />
     <el-menu-item index="1">其他</el-menu-item>
@@ -27,6 +29,7 @@
 import { ref } from 'vue'
 import router from "@/router";
 import store from "@/store";
+import {ElMessage} from "element-plus";
 
 // let showRegister = ref(store.state.user.isLogin);
 const activeIndex = ref('1')
@@ -49,6 +52,7 @@ const logout = () => {
   if (localStorage.getItem("jwtToken") != null) {
     localStorage.removeItem("jwtToken");
   }
+  ElMessage('退出登录');
   router.push('/');
 }
 
