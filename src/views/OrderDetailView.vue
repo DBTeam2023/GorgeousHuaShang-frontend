@@ -1,7 +1,7 @@
 <!--html模板-->
 <template>
     <el-container class="orderDetailMainView">
-        <el-aside><!--侧栏--><userInfoMenu/></el-aside>
+
         <el-main>
             <el-row class="row-1"><!--返回按钮+页面功能描述-->
                 <el-col :span="2" class="row-1-text">

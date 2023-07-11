@@ -4,6 +4,8 @@
     import FollowedShop from '@/views/user_info/FollowedShop.vue';
     import CollectedItem from '@/views/user_info/CollectedItem.vue';
     import AccountSetting from '@/views/user_info/AccountSetting.vue';
+    import OrderViewVue from '@/views/OrderView.vue';
+   
 
     // 左侧菜单栏用到的
     import { reactive} from 'vue'
@@ -136,6 +138,10 @@
             <div v-else-if="selectedMenu === 'accountSetting'">
                 <AccountSetting /> 
             </div>
+            <!--我的订单-->
+            <div v-else-if="selectedMenu === 'myOrder'">
+                <OrderViewVue/>
+            </div>
 
         </el-col>
 
@@ -168,9 +174,9 @@
         align-items: center;
     }
 
-    .menu-row {
-        // margin-left:0;
-    }
+    // .menu-row {
+    //     // margin-left:0;
+    // }
 
     .menu-item{
         display: flex;

@@ -3,10 +3,8 @@
     <!-- <div class="common-layout"> -->
     <!-- <div> -->
         <el-container class="orderMainView">
-            <el-aside><!--侧边栏-->
-                <userInfoMenu/>
-            </el-aside>   
             <el-main>
+                
                 <el-header class="totalorder-head">
                     <el-menu
                         :default-active="activeIndex"
@@ -27,9 +25,12 @@
                     </el-menu>
                     
                 </el-header>
-                <el-main class="allOrder">                
+                <div v-if="!showDetails">
+                <el-main class="allOrder"> 
+                                  
                     <!--显示全部订单-->
                     <div v-if="activeIndex === '1'">
+                        <!-- <div v-if="!showOrderDetails"> -->
                         <el-table
                             ref="multipleTableRef"
                             :data="allorderTableData"
@@ -61,7 +62,7 @@
                                 <template v-slot="{ row }">
                                     <div>
                                         <div>
-                                            <el-link :icon="View" :underline="false">订单详情</el-link>
+                                            <el-link :icon="View" :underline="false" @click="checkDetails(orderID)">订单详情</el-link>
                                         </div>
                                         <div>
                                             <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -79,8 +80,10 @@
                                     </div>
                                 </template>
                             </el-table-column>
-
+                            
                         </el-table>
+                    <!-- </div>
+                    <OrderDetailView v-else :order="currentOrder" /> -->
                     </div>
                     <!--显示待付款内容-->
                     <div v-else-if="activeIndex === '2'">
@@ -283,6 +286,8 @@
                         </el-table>
                     </div>
                 </el-main>
+                </div>
+                <OrderDetailView v-else :order="currentOrder" />
                 <el-footer>
                     <!-- 分页栏 -->
                     <el-row>
@@ -305,14 +310,15 @@
                             <el-button class="deleteSelect" type="danger" plain>删除选中订单</el-button>
                         </el-col>
                     </el-row>
-                </el-footer>
-            </el-main> 
+                </el-footer>   
+            </el-main>
         </el-container>
     <!-- </div> -->
 </template>
 
 <script>
 import userInfoMenu from "../components/common/userInfoMenu.vue"
+import OrderDetailView from '@/views/OrderDetailView.vue';
 import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
@@ -324,14 +330,25 @@ export default defineComponent({
     ElTable,
     ElMenu,
     ElMenuItem,
-    ElHeader
+    ElHeader,
+    OrderDetailView,
   },
+
   setup() {
 
     const activeIndex = ref('1');
     const handleSelect = function(index) {
       activeIndex.value = index;
     };
+
+    let showDetails = ref(false);
+    let currentOrder = ref(null);
+
+    const checkDetails = (order) => {
+        currentOrder.value = order;
+        showDetails.value = true;
+    };
+
 
     const allorderTableData = ref([
       {
@@ -526,6 +543,7 @@ export default defineComponent({
       commentOrder,
       moreOrder,
       deleteOrder,
+      checkDetails,
     }
   }
 });
