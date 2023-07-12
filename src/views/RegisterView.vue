@@ -72,8 +72,8 @@
 
             <div class="mb-2 flex items-center text-sm">
               <el-radio-group v-model="radio1" class="ml-4">
-                <el-radio label="1" size="large">商家</el-radio>
-                <el-radio label="2" size="large">买家</el-radio>
+                <el-radio label="seller" size="large">商家</el-radio>
+                <el-radio label="buyer" size="large">买家</el-radio>
               </el-radio-group>
             </div>
 
@@ -100,7 +100,7 @@ import {doRegister} from "@/api/login";
 import {ElMessage} from "element-plus";
 import store from "@/store";
 // import store from "@/store";
-let radio1 = ref('2');
+let radio1 = ref('buyer');
 
 const loginImages = [
   "./assets/login/HuashangLogo.png",
@@ -108,7 +108,8 @@ const loginImages = [
 let RegisterForm = ref({
   username: "",
   password: "",
-  roleId: radio1.value,
+  // todo: 改回来
+  role: radio1.value,
 });
 let passwordConfirm = ref("");
 

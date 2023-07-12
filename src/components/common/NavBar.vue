@@ -54,6 +54,8 @@ const logout = () => {
   }
   ElMessage('退出登录');
   router.push('/');
+
+  // console.log(store.state.user)
 }
 
 </script>

@@ -7,14 +7,9 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 
 // todo： 线上还要改
-// export const defaultDomain =
-//     process.env.NODE_ENV === "development"
-//         ? "http://localhost:7198"
-//         : "http://xxx:7198";
-
 export const defaultDomain =
     process.env.NODE_ENV === "development"
-        ? "http://47.115.231.142:1025"
+        ? "http://47.115.231.142:8081"
         : "http://xxx:7198";
 
 const service = axios.create({
@@ -32,7 +27,7 @@ service.interceptors.request.use(
         config.headers = {
             "Content-Type": "application/json",
         };
-        console.log(config);
+        console.log("成功请求");
         return config;
     },
     (error) => {
@@ -44,7 +39,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response) => {
-        console.log(response);
+        console.log("成功响应");
                          // if the custom code is not 200, it is judged as an error.
         // if (response.data.statusCode != 200) {
             // Message({

@@ -2,6 +2,7 @@ import {doLogin, getUserInfo} from "@/api/login";
 import {ElMessage} from "element-plus";
 import {decodeToken} from "@/utils/jwtHelper";
 import router from "@/router";
+import store from "@/store/index";
 
 export default {
     state: {
@@ -42,48 +43,43 @@ export default {
             context.commit("setIsLogin", data.isLogin);
         },
 
-        // 采用jwt
-        doLogin(context, data) {
-            doLogin(data)
-                .then(resp => {
-                    if (resp.msg === 'success') {
-                        ElMessage({
-                            message: '登录成功',
-                            type: 'success',
-                        })
+        // getUserInfoForRouter(context) {
+        //     return new Promise((resolve, reject) => {
+        //         getUserInfo()
+        //         .then((resp) => {
+        //             context.commit("setIsLogin", true);
+        //             context.commit("setUsername", resp.data.username);
+        //             context.commit("setUserId", resp.data.userId);
+        //             context.commit("setUserPhoto", resp.data.userPhoto);
+        //             resolve(store.state.user.isLogin);
+        //         })
+        //         .catch((error) => {
+        //             reject(error);
+        //         })
+        //     })
+        // }
 
-                        localStorage.setItem("jwtToken",  resp.data);
-                        context.commit("setToken", resp.data);
-                    }
-                    else {
-                        // todo: 不同的错误
-                        ElMessage.error('登录错误');
-                    }
-                })
-                .catch(resp => {
-                    console.log(resp);
-                    ElMessage.error('登录异常');
-                })
-        },
 
-        // todo: resp 的token     并且待定   data也有问题
-        setUserInfo(context) {
+        getUserInfoForRouter(context) {
             return new Promise((resolve, reject) => {
                 getUserInfo()
-                    .then(resp => {
-                        if (resp.msg === "success") {
-                            context.commit("setUserId", resp.data.userId);
-                            context.commit("setUsername", resp.data.username);
-                            // context.commit("setToken", resp.data.token);
-                            // context.commit("setIsLogin", true);
-                            resolve(resp.data);
-                        }
+                    .then((resp) => {
+                        context.commit("setIsLogin", true);
+                        context.commit("setUsername", resp.data.username);
+                        context.commit("setUserId", resp.data.userId);
+                        context.commit("setUserPhoto", resp.data.userPhoto);
+                        resolve(store.state.user.isLogin);
                     })
-                    .catch(error => {
-                        reject(error);
+                    .catch((resp) => {
+                        context.commit("setIsLogin", true);
+                        context.commit("setUsername", "test");
+                        context.commit("setUserId", "test");
+                        context.commit("setUserPhoto", "test");
+                        resolve(store.state.user.isLogin);
                     })
             })
         }
+
     },
     modules: {
     }
