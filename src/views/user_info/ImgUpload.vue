@@ -9,6 +9,7 @@
       <img v-if="imageUrl" :src="imageUrl" class="avatar" />
       <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
     </el-upload>
+    <h4>点击修改头像</h4>
   </template>
   
 <script setup>
@@ -35,6 +36,9 @@ const beforeAvatarUpload = (rawFile) => {
 </script>
   
   <style lang='scss' scoped>
+      h4{
+        margin-left:390px;
+    }
 
     .avatar-uploader {
         margin-top:20px;

@@ -2,10 +2,10 @@
     <div class="item-gallery">
         <h2>商品收藏</h2>
         <!-- 行 -->
-      <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="50">
+      <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="55">
         <!-- 列 -->
         <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
-          <el-card :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
+          <Card :style="{ width: '210px', height: '300px'}" shadow="hover">
             <!-- 商品图片 -->
             <div class="item">
                 <img :src="item.url" class="image" />
@@ -20,12 +20,12 @@
                 <el-button class="cancel-btn" @click="handleCancelClick">取消收藏</el-button>
               </div>
             </div>
-          </el-card>
+          </Card>
         </el-col>
       </el-row>
     </div>
+    <!-- 分页栏 -->
     <el-row class="pagination">
-    <!-- <div class="demonstration">Jump to</div> -->
         <el-pagination
             v-model:currentPage="currentPage"
             v-model:pageSize="pageSize"
@@ -44,6 +44,7 @@
   <script setup>
   import {computed} from 'vue'
   import {ref} from 'vue'
+  import Card from '@/components/common/Card.vue'
     const itemList = [
     {
         url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
@@ -112,13 +113,17 @@
         const end=start+pageSize;  //当前页的最后数据号
         const paginatedItemRows=itemList.slice(start,end);//currentPage.value当前页需要显示的所有商品卡片（8个）
         const rows = [] //二维数组，rows[i]存储第i行的商品卡片（4个）
-        const rowSize = 4  //每行rowSize个商品
-        const rowCount = 2 //行数
+        const rowSize = 4;  //每行rowSize个商品
+        const rowCount = pageSize/rowSize; //行数
         for (let i = 0; i < rowCount; i++) {
             rows.push(paginatedItemRows.slice(i * rowSize, (i + 1) * rowSize))
         }
         return rows
     })
+
+    function handleCurrentChange(){
+        console.log("handleCurrentChange");
+    }
 
 
     function handleCancelClick(){
@@ -139,11 +144,9 @@
     }
 
     .item-gallery {
-        // background-color: rgb(200, 226, 238);
         margin-left:10%;
         position:relative;
-        width:900px;
-        // margin-right:10%;
+        width:100%;
     }
 
     .itemrow{
@@ -151,6 +154,7 @@
         margin-right:5%;
         margin-top:30px;
     }
+
 
     .item{
         width:210px;
@@ -165,8 +169,6 @@
         object-fit:cover;
         object-position: center;
         margin-bottom: 0;
-        // height:auto;
-        // display:block;
     }
 
     .item-gallery .info{

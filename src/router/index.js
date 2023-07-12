@@ -7,7 +7,10 @@ import ShopSelectView from "@/views/ShopSelectView.vue";
 import ShopManageView from "@/views/ShopManageView.vue";
 import ShopView from "@/views/ShopView.vue";
 import CartView from "@/views/cart/CartView.vue";
+import OrderDetailView from "@/views/OrderDetailView.vue";
+import OrderView from "@/views/OrderView.vue";
 import GoodsdetailView from "@/views/GoodsdetailView.vue";
+import UserInfoView from "@/views/UserInfoView.vue"
 import store from "@/store";
 import {ElMessage} from "element-plus";
 // import store from "@/store";
@@ -88,6 +91,25 @@ const routes =
                 requestAuth: true,
             }
         },
+      {
+          path : '/orderdetail/',
+          name : 'OrderDetail',
+          component : OrderDetailView
+      },
+      {path : '/order/',
+          name : 'Order',
+          component : OrderView
+      },
+      // todo: /goodsdetail/ 这个url还要加参数的，因为有不同的商品
+      {
+          path: '/goodsdetail/',
+          name: 'Goodsdetail',
+          component: GoodsdetailView
+      },
+      {path: '/userinfo/',
+          name: 'UserInfo',
+          component: UserInfoView
+      },
     ]
 
     const router = createRouter({history : createWebHistory(), routes})

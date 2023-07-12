@@ -21,8 +21,8 @@
 </script>
 
 <template>
-
-    <el-form :model="form" label-width="200px">
+    <div class="all">
+        <el-form :model="form" label-width="200px">
         <el-form-item label="昵称">
             <el-input class="input"  v-model="InfoForm.name"/>
         </el-form-item>
@@ -55,9 +55,15 @@
             <el-button>取消</el-button>
         </el-form-item>
     </el-form>
+    </div>
+
+
 </template>
 
 <style lang="scss" scoped>
+    .all{
+        width:100%;
+    }
     .input{
         width:500px;
     }
