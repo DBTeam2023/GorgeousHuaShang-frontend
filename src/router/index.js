@@ -13,11 +13,13 @@ import GoodsdetailView from "@/views/GoodsdetailView.vue";
 import UserInfoView from "@/views/UserInfoView.vue"
 import store from "@/store";
 import {ElMessage} from "element-plus";
-// import store from "@/store";
+import NotFound from "@/views/NotFound.vue";
+
+/// requestAuth 代表是否需要登录才能访问界面
 
 const routes =
     [
-      {
+        {
           path : '/',
           name : 'home',
           redirect: "/homepage/",
@@ -25,91 +27,111 @@ const routes =
           meta: {
               requestAuth: false,
           }
-      },
-      {
+        },
+        {
           path : '/homepage/',
           name : "Homepage",
           component : HomePageView,
           meta: {
               requestAuth: false,
           }
-      },
-      {
+        },
+        {
           path : '/login/',
           name : 'Login',
           component : LoginView,
           meta: {
               requestAuth: false,
           }
-      },
-      {
+        },
+        {
           path : '/register/',
           name : 'Register',
           component : RegisterView,
           meta: {
               requestAuth: false,
           }
-      },
-      {
+        },
+        {
           path : '/shopselect/',
           name : 'ShopSelect',
           component : ShopSelectView,
           meta: {
               requestAuth: true,
           }
-      },
-      {
+        },
+        {
           path : '/shopmanage/',
           name : 'ShopManage',
           component : ShopManageView,
           meta: {
               requestAuth: true,
           }
-      },
-      {
+        },
+        {
           path : '/shop/',
           name : 'Shop'
           , component : ShopView,
           meta: {
               requestAuth: true,
           }
-      },
-      {
+        },
+        {
           path: '/cart/',
           name: 'Cart',
           component: CartView,
           meta: {
               requestAuth: true,
           }
-      },
-        // todo: /goodsdetail/ 这个url还要加参数的，因为有不同的商品
-        {
-            path: '/goodsdetail/',
-            name: 'Goodsdetail',
-            component: GoodsdetailView,
-            meta: {
-                requestAuth: true,
-            }
         },
-      {
-          path : '/orderdetail/',
-          name : 'OrderDetail',
-          component : OrderDetailView
-      },
-      {path : '/order/',
-          name : 'Order',
-          component : OrderView
-      },
-      // todo: /goodsdetail/ 这个url还要加参数的，因为有不同的商品
-      {
+        {
           path: '/goodsdetail/',
           name: 'Goodsdetail',
-          component: GoodsdetailView
-      },
-      {path: '/userinfo/',
+          component: GoodsdetailView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/orderdetail/',
+          name : 'OrderDetail',
+          component : OrderDetailView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/order/',
+          name : 'Order',
+          component : OrderView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path: '/goodsdetail/',
+          name: 'Goodsdetail',
+          component: GoodsdetailView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path: '/userinfo/',
           name: 'UserInfo',
-          component: UserInfoView
-      },
+          component: UserInfoView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'NotFound',
+            component: NotFound,
+            meta: {
+                requestAuth: false,
+            }
+        },
     ]
 
     const router = createRouter({history : createWebHistory(), routes})

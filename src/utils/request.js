@@ -5,7 +5,6 @@ import axios from "axios";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-
 // todo： 线上还要改
 export const defaultDomain =
     process.env.NODE_ENV === "development"
@@ -27,7 +26,7 @@ service.interceptors.request.use(
         config.headers = {
             "Content-Type": "application/json",
         };
-        console.log("成功请求");
+        console.log(config);
         return config;
     },
     (error) => {

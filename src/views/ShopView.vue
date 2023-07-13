@@ -64,8 +64,9 @@
   </template>
 
   <script setup>
-  import { ref } from 'vue';
+  import {onMounted, ref} from 'vue';
   import AllItems from '@/views/shop_subs/ALLItemsView.vue'
+  import {checkPermission} from "@/utils/auth";
     const selectedMenu=ref('AllItems')
 
     const shopAvatar = ref('https://picsum.photos/id/1018/400/200');
@@ -73,6 +74,10 @@
     const fanCount = ref(1000);
     const address = ref('Beijing, China');
     const starRating = ref('4.5');
+
+    onMounted(() => {
+      checkPermission(["buyer"]);
+    })
   </script>
 
 <style scoped>

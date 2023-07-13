@@ -5,19 +5,19 @@ export function doLogin(data) {
     return request({
         url: "/api/UserSystem/user/",
         method: "POST",
-        params: data,
+        data: data,
     });
 }
 
 // todo: headers
 export function getUserInfo(data) {
     return request({
-        url: "/api/UserSystem/user/",
-        method: "GET",
+        url: "/api/UserSystem/userlnfo/",
+        method: "POST",
         // headers: {
         //     Authorization: "Bearer " + localStorage.getItem("jwtToken")
         // }
-        params: data
+        data: data
     })
 }
 
@@ -25,7 +25,7 @@ export function doRegister(data) {
     return request({
         url: "/api/UserSystem/newuser/",
         method: "POST",
-        params: data,
+        data: data,
     })
 }
 
