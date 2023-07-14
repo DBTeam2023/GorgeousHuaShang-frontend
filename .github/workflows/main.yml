@@ -18,6 +18,8 @@ jobs:
       - name: npm install
         # 步骤执行指令
         run: npm install
+      - name: npm audit fix
+        run: npm audit fix
       - name: npm run build
         run: npm run build
       # 命名这个任务为发布Deploy
@@ -33,4 +35,4 @@ jobs:
           pass: ${{ secrets.USER_PASS }}
           connect_timeout: 10s
           local: './dist/*'
-          remote: /home/www/dist
+          remote: /www/wwwroot/www.huashangyicai.com
