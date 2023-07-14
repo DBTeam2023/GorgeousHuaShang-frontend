@@ -88,6 +88,7 @@ import store from "@/store";
 import {onMounted, ref} from "vue";
 import {ElMessage} from "element-plus";
 import router from "@/router";
+import axios from "axios";
 
 const loginImages = [
   "./assets/login/HuashangLogo.png",
@@ -107,53 +108,49 @@ const login = () => {
             message: '登录成功',
             type: 'success',
           })
-
-          localStorage.setItem("jwtToken",  resp.data);
-          store.commit("setToken", resp.data);
+          localStorage.setItem("jwtToken", resp.data.token);
+          store.commit("setToken", resp.data.token);
           // todo: resolve怎么用
           // resolve(resp);
-        }
-        else {
+        } else {
           ElMessage.error('登录错误');
         }
       })
       .then(() => {
-          // 有token返回就跳转到首页
-          router.push("/");
+        // 获取用户信息
+        getUserInfo()
+            .then(resp => {
+              store.commit("setIsLogin", true);
+              store.commit("setUsername", resp.data.username);
+              store.commit("setRole",resp.data.type);
+              // store.commit("setUserPhoto", resp.data.userPhoto);
 
-          //记住密码
-          if (checkPassword.value) {
-            localStorage.setItem("username", loginForm.value.username);
-            localStorage.setItem("password", loginForm.value.password);
-          } else {
-            localStorage.removeItem("username");
-            localStorage.removeItem("password");
-          }
+              localStorage.setItem("role", resp.data.type);
+            })
+            .catch(resp => {
+              console.log(resp);
+              console.log("获取用户信息错误");
+            });
       })
       .then(() => {
-          let token = {
-            "token": localStorage.getItem("jwtToken")
-          }
+        // 有token返回就跳转到首页
+        router.push("/");
 
-          // 获取用户信息
-          getUserInfo(token)
-              .then(resp => {
-                console.log(resp);
-                store.commit("setIsLogin", true);
-                store.commit("setUsername", resp.data.username);
-                store.commit("setUserId", resp.data.userId);
-                store.commit("setUserPhoto", resp.data.userPhoto);
-              })
-              .catch(resp => {
-                console.log(resp);
-                console.log("获取用户信息错误");
-              });
+        //记住密码
+        if (checkPassword.value) {
+          localStorage.setItem("username", loginForm.value.username);
+          localStorage.setItem("password", loginForm.value.password);
+        } else {
+          localStorage.removeItem("username");
+          localStorage.removeItem("password");
+        }
       })
       .catch(resp => {
         console.log(resp);
         ElMessage.error('登录异常');
       })
 }
+
 
 // 生命周期 - 创建完成
 onMounted(() => {

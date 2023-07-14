@@ -76,7 +76,7 @@
     const starRating = ref('4.5');
 
     onMounted(() => {
-      checkPermission(["buyer"]);
+      checkPermission(["seller"]);
     })
   </script>
 

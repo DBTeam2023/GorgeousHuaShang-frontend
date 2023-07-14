@@ -121,7 +121,7 @@ onMounted(() => {
   console.log(store.state.user);
 })
 
-// todo: 后端判断还是前端判断
+
 const register = () => {
   if (showError.value) {
     ElMessage('两次密码不同！');

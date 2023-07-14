@@ -70,8 +70,8 @@ const routes =
         },
         {
           path : '/shop/',
-          name : 'Shop'
-          , component : ShopView,
+          name : 'Shop',
+            component : ShopView,
           meta: {
               requestAuth: true,
           }
@@ -137,8 +137,7 @@ const routes =
     const router = createRouter({history : createWebHistory(), routes})
 
     router.beforeEach(async (to, from, next) => {
-      console.log(to.path);
-      console.log(store.state.user);
+      console.log("当前页面url: " + to.path);
 
       let flag = 1;
       const token = localStorage.getItem("jwtToken");
@@ -148,6 +147,8 @@ const routes =
         try {
             // 如果有token且没过期能获取到user信息，则设置为当前状态为登录
             isLogin = await store.dispatch("getUserInfoForRouter");
+            console.log("当前页面拥有的信息如下：");
+            console.log(store.state.user);
             // isLogin = false;
         } catch (error) {
             ElMessage({

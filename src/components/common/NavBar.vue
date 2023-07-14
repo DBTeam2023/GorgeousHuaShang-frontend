@@ -8,19 +8,36 @@
       style="background-color: transparent;"
   >
     <el-menu-item index="0" style="height: 4em;">
-<!--      <img src="../../assets/login/HuashangLogo.png" style="width: 4em; height: 4em;">-->
       首页
     </el-menu-item>
+
+    <!--  添加其他导航  -->
+
     <div class="flex-grow" />
-    <el-menu-item index="1">其他</el-menu-item>
+    <el-menu-item index="1">购物车（测试）</el-menu-item>
 
-<!--  添加其他导航  -->
+    <!--  添加其他导航  -->
 
-    <el-sub-menu index="2">
-      <template #title>个人信息</template>
+    <el-sub-menu index="2" v-if="store.state.user.isLogin">
+      <template #title >
+        <div class="demo-fit">
+          <el-avatar shape="square" :size="55" :fit="fit" :src="store.state.user.userPhoto" />
+          <el-text tag="b" style="margin-left: 10px">{{ store.state.user.username }}</el-text>
+        </div>
+      </template>
+
+    <!--   这里添加登录状态的路由跳转，如个人信息跳转   -->
+      <el-menu-item :index="'2-4'" v-if="store.state.user.isLogin">个人信息</el-menu-item>
+      <el-menu-item :index="'2-3'" v-if="store.state.user.isLogin">退出登录</el-menu-item>
+
+    </el-sub-menu>
+    <el-sub-menu index="2" v-else>
+      <template #title >请登录</template>
       <el-menu-item :index="!store.state.user.isLogin ? '2-1' : '2-0'" v-if="!store.state.user.isLogin">注册</el-menu-item>
       <el-menu-item :index="!store.state.user.isLogin ? '2-2' : '2-0'" v-if="!store.state.user.isLogin">登录</el-menu-item>
-      <el-menu-item :index="'2-3'" v-if="store.state.user.isLogin">退出登录</el-menu-item>
+
+      <!--   这里添加未登录状态的路由跳转   -->
+
     </el-sub-menu>
   </el-menu>
 </template>
@@ -29,9 +46,7 @@
 import { ref } from 'vue'
 import router from "@/router";
 import store from "@/store";
-import {ElMessage} from "element-plus";
 
-// let showRegister = ref(store.state.user.isLogin);
 const activeIndex = ref('1')
 const handleSelect = (key, keyPath) => {
   keyPath; // 用不到但是要写
@@ -42,20 +57,14 @@ const handleSelect = (key, keyPath) => {
   } else if (key === '2-2') {
     router.push('/login/');
   } else if (key === '2-3') {
-    logout();
+    store.commit("logout");
+  } else if (key === '2-4') {
+    router.push('/userinfo/');
+  } else if (key === '1') {
+    router.push('/cart/');
   }
-}
 
-const logout = () => {
-  store.commit("setIsLogin", false);
-  store.commit("setToken", "");
-  if (localStorage.getItem("jwtToken") != null) {
-    localStorage.removeItem("jwtToken");
-  }
-  ElMessage('退出登录');
-  router.push('/');
 
-  // console.log(store.state.user)
 }
 
 </script>
@@ -63,5 +72,23 @@ const logout = () => {
 <style>
 .flex-grow {
   flex-grow: 1;
+}
+
+.demo-fit {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+}
+.demo-fit .block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+}
+
+.demo-fit .title {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--el-text-color-secondary);
 }
 </style>

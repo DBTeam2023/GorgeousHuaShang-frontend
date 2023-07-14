@@ -10,8 +10,9 @@ export function checkPermission(validList) {
 
     // 登录，分别讨论有无role
     if (currentRole) {
+        console.log("当前页面运行访问的role有如下：")
         console.log(validList);
-        console.log(currentRole);
+        console.log("当前登录的role是：" + currentRole);
 
         if (validList.includes(currentRole)) {
             return;

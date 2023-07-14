@@ -6,11 +6,13 @@ import store from "@/store/index";
 
 export default {
     state: {
-        username: "",
-        role: null,
-        userPhoto: "",
-        token: "", // todo: jwt token
-        isLogin: false,
+        username: "", // 目前的处理逻辑为既是账号，又是可以显示的用户昵称
+        role: null, // “buyer” "seller"
+
+        userPhoto: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg', // todo: 大家可以先写死
+
+        token: "", // "jwt token"
+        isLogin: false, // 当前状态是否登录
     },
     getters: {
     },
@@ -25,53 +27,65 @@ export default {
             state.isLogin = isLogin;
         },
         setRole(state, role) {
-            state.roleId = role;
+            state.role = role;
         },
         setUserPhoto(state, userPhoto) {
             state.userPhoto = userPhoto;
         },
+        logout(state) {
+            state.isLogin = false;
+            state.token = "";
+            if (localStorage.getItem("jwtToken") != null) {
+                localStorage.removeItem("jwtToken");
+            }
+            if (localStorage.getItem("role") != null) {
+                localStorage.removeItem("role");
+            }
+
+            ElMessage('退出登录');
+            router.push('/');
+        }
     },
     actions: {
-        setUser(context, data) {
-            context.commit("setUsername", data.username);
-            context.commit("setToken", data.token);
-            context.commit("setIsLogin", data.isLogin);
-        },
-
-        // getUserInfoForRouter(context) {
-        //     return new Promise((resolve, reject) => {
-        //         getUserInfo()
-        //         .then((resp) => {
-        //             context.commit("setIsLogin", true);
-        //             context.commit("setUsername", resp.data.username);
-        //             context.commit("setUserId", resp.data.userId);
-        //             context.commit("setUserPhoto", resp.data.userPhoto);
-        //             resolve(store.state.user.isLogin);
-        //         })
-        //         .catch((error) => {
-        //             reject(error);
-        //         })
-        //     })
-        // }
 
 
         getUserInfoForRouter(context) {
             return new Promise((resolve, reject) => {
                 getUserInfo()
-                    .then((resp) => {
-                        context.commit("setIsLogin", true);
-                        context.commit("setUsername", resp.data.username);
-                        context.commit("setUserPhoto", resp.data.userPhoto);
-                        resolve(store.state.user.isLogin);
-                    })
-                    .catch((resp) => {
-                        context.commit("setIsLogin", true);
-                        context.commit("setUsername", "test");
-                        context.commit("setUserPhoto", "test");
-                        resolve(store.state.user.isLogin);
-                    })
+                .then((resp) => {
+                    context.commit("setIsLogin", true);
+                    context.commit("setUsername", resp.data.username);
+                    // context.commit("setToken", localStorage.getItem("jwtToken"))
+                    context.commit("setRole",resp.data.type);
+                    resolve(store.state.user.isLogin);
+                })
+                .catch((error) => {
+                    reject(error);
+                })
             })
         }
+
+
+        // getUserInfoForRouter(context) {
+        //     return new Promise((resolve, reject) => {
+        //         getUserInfo({
+        //             token: localStorage.getItem("jwtToken"),
+        //         })
+        //             .then((resp) => {
+        //                 context.commit("setIsLogin", true);
+        //                 context.commit("setUsername", resp.data.username);
+        //                 context.commit("setToken", localStorage.getItem("jwtToken"))
+        //                 context.commit("setRole",resp.data.type);
+        //                 resolve(store.state.user.isLogin);
+        //             })
+        //             .catch((resp) => {
+        //                 context.commit("setIsLogin", true);
+        //                 context.commit("setUsername", resp.data.username);
+        //                 context.commit("setRole",resp.data.type);
+        //                 resolve(store.state.user.isLogin);
+        //             })
+        //     })
+        // }
 
     },
     modules: {

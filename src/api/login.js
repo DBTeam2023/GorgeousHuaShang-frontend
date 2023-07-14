@@ -3,27 +3,25 @@ import request from '@/utils/request';
 // todo: data
 export function doLogin(data) {
     return request({
-        url: "/api/UserSystem/user/",
+        url: "/api/UserSystem/login/",
         method: "POST",
         data: data,
     });
 }
 
-// todo: headers
-export function getUserInfo(data) {
+export function getUserInfo() {
     return request({
-        url: "/api/UserSystem/userlnfo/",
-        method: "POST",
-        // headers: {
-        //     Authorization: "Bearer " + localStorage.getItem("jwtToken")
-        // }
-        data: data
+        url: "/api/UserSystem/getUserInfo/",
+        method: "GET",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
     })
 }
 
 export function doRegister(data) {
     return request({
-        url: "/api/UserSystem/newuser/",
+        url: "/api/UserSystem/register/",
         method: "POST",
         data: data,
     })
