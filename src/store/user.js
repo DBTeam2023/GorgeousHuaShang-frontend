@@ -6,7 +6,7 @@ import store from "@/store/index";
 
 export default {
     state: {
-        username: "", // 目前的处理逻辑为既是账号，又是可以显示的用户昵称
+        username: "", // 目前的处理逻辑为既是账号，又是可以显示的用户昵称  LoginView的resp里返回的是nikeName
         role: null, // “buyer” "seller"
 
         userPhoto: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg', // todo: 大家可以先写死
@@ -54,7 +54,7 @@ export default {
                 getUserInfo()
                 .then((resp) => {
                     context.commit("setIsLogin", true);
-                    context.commit("setUsername", resp.data.username);
+                    context.commit("setUsername", resp.data.nickName);
                     // context.commit("setToken", localStorage.getItem("jwtToken"))
                     context.commit("setRole",resp.data.type);
                     resolve(store.state.user.isLogin);
@@ -73,14 +73,14 @@ export default {
         //         })
         //             .then((resp) => {
         //                 context.commit("setIsLogin", true);
-        //                 context.commit("setUsername", resp.data.username);
+        //                 context.commit("setUsername", resp.data.nickName);
         //                 context.commit("setToken", localStorage.getItem("jwtToken"))
         //                 context.commit("setRole",resp.data.type);
         //                 resolve(store.state.user.isLogin);
         //             })
         //             .catch((resp) => {
         //                 context.commit("setIsLogin", true);
-        //                 context.commit("setUsername", resp.data.username);
+        //                 context.commit("setUsername", resp.data.nickName);
         //                 context.commit("setRole",resp.data.type);
         //                 resolve(store.state.user.isLogin);
         //             })

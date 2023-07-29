@@ -109,7 +109,7 @@ let RegisterForm = ref({
   username: "",
   password: "",
   // todo: 改回来
-  role: radio1.value,
+  type: radio1.value,
 });
 let passwordConfirm = ref("");
 
