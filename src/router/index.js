@@ -121,7 +121,7 @@ const routes =
           name: 'UserInfo',
           component: UserInfoView,
           meta: {
-              requestAuth: true,
+              requestAuth: false,
           }
         },
         {

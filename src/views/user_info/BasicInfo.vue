@@ -1,7 +1,9 @@
 <script setup>
-    import {reactive,ref} from 'vue'
+    import {reactive,ref, onMounted} from 'vue'
+
 
     import ImgUpload from '@/views/user_info/ImgUpload.vue';
+    import { getUserInfo } from '@/api/userinfo';
 
     
     // 用户输入的个人信息表
@@ -12,9 +14,30 @@
         weight:'',
         gender:'',
         address:'',
-        receivename:'',
         phonenumber:'',
     })
+
+    // 获取用户信息
+    getUserInfo()
+    .then(resp => {
+        InfoForm.name = resp.data.nickName;
+        InfoForm.age = resp.data.buyerInfo.age;
+        InfoForm.height = resp.data.buyerInfo.height;
+        InfoForm.weight = resp.data.buyerInfo.weight;
+        InfoForm.gender = resp.data.buyerInfo.gender;
+        InfoForm.address = resp.data.buyerInfo.address;
+        console.log(InfoForm);
+    })
+    .catch(resp => {
+        console.log(resp);
+        console.log("获取用户信息错误");
+    });
+
+    onMounted(() => {   
+        getUserInfo();
+ 
+    })
+
 
     // 提交按钮
     function onSubmit() {
@@ -72,7 +95,7 @@
                             <el-input class="input"  v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"/>
                         </el-form-item>
                         <el-form-item label="收货人姓名">
-                            <el-input class="input" v-model="InfoForm.receivename"/>
+                            <el-input class="input" v-model="InfoForm.name"/>
                         </el-form-item>
                         <el-form-item label="手机号码">
                             <el-input class="input" v-model="InfoForm.phonenumber"/>
