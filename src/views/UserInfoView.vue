@@ -1,10 +1,10 @@
 <script setup>
     import BasicInfo from '@/views/user_info/BasicInfo.vue';
-    import ImgUpload from '@/views/user_info/ImgUpload.vue';
     import FollowedShop from '@/views/user_info/FollowedShop.vue';
     import CollectedItem from '@/views/user_info/CollectedItem.vue';
     import AccountSetting from '@/views/user_info/AccountSetting.vue';
     import OrderViewVue from '@/views/OrderView.vue';
+    import myWalletVue from '@/views/user_info/myWallet.vue';
    
 
     // 左侧菜单栏用到的
@@ -94,7 +94,7 @@
                                 <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('footprint')">
                                     <span>
                                         <el-icon><Position /></el-icon>
-                                        <span style="margin-left:10px">我的足迹</span>
+                                        <span style="margin-left:10px">我的优惠券</span>
                                     </span>
                                 </el-menu-item>
                                 <el-menu-item index="myWallet" class="menu-item" @click="MenuSelect('myWallet')">
@@ -140,6 +140,10 @@
             <!--我的订单-->
             <div v-else-if="selectedMenu === 'myOrder'">
                 <OrderViewVue/>
+            </div>
+            <!-- 我的钱包 -->
+            <div v-else-if="selectedMenu === 'myWallet'">
+                <myWalletVue/>
             </div>
 
         </el-col>
