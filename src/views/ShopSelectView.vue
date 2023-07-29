@@ -45,14 +45,14 @@
         }
       ])
 
-    //    // 发起 GET 请求，并将返回的数据保存在响应式数据中
-    //    axios.get('https://example.com/cards')
-    //     .then(response => {
-    //       cards.value = response.data
-    //     })
-    //     .catch(error => {
-    //       console.error(error)
-    //     })
+      //  // 发起 GET 请求，并将返回的数据保存在响应式数据中
+      //  axios.get('https://example.com/cards')
+      //   .then(response => {
+      //     cards.value = response.data
+      //   })
+      //   .catch(error => {
+      //     console.error(error)
+      //   })
 
       return {
         title,

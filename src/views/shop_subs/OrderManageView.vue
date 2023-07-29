@@ -30,6 +30,16 @@
       <el-table-column prop="status" label="订单状态"></el-table-column>
       <el-table-column prop="logisticsId" label="物流ID"></el-table-column>
     </el-table>
+    <div class="pagination-wrapper">
+      <el-pagination
+        background
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="Math.ceil(totalOrders / pageSize)"
+        @current-change="handlePageChange"
+      >
+      </el-pagination>
+    </div>
     <div class="summary">
       <span>总订单数: {{ totalOrders }}</span>
       <span>待支付: {{ countOrdersByStatus('待支付') }}</span>
@@ -42,8 +52,8 @@
 </template>
 
 <script>
-import { computed , ref } from 'vue';
-import { ElButton, ElCol, ElInput, ElRow, ElSelect, ElTable, ElTableColumn } from 'element-plus';
+import { computed, ref } from 'vue';
+import { ElButton, ElCol, ElInput, ElRow, ElSelect, ElTable, ElTableColumn, ElPagination } from 'element-plus';
 
 export default {
   components: {
@@ -54,8 +64,10 @@ export default {
     ElSelect,
     ElTable,
     ElTableColumn,
+    ElPagination,
   },
   setup() {
+    // 订单数据
     const orders = [
       {
         orderId: '1a',
@@ -76,48 +88,73 @@ export default {
       // 其他订单数据...
     ];
 
+    // 查询条件
     const searchOrderId = ref('');
     const searchBuyerId = ref('');
     const filterStatus = ref('');
 
+    // 分页状态
+    const currentPage = ref(1);
+    const pageSize = ref(10);
+
+    // 查询订单
     const searchOrders = () => {
       // 根据订单ID或买家ID进行查询逻辑
     };
 
+    // 重置查询条件
     const resetFilters = () => {
       searchOrderId.value = '';
       searchBuyerId.value = '';
       filterStatus.value = '';
     };
 
+    // 筛选后的订单数据
     const filteredOrders = computed(() => {
       // 根据订单状态进行筛选逻辑
-      return orders.filter(order => {
-        return (
-          (order.orderId.includes(searchOrderId.value) || order.buyerId.includes(searchBuyerId.value)) &&
+      return orders.filter((order) => {
+       return (
+          (order.orderId.includes(searchOrderId.value) ||
+            order.buyerId.includes(searchBuyerId.value)) &&
           (order.status === filterStatus.value || filterStatus.value === '')
         );
       });
     });
 
+    // 根据订单状态统计订单数量
     const countOrdersByStatus = (status) => {
-      // 根据订单状态统计逻辑
-      return filteredOrders.value.filter(order => order.status === status).length;
+      return filteredOrders.value.filter((order) => order.status === status).length;
     };
 
+    // 总订单数量
     const totalOrders = computed(() => {
       return filteredOrders.value.length;
     });
+
+    // 当前页的订单数据
+    const paginatedOrders = computed(() => {
+      const startIndex = (currentPage.value - 1) * pageSize.value;
+      return filteredOrders.value.slice(startIndex, startIndex + pageSize.value);
+    });
+
+    // 处理页码变化
+    const handlePageChange = (newPage) => {
+      currentPage.value = newPage;
+    };
 
     return {
       searchOrderId,
       searchBuyerId,
       filterStatus,
+      currentPage,
+      pageSize,
       searchOrders,
       resetFilters,
       filteredOrders,
       countOrdersByStatus,
       totalOrders,
+      paginatedOrders,
+      handlePageChange,
     };
   },
 };
@@ -140,5 +177,8 @@ export default {
 .summary {
   margin-top: 20px;
   text-align: right;
+}
+.pagination-wrapper {
+  margin-top: 20px;
 }
 </style>
