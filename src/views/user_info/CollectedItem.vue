@@ -5,12 +5,12 @@
       <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="55">
         <!-- 列 -->
         <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
-          <Card :style="{ width: '210px', height: '300px'}" shadow="hover">
+          <Card :body-style="{ padding: '0' }"  :style="{ width: '210px', height: '300px'}" shadow="hover">
             <!-- 商品图片 -->
             <div class="item">
                 <img :src="item.url" class="image" />
             </div>
-            <div class="info">
+            <div style="padding:14px">
               <!-- 商品描述 -->
               <div class="description">{{ item.itemDescription }}</div>
               <!-- 商品价格 -->
@@ -146,7 +146,7 @@
     .item-gallery {
         margin-left:10%;
         position:relative;
-        width:100%;
+        // width:100%;
     }
 
     .itemrow{
@@ -164,18 +164,18 @@
     }
 
     .item-gallery .item .image{
-        width:85%;
-        height:85%;
+        width:80%;
+        height:100%;
         object-fit:cover;
         object-position: center;
         margin-bottom: 0;
     }
 
-    .item-gallery .info{
-        padding-top:0;
-        padding-left:14px;
-        padding-right:14px;
-    }
+    // .item-gallery .info{
+    //     padding-top:0;
+    //     padding-left:14px;
+    //     padding-right:14px;
+    // }
     .description {
         margin-bottom: 20px;
         // padding-top:10px;

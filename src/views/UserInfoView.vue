@@ -120,7 +120,6 @@
         <el-col span="20" >
             <!-- 个人信息页 -->
             <div v-if="selectedMenu === 'basicInfo'">
-                <ImgUpload />
                 <BasicInfo />
             </div>
 
