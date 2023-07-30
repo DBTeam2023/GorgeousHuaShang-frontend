@@ -1,6 +1,5 @@
 import {doLogin, getUserInfo} from "@/api/login";
 import {ElMessage} from "element-plus";
-import {decodeToken} from "@/utils/jwtHelper";
 import router from "@/router";
 import store from "@/store/index";
 
@@ -47,8 +46,6 @@ export default {
         }
     },
     actions: {
-
-
         getUserInfoForRouter(context) {
             return new Promise((resolve, reject) => {
                 getUserInfo()
@@ -56,6 +53,7 @@ export default {
                     context.commit("setIsLogin", true);
                     context.commit("setUsername", resp.data.nickName);
                     // context.commit("setToken", localStorage.getItem("jwtToken"))
+                    console.log(resp.data.type);
                     context.commit("setRole",resp.data.type);
                     resolve(store.state.user.isLogin);
                 })
@@ -64,29 +62,6 @@ export default {
                 })
             })
         }
-
-
-        // getUserInfoForRouter(context) {
-        //     return new Promise((resolve, reject) => {
-        //         getUserInfo({
-        //             token: localStorage.getItem("jwtToken"),
-        //         })
-        //             .then((resp) => {
-        //                 context.commit("setIsLogin", true);
-        //                 context.commit("setUsername", resp.data.nickName);
-        //                 context.commit("setToken", localStorage.getItem("jwtToken"))
-        //                 context.commit("setRole",resp.data.type);
-        //                 resolve(store.state.user.isLogin);
-        //             })
-        //             .catch((resp) => {
-        //                 context.commit("setIsLogin", true);
-        //                 context.commit("setUsername", resp.data.nickName);
-        //                 context.commit("setRole",resp.data.type);
-        //                 resolve(store.state.user.isLogin);
-        //             })
-        //     })
-        // }
-
     },
     modules: {
     }
