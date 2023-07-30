@@ -150,12 +150,20 @@ const routes =
             console.log("当前页面拥有的信息如下：");
             console.log(store.state.user);
             // isLogin = false;
+            if (isLogin === false) {
+                ElMessage({
+                    message: "请先进行登陆操作!",
+                    type: "warning",
+                });
+                router.push({ name: "Login" });
+            }
         } catch (error) {
-            ElMessage({
-                message: "获取登录信息失败，请先进行登陆操作!",
-                type: "warning",
-            });
-            router.push({ name: "Login" });
+            if (to.path !== "/login/" && to.path !== "/register/") {
+                ElMessage({
+                    message: "获取登录信息失败，请先进行登陆操作!",
+                    type: "warning",
+                });
+            }
         }
       } else {
           flag = 2;

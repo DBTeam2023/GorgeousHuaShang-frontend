@@ -117,11 +117,6 @@ let showError = computed(() => {
   return passwordConfirm.value !== RegisterForm.value.password && passwordConfirm.value > 0;
 });
 
-onMounted(() => {
-  console.log(store.state.user);
-})
-
-
 const register = () => {
 
   if (showError.value) {
