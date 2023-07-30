@@ -22,6 +22,8 @@
 
 <script setup>
 import { MoreFilled } from '@element-plus/icons-vue'
+import {reactive} from 'vue'
+  
 const activities = [
   {
     content: '【浙江省嘉兴市】',
@@ -42,6 +44,37 @@ const activities = [
   }
 ]
 
+const LogisticsInfo=reactive({
+  address:'',
+  timestamp:'',
+})
+
+/*
+function getLogisticsInfo(){
+  return request({
+        url: "/api/order/logisticsDetails/",
+        method: "GET",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+    })
+}
+
+const fetchLogisticsInfo = () => {
+  getLogisticsInfo()
+    .then(resp=> {
+      
+    })
+    .catch(resp => {
+      console.log(resp);
+      console.log("获取物流信息时出现错误：");
+    
+    });
+}
+
+fetchLogisticsInfo()
+*/
+
 </script>
 
 <style scoped>
@@ -56,3 +89,4 @@ const activities = [
     margin-bottom: 30px;
 }
 </style>
+

@@ -97,7 +97,7 @@ const routes =
           name : 'OrderDetail',
           component : OrderDetailView,
           meta: {
-              requestAuth: true,
+              requestAuth: false,
           }
         },
         {
@@ -121,7 +121,7 @@ const routes =
           name: 'UserInfo',
           component: UserInfoView,
           meta: {
-              requestAuth: true,
+              requestAuth: false,
           }
         },
         {
