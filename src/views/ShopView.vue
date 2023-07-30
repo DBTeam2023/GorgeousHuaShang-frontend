@@ -1,121 +1,184 @@
 <template>
-    <div>
-        <!-- 顶栏 -->
-        <div class="shop-header">
-
-            <div class="shop-avatar">
-              <ElIcon name="el-icon-house"></ElIcon>
-                <img :src="shopAvatar" alt="Shop Avatar" />
-            </div>
-            <div class="shop-name">{{ shopName }}</div>
-            <div class="shop-stats">
-            <div class="shop-stat">
-                <div class="shop-stat-value">{{ fanCount }}</div>
-                <div class="shop-stat-label">收藏用户</div>
-            </div>
-            <div class="shop-stat">
-                <div class="shop-stat-value">{{ starRating }}</div>
-                <div class="shop-stat-label">店铺星级</div>
-            </div>
-            <div class="shop-stat">
-                <div class="shop-stat-value">{{ address }}</div>
-                <div class="shop-stat-label">店铺地址</div>
-            </div>
-            </div>
+  <div>
+    <!-- 顶栏 -->
+    <div class="shop-header">
+      <div style=" display: flex;align-items: center;justify-content: space-between;">
+        <el-icon style="font-size: 25px;"><house /></el-icon>
+        <div class="shop-name">{{ shopName }}</div>
+      </div>
+      <div class="shop-stats">
+        <div class="shop-stat">
+          <el-icon style="font-size: 25px;"><User /></el-icon>
+          <div class="shop-stat-info">
+            <div class="shop-stat-value">{{ favoriteUserCount }}</div>
+            <div class="shop-stat-label">收藏用户</div>
+          </div>
         </div>
-        <!-- 侧边栏 -->
-      <el-row class="tac">
-        <el-col :span="4">
-          <h5 class="mb-2">店铺选项</h5>
-          <el-menu default-active="1" class="el-menu-vertical-demo">
-            <el-menu-item index="1" @click="selectMenu('AllItems')">
-                <el-icon><location /></el-icon>
-                全部宝贝
-            </el-menu-item>
-            <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">
-                <el-icon><setting /></el-icon>
-                店铺动态
-            </el-menu-item>
-            <el-sub-menu index="3">
-              <template #title>
-                <el-icon><document /></el-icon>
-                <span>宝贝分类</span>
-              </template>
-              <el-menu-item index="3-1" @click="selectMenu('ProductManagement')">
-                <el-icon><setting /></el-icon>
-                分类1
-            </el-menu-item>
-            <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
-                <el-icon><setting /></el-icon>
-                分类2
-            </el-menu-item>
-            </el-sub-menu>
-            <el-menu-item index="4" @click="selectMenu('ShopAnalysis')">
-                <el-icon><setting /></el-icon>
-                联系客服
-            </el-menu-item>
-          </el-menu>
-        </el-col>
-        <el-col :span="20">
-      <template v-if="selectedMenu === 'AllItems'">
-        <AllItems></AllItems>
-      </template>
-        </el-col>
-      </el-row>
+        <div class="shop-stat">
+          <el-icon style="font-size: 25px;"><Star /></el-icon>
+          <div class="shop-stat-info">
+            <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>
+            <div class="shop-stat-label">店铺星级</div>
+          </div>
+        </div>
+        <div class="shop-stat">
+          <el-icon style="font-size: 25px;"><Location/></el-icon>
+          <div class="shop-stat-info">
+            <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>
+            <div class="shop-stat-label">店铺地址</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </template>
+    <!-- 侧边栏 -->
+    <el-row class="tac">
+      <el-col :span="4" backgroundColor="#545c64">
+        <!-- <div style="display: flex; align-items: center;">
+        <el-icon><Tools /></el-icon>
+        <h5 class="mb-2" style="margin-left: 10px;">店铺管理选项</h5>
+      </div> -->
+      <el-header class="header" >
+          <!--用户头像-->
+          <el-row class="avatar-row">
+              <el-avatar :size="100" src='https://picsum.photos/id/1018/200/200' />
+          </el-row>
+          <!--用户姓名-->
+          <el-row class="name-row">{{ shopName }}</el-row>
+      </el-header>
+        <el-menu default-active="1"  active-text-color="#ffd04b"
+                  background-color="#545c64"
+                  class="el-menu-vertical-demo"
+                  text-color="#fff"
+                  @selected="handleMenuSelect"
+                  @open="handleOpen"
+                  @close="handleClose"
+                  style="height: 60%;border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;"
+                  >
+          <el-menu-item index="1" @click="selectMenu('ShopInfo')">
+              <el-icon><Grid /></el-icon>
+              全部宝贝
+          </el-menu-item>
+          <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">
+              <el-icon><Comment /></el-icon>
+              店铺动态
+          </el-menu-item>
+          <el-menu-item index="3" @click="selectMenu('ShopAnalysis')">
+              <el-icon><Menu /></el-icon>
+              宝贝分类
+          </el-menu-item>
+          <el-menu-item index="4" @click="selectMenu('OrderManage')">
+              <el-icon><Avatar /></el-icon>
+              联系客服
+          </el-menu-item>
+        </el-menu>
+      </el-col>
+  <el-col :span="20">
+    <template v-if="selectedMenu === 'ShopInfo'">
+      <ALLItems></ALLItems>
+    </template>
+    <template v-else-if="selectedMenu === 'OrderManage'">
+      <OrderManage></OrderManage>
+    </template>
+    <template v-if="selectedMenu === 'ProductIncrease'">
+      <ProductIncrease></ProductIncrease>
+    </template>
+    <template v-else-if="selectedMenu === 'ProductManagement'">
+      <ProductManagement></ProductManagement>
+    </template>
+    <template v-else-if="selectedMenu === 'ShopAnalysis'">
+      <ShopAnalysis></ShopAnalysis>
+    </template>
+  </el-col>
+    </el-row>
+  </div>
+</template>
 
-  <script setup>
-  import {onMounted, ref} from 'vue';
-  import AllItems from '@/views/shop_subs/ALLItemsView.vue'
-  import { ElIcon } from 'element-plus';
+<script setup>
+import {
+House,
+  Star,
+  Grid,
+User,
+Document,
+DocumentAdd,
+  Collection,
+Comment,
+Menu as IconMenu,
+Location,
+Setting,
+InfoFilled,
+Histogram,
+MoreFilled,
+Menu,
+Tools,
+Avatar,
+} from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import ShopInfo from '@/views/shop_subs/ShopInfoView.vue'
+import OrderManage from '@/views/shop_subs/OrderManageView.vue'
+import ProductIncrease from '@/views/shop_subs/ProductIncreaseView.vue';
+import ALLItems from '@/views/shop_subs/ALLItemsView.vue';
+import ShopAnalysis from '@/views/shop_subs/ShopAnalysisView.vue';
+import { ElIcon } from 'element-plus';
 
-    const selectedMenu=ref('AllItems')
 
-    const shopAvatar = ref('https://picsum.photos/id/1018/400/200');
-    const shopName = ref('A Test Shop');
-    const fanCount = ref(1000);
-    const address = ref('Beijing, China');
-    const starRating = ref('4.5');
 
-    onMounted(() => {
-      checkPermission(["seller"]);
-    })
-  </script>
+//   const handleOpen = (key, keyPath) => {
+//     console.log(key, keyPath)
+//   }
+
+//   const handleClose = (key, keyPath) => {
+//     console.log(key, keyPath)
+//   }
+const selectedMenu = ref('ShopInfo');
+
+// 商店名字
+const shopName = ref('A Test Shop')
+
+// 收藏用户数
+const favoriteUserCount = ref(123)
+
+// 店铺星级
+const toBeShippedOrderCount = ref(4)
+
+// 店铺地址
+const toBeReceivedOrderCount = ref('缪缪的心里')
+
+
+function selectMenu(menu) {
+    selectedMenu.value = menu;
+}
+
+</script>
 
 <style scoped>
-.el-row {
-    margin-top: 20px;
-  }
-
-  .el-col {
-    padding: 0 10px;
-  }
-  .no-link-style {
-    color: inherit;
-    text-decoration: none;
-    cursor: default;
-  }
-.shop-avatar img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 50%;
+.info {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 20px;
+background-color: #f5f5f5;
+border-radius: 20px;
 }
 .shop-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
+  height: 60px;
   background-color: #fff;
   padding: 0 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
 }
 
 .shop-name {
   font-size: 24px;
   font-weight: bold;
+  margin-left: 10px;
 }
+
 
 .shop-stats {
   display: flex;
@@ -123,8 +186,15 @@
 }
 
 .shop-stat {
-  margin-left: 20px;
-  line-height: 1.5;
+display: flex;
+align-items: center;
+margin-left: 30px;
+}
+
+.shop-stat-info {
+display: flex;
+flex-direction: column;
+margin-left: 5px; /* 调整适当的数值来增加左侧空隙 */
 }
 
 .shop-stat-value {
@@ -149,4 +219,23 @@
   text-decoration: none;
   cursor: default;
 }
+.header {
+      /* background-color: #fff; */
+      /* width: 300px; */
+      background-color: #393f44;
+      padding-top:20px;
+      height:200px;
+      /* border-right: 1px solid #d7d4d4;
+      border-left: 1px solid #d7d4d4;
+      border-bottom: 1px solid #d7d4d4; */
+      display: flex;
+      flex-direction:column;
+      align-items: center;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+  }
+.header .name-row{
+      align-self: center;
+      color:#fff
+  }
 </style>
