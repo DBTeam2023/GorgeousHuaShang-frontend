@@ -71,7 +71,7 @@
             <div v-if="showError" style="color:red;">两次输入的密码不一致！</div>
 
             <div class="mb-2 flex items-center text-sm">
-              <el-radio-group v-model="radio1" class="ml-4">
+              <el-radio-group v-model="RegisterForm.type" class="ml-4">
                 <el-radio label="seller" size="large">商家</el-radio>
                 <el-radio label="buyer" size="large">买家</el-radio>
               </el-radio-group>
@@ -99,8 +99,9 @@ import {computed, onMounted, ref} from "vue";
 import {doRegister} from "@/api/login";
 import {ElMessage} from "element-plus";
 import store from "@/store";
-// import store from "@/store";
-let radio1 = ref('buyer');
+import router from "@/router";
+
+let radio1 = ref('');
 
 const loginImages = [
   "./assets/login/HuashangLogo.png",
@@ -108,8 +109,7 @@ const loginImages = [
 let RegisterForm = ref({
   username: "",
   password: "",
-  // todo: 改回来
-  role: radio1.value,
+  type: radio1.value,
 });
 let passwordConfirm = ref("");
 
@@ -123,16 +123,26 @@ onMounted(() => {
 
 
 const register = () => {
+
   if (showError.value) {
     ElMessage('两次密码不同！');
     return;
   }
-
+  console.log(RegisterForm.value)
   doRegister(RegisterForm.value)
       .then(resp => {
+        ElMessage({
+          message: '登录成功',
+          type: 'success',
+        })
         console.log(resp);
+        router.push("/login/");
       })
       .catch(resp => {
+        ElMessage({
+          message: '注册失败',
+          type: 'warning',
+        })
         console.log(resp);
       })
 }
