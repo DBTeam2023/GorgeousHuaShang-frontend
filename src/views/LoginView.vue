@@ -121,7 +121,7 @@ const login = () => {
         getUserInfo()
             .then(resp => {
               store.commit("setIsLogin", true);
-              store.commit("setUsername", resp.data.username);
+              store.commit("setUsername", resp.data.nickName);
               store.commit("setRole",resp.data.type);
               // store.commit("setUserPhoto", resp.data.userPhoto);
 
