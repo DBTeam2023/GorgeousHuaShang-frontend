@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-// 获取用户个人信息
+// // 获取用户个人信息
 export function getUserInfo() {
     return request({
         url: "/api/UserSystem/getUserInfo/",
