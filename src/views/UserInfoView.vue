@@ -5,6 +5,9 @@
     import AccountSetting from '@/views/user_info/AccountSetting.vue';
     import OrderViewVue from '@/views/OrderView.vue';
     import myWalletVue from '@/views/user_info/myWallet.vue';
+
+    import { watchEffect } from 'vue';
+    import { useRoute } from 'vue-router';
    
 
     // 左侧菜单栏用到的
@@ -27,8 +30,13 @@
         console.log(key, keyPath)
     }
 
-    // 选择的菜单项
-    const selectedMenu=ref('basicInfo');
+    const route = useRoute(); // 获取路由对象
+    // 使用路由参数作为初始值，如果未传递参数，则默认为 'basicinfo'
+    const selectedMenu = ref(route.params.selected || 'basicInfo');
+    // 监听路由参数的变化
+    watchEffect(() => {
+    	selectedMenu.value = route.params.selected || 'basicInfo';
+    });
 
     // 菜单项选择响应函数
     const MenuSelect=(menuItem)=>{

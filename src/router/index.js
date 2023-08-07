@@ -117,9 +117,10 @@ const routes =
           }
         },
         {
-          path: '/userinfo/',
+          path: '/userinfo/:selected?',
           name: 'UserInfo',
           component: UserInfoView,
+          props:true,
           meta: {
               requestAuth: false,
           }
