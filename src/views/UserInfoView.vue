@@ -4,7 +4,8 @@
     import CollectedItem from '@/views/user_info/CollectedItem.vue';
     import AccountSetting from '@/views/user_info/AccountSetting.vue';
     import OrderViewVue from '@/views/OrderView.vue';
-    import myWalletVue from '@/views/user_info/myWallet.vue';
+    import myWallet from '@/views/user_info/myWallet.vue';
+    import myCoupon from '@/views/user_info/Coupon.vue';
 
     import { watchEffect } from 'vue';
     import { useRoute } from 'vue-router';
@@ -99,7 +100,7 @@
                                         <span style="margin-left:10px">我的订单</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('footprint')">
+                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('myCoupon')">
                                     <span>
                                         <el-icon><Position /></el-icon>
                                         <span style="margin-left:10px">我的优惠券</span>
@@ -151,8 +152,14 @@
             </div>
             <!-- 我的钱包 -->
             <div v-else-if="selectedMenu === 'myWallet'">
-                <myWalletVue/>
+                <myWallet/>
             </div>
+
+            <!-- 我的优惠券 -->
+            <div v-else-if="selectedMenu === 'myCoupon'">
+                <myCoupon/>
+            </div>
+
 
         </el-col>
 

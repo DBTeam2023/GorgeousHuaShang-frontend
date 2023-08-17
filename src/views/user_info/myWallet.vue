@@ -77,7 +77,8 @@
     import { ElMessage } from 'element-plus' //消息框提示
 
     import store from "@/store";
-    import { getWallet, updateWalletStatus, rechargeWallet} from '@/api/mywallet'
+    import { getWallet, updateWalletStatus, rechargeWallet,addWallet} from '@/api/mywallet'
+    import { getUserInfo } from '@/api/userinfo';
 
     // 钱包：从后端获取的数据
     const walletForm=reactive({
@@ -86,19 +87,18 @@
     })
 
     // 获取用户钱包信息
-    getWallet()
+    getWallet({
+        token:"Bearer " + localStorage.getItem("jwtToken"),        
+    })
     .then(resp => {
         walletForm.balance=resp.data.balance;
         walletForm.status=resp.data.status;
     })
     .catch(resp => {
+        // 若用户不存在钱包
         console.log(resp);
         console.log("获取钱包信息错误");
     });
-
-    onMounted(() => {   
-            getWallet(); 
-        })
 
     // 余额颜色
     const statusColors = ref({
@@ -131,11 +131,27 @@
         // 判断输入金额是否正确
         if (updateForm.amount&&(updateForm.amount+walletForm.balance < 99999999.99)) {
             // api:充值金额recharge，重新获取walletForm的值并显示
-
-            //充值成功提示
-            ElMessage({
-                message: '充值成功！',
-                type: 'success',
+            rechargeWallet({
+                token:"Bearer " + localStorage.getItem("jwtToken"), 
+                amount:updateForm.amount,
+            })
+            .then(resp=>{
+                walletForm.balance=resp.data.balance;
+                walletForm.status=resp.data.status;
+                console.log('充值成功！');
+                            //充值成功提示
+                ElMessage({
+                    message: '充值成功！',
+                    type: 'success',
+                })
+            })
+            .catch(err=>{
+                console.log('充值失败！');
+                console.log(err);
+                ElMessage({
+                    message: '充值失败',
+                    type: 'error',
+                })
             })
         }
         else{
@@ -144,14 +160,36 @@
                 type: 'error',
             })
         }
-    updateForm.amount = 0;
-    dialogFormVisible.value = false;
+        updateForm.amount = 0;
+        dialogFormVisible.value = false;
     };
 
-    //状态处理函数
+    //钱包状态处理函数
     const handleEdit = () => {
 
         //后端api：修改钱包状态
+        updateWalletStatus({
+                token:"Bearer " + localStorage.getItem("jwtToken"), 
+                status:walletForm.status,
+            })
+            .then(resp=>{
+                walletForm.balance=resp.data.balance;
+                walletForm.status=resp.data.status;
+                console.log('修改成功！');
+                            //充值成功提示
+                ElMessage({
+                    message: '修改成功！',
+                    type: 'success',
+                })
+            })
+            .catch(err=>{
+                console.log('修改失败！');
+                console.log(err);
+                ElMessage({
+                    message: '修改失败',
+                    type: 'error',
+                })
+            })
 
         dialogFormVisible.value = false;
 
