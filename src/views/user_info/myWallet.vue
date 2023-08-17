@@ -19,9 +19,9 @@
                         <div>
                             <el-button type="primary" :disabled="isButtonDisabled" @click="dialogFormVisible=true">余额充值</el-button>
                             <el-dialog v-model="dialogFormVisible" title="充值">
-                                <el-form :model="form">
+                                <el-form :model="updateForm">
                                 <el-form-item label="请输入充值金额" :label-width="formLabelWidth">
-                                    <el-input v-model="form.amount" autocomplete="off" />
+                                    <el-input v-model="updateForm.amount" autocomplete="off" />
                                 </el-form-item>
                                 </el-form>
                                 <template #footer>
@@ -33,96 +33,129 @@
                             </el-dialog>
                         </div>
                         <!-- 钱包状态 -->
-                        <h4>钱包状态：{{walletForm.status}}</h4> 
+                        <h4>钱包状态：
+                            <template v-if="walletForm.status === true">
+                                活跃
+                            </template>
+                            <template v-else-if="walletForm.status === false">
+                                冻结
+                            </template>
+                        </h4> 
                         <!-- 钱包状态修改select选择框 -->
                         <div>
-                            <el-select v-model="walletForm.status" style="width:90px">
-                                <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                                />
-                            </el-select>
+                            <el-button type="primary" @click="dialogFormVisible=true">修改状态</el-button>
+                            <el-dialog v-model="dialogFormVisible" title="修改钱包状态">
+                                <el-form :model="updateForm">
+                                <el-form-item>
+                                    <el-radio-group v-model="walletForm.status" @change="handleStatusChange">
+                                        <el-radio :label='true' >活跃</el-radio>
+                                        <el-radio :label='false' >冻结</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                </el-form>
+                                <template #footer>
+                                    <span class="dialog-footer">
+                                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                                        <el-button type="primary" @click="handleEdit">确定</el-button>
+                                    </span>
+                                </template>
+                            </el-dialog>
                         </div>
                     </el-col>
                 </el-row>
             </el-card>
         </el-col>
     </el-row>
+
 </template>
 
 
   
 <script setup>
-import {reactive,ref} from 'vue'
-import { computed } from 'vue';
-import { ElMessage } from 'element-plus' //消息框提示
+    import {reactive,ref} from 'vue'
+    import { computed } from 'vue';
+    import { ElMessage } from 'element-plus' //消息框提示
 
-// 钱包：从后端获取的数据
-const walletForm=reactive({
-    balance:122.4,
-    status:'活跃',
-})
+    import store from "@/store";
+    import { getWallet, updateWalletStatus, rechargeWallet} from '@/api/mywallet'
 
-//select框中钱包状态选项
-const options = [
-  {
-    value: '活跃',
-    label: '活跃',
-  },
-  {
-    value: '冻结',
-    label: '冻结',
-  },
-]
+    // 钱包：从后端获取的数据
+    const walletForm=reactive({
+        balance:122.4,
+        status:true,
+    })
 
-// 余额字体颜色
-const statusColors = ref({
-  '活跃': 'red',
-  '冻结': 'gray',
-});
+    // 获取用户钱包信息
+    getWallet()
+    .then(resp => {
+        walletForm.balance=resp.data.balance;
+        walletForm.status=resp.data.status;
+    })
+    .catch(resp => {
+        console.log(resp);
+        console.log("获取钱包信息错误");
+    });
 
-// 根据钱包状态显示对应余额颜色
-const statusColor = computed(() => {
-  return statusColors.value[walletForm.status];
-});
-// 根据钱包状态计算按钮是否应该被禁用
-const isButtonDisabled = computed(() => {
-  return walletForm.status === '冻结';
-});
-
-// 余额充值
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
-// 充值的金额
-const form=reactive({
-    amount:0,
-});
-
-
-
-// 充值处理函数
-const handleRecharge = () => {
-  
-    // 判断输入金额是否正确
-    if (form.amount&&(form.amount+walletForm.balance < 99999999.99)) {
-        // api:充值金额recharge，重新获取walletForm的值并显示
-        //充值成功提示
-        ElMessage({
-            message: '充值成功！',
-            type: 'success',
+    onMounted(() => {   
+            getWallet(); 
         })
+
+    // 余额颜色
+    const statusColors = ref({
+        true: 'red',
+        false: 'gray',
+    });
+
+    // 根据钱包状态显示对应余额颜色
+    const statusColor = computed(() => {
+    return statusColors.value[walletForm.status];
+    });
+
+    // 根据钱包状态计算按钮是否应该被禁用
+    const isButtonDisabled = computed(() => {
+    return walletForm.status === false;
+    });
+
+    // 余额充值
+    const dialogFormVisible = ref(false)
+    const formLabelWidth = '140px'
+    // 充值的金额
+    const updateForm=reactive({
+        amount:0,
+    });
+
+
+    // 充值处理函数
+    const handleRecharge = () => {
+    
+        // 判断输入金额是否正确
+        if (updateForm.amount&&(updateForm.amount+walletForm.balance < 99999999.99)) {
+            // api:充值金额recharge，重新获取walletForm的值并显示
+
+            //充值成功提示
+            ElMessage({
+                message: '充值成功！',
+                type: 'success',
+            })
+        }
+        else{
+            ElMessage({
+                message: '充值金额不能超过999999999.99',
+                type: 'error',
+            })
+        }
+    updateForm.amount = 0;
+    dialogFormVisible.value = false;
+    };
+
+    //状态处理函数
+    const handleEdit = () => {
+
+        //后端api：修改钱包状态
+
+        dialogFormVisible.value = false;
+
     }
-    else{
-        ElMessage({
-            message: '充值金额不能超过999999999.99',
-            type: 'error',
-        })
-    }
-  form.amount = 0;
-  dialogFormVisible.value = false;
-};
 
 
 </script>
