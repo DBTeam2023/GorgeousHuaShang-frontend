@@ -17,8 +17,8 @@
                         <h4>全部余额：{{walletForm.balance}}</h4>
                         <!-- 钱包充值对话框dialog -->
                         <div>
-                            <el-button type="primary" :disabled="isButtonDisabled" @click="dialogFormVisible=true">余额充值</el-button>
-                            <el-dialog v-model="dialogFormVisible" title="充值">
+                            <el-button type="primary" :disabled="isButtonDisabled" @click="dialogRechargeVisible=true">余额充值</el-button>
+                            <el-dialog v-model="dialogRechargeVisible" title="充值">
                                 <el-form :model="updateForm">
                                 <el-form-item label="请输入充值金额" :label-width="formLabelWidth">
                                     <el-input v-model="updateForm.amount" autocomplete="off" />
@@ -26,7 +26,7 @@
                                 </el-form>
                                 <template #footer>
                                     <span class="dialog-footer">
-                                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                                        <el-button @click="dialogRechargeVisible = false">取消</el-button>
                                         <el-button type="primary" @click="handleRecharge">确定</el-button>
                                     </span>
                                 </template>
@@ -43,8 +43,8 @@
                         </h4> 
                         <!-- 钱包状态修改select选择框 -->
                         <div>
-                            <el-button type="primary" @click="dialogFormVisible=true">修改状态</el-button>
-                            <el-dialog v-model="dialogFormVisible" title="修改钱包状态">
+                            <el-button type="primary" @click="EditStatus">修改状态</el-button>
+                            <el-dialog v-model="dialogEditVisible" title="修改钱包状态">
                                 <el-form :model="updateForm">
                                 <el-form-item>
                                     <el-radio-group v-model="walletForm.status" @change="handleStatusChange">
@@ -55,7 +55,7 @@
                                 </el-form>
                                 <template #footer>
                                     <span class="dialog-footer">
-                                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                                        <el-button @click="handleCancel">取消</el-button>
                                         <el-button type="primary" @click="handleEdit">确定</el-button>
                                     </span>
                                 </template>
@@ -73,12 +73,10 @@
   
 <script setup>
     import {reactive,ref} from 'vue'
-    import { computed } from 'vue';
+    import { computed,onMounted } from 'vue';
     import { ElMessage } from 'element-plus' //消息框提示
 
-    import store from "@/store";
     import { getWallet, updateWalletStatus, rechargeWallet,addWallet} from '@/api/mywallet'
-    import { getUserInfo } from '@/api/userinfo';
 
     // 钱包：从后端获取的数据
     const walletForm=reactive({
@@ -86,19 +84,11 @@
         status:true,
     })
 
-    // 获取用户钱包信息
-    getWallet({
-        token:"Bearer " + localStorage.getItem("jwtToken"),        
+    // walletForm的对象副本
+    const form=reactive({
+        balance:122.4,
+        status:true,
     })
-    .then(resp => {
-        walletForm.balance=resp.data.balance;
-        walletForm.status=resp.data.status;
-    })
-    .catch(resp => {
-        // 若用户不存在钱包
-        console.log(resp);
-        console.log("获取钱包信息错误");
-    });
 
     // 余额颜色
     const statusColors = ref({
@@ -108,21 +98,48 @@
 
     // 根据钱包状态显示对应余额颜色
     const statusColor = computed(() => {
-    return statusColors.value[walletForm.status];
+        return statusColors.value[walletForm.status];
     });
 
     // 根据钱包状态计算按钮是否应该被禁用
     const isButtonDisabled = computed(() => {
-    return walletForm.status === false;
+        return walletForm.status === false;
     });
 
-    // 余额充值
-    const dialogFormVisible = ref(false)
+    
+    const dialogEditVisible = ref(false) // 状态修改对话框可见
+    const dialogRechargeVisible = ref(false) //余额充值对话框可见
     const formLabelWidth = '140px'
+
     // 充值的金额
     const updateForm=reactive({
         amount:0,
     });
+
+
+    // 获取用户钱包信息
+    getWallet({
+        token:"Bearer " + localStorage.getItem("jwtToken"),        
+    })
+    .then(resp => {
+        walletForm.balance=resp.data.balance;
+        walletForm.status=resp.data.status;
+        form.value.balance=walletForm.balance;
+        form.value.status=walletForm.status;
+        console.log('getWallet:form.status', form.value.status);
+    })
+    .catch(resp => {
+        // 若用户不存在钱包
+        console.log(resp);
+        console.log("获取钱包信息错误");
+    });
+
+
+    // 钩子函数：
+    onMounted(() => {   
+        getWallet();
+ 
+    })
 
 
     // 充值处理函数
@@ -138,6 +155,8 @@
             .then(resp=>{
                 walletForm.balance=resp.data.balance;
                 walletForm.status=resp.data.status;
+                form.balance=walletForm.balance;
+                form.status=walletForm.status;
                 console.log('充值成功！');
                             //充值成功提示
                 ElMessage({
@@ -161,10 +180,23 @@
             })
         }
         updateForm.amount = 0;
-        dialogFormVisible.value = false;
+        dialogRechargeVisible.value = false;
     };
 
-    //钱包状态处理函数
+
+    //钱包状态处理函数1：按钮-修改状态
+    const EditStatus = () => {
+        console.log('edit');
+        dialogEditVisible.value=true; // 对话框设置为可见
+
+        //暂存原始数据
+        form.status=walletForm.status;
+        form.balance=walletForm.balance;
+
+    }
+
+
+    //钱包状态处理函数2：按钮-保存修改状态
     const handleEdit = () => {
 
         //后端api：修改钱包状态
@@ -175,6 +207,7 @@
             .then(resp=>{
                 walletForm.balance=resp.data.balance;
                 walletForm.status=resp.data.status;
+                form.status=resp.data.status;
                 console.log('修改成功！');
                             //充值成功提示
                 ElMessage({
@@ -191,8 +224,19 @@
                 })
             })
 
-        dialogFormVisible.value = false;
+        dialogEditVisible.value = false; 
+    }
 
+    // 钱包状态处理函数3：按钮-取消修改状态
+    const handleCancel=()=>{
+        console.log('cancel');
+
+        // 还原为未修改前的数据
+        walletForm.status = form.status;
+        walletForm.balance = form.balance;
+        
+        // 对话框不可见
+        dialogEditVisible.value = false;
     }
 
 

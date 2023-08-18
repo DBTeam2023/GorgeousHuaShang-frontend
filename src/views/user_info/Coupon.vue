@@ -15,6 +15,7 @@
         text-align: center;
     }
     .empty-container{
+        margin-top:50px;
         width:1100px;
     }
 </style>
