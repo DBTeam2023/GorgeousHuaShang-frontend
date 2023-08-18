@@ -27,6 +27,7 @@ export function rechargeWallet(data){
     })
 }
 
+// 为用户开通钱包功能呢
 export function addWallet(data){
     return request({
         url:"/api/Wallet/add",

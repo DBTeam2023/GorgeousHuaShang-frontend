@@ -1,7 +1,18 @@
 <template>
     <h2>我的钱包</h2>
+    <!-- 未开通钱包功能 -->
+    <el-row class="row" v-if="walletExit === false">
+        <el-col :span="24" style="justify-content: center; align-items: center;">
+            <el-card>
+                <el-empty description="您还没有开通钱包功能哦~">
+                    <el-button type="primary" @click="handleAdd">开通钱包</el-button>
+                </el-empty>
+            </el-card>
+        </el-col>
+    </el-row>
+
     <!-- 可用余额 -->
-    <el-row class="row">
+    <el-row class="row" v-if="walletExit === true">
         <el-col :span="24" style="justify-content: center; align-items: center;">
             <el-card>
                 <el-row class="wallet">
@@ -78,6 +89,8 @@
 
     import { getWallet, updateWalletStatus, rechargeWallet,addWallet} from '@/api/mywallet'
 
+    const walletExit=ref(false);//是否开通钱包功能标志
+
     // 钱包：从后端获取的数据
     const walletForm=reactive({
         balance:122.4,
@@ -116,6 +129,30 @@
         amount:0,
     });
 
+    // 为用户添加钱包
+    const handleAdd = () => {
+
+        addWallet({
+            token:"Bearer " + localStorage.getItem("jwtToken"),        
+            balance:0,
+        })
+        .then(resp=>{
+            walletForm.balance=resp.data.balance;
+            walletForm.status=resp.data.status;
+            walletExit=true;
+            ElMessage({
+                message:'开通钱包功能成功！',
+                type:'success',
+            })
+        })
+        .catch(err=>{
+            ElMessage({
+                message:'开通钱包功能失败！',
+                type:'error',
+            })
+        })
+    }
+
 
     // 获取用户钱包信息
     getWallet({
@@ -126,12 +163,20 @@
         walletForm.status=resp.data.status;
         form.value.balance=walletForm.balance;
         form.value.status=walletForm.status;
-        console.log('getWallet:form.status', form.value.status);
     })
     .catch(resp => {
         // 若用户不存在钱包
-        console.log(resp);
-        console.log("获取钱包信息错误");
+        if(resp.code === 404){
+            //新建钱包
+            console.log('用户钱包不存在，新建钱包！')
+        }
+        else{
+            ElMessage({
+                    message: '获取钱包信息错误，请重试！',
+                    type: 'error',
+                })
+        }
+
     });
 
 
@@ -208,7 +253,8 @@
                 walletForm.balance=resp.data.balance;
                 walletForm.status=resp.data.status;
                 form.status=resp.data.status;
-                console.log('修改成功！');
+                form.balance=resp.data.balance;
+
                             //充值成功提示
                 ElMessage({
                     message: '修改成功！',
@@ -216,10 +262,11 @@
                 })
             })
             .catch(err=>{
-                console.log('修改失败！');
-                console.log(err);
+                //恢复为原数据
+                walletForm.status=form.status;
+                walletForm.balance=form.balance;
                 ElMessage({
-                    message: '修改失败',
+                    message: '修改失败,请重试！',
                     type: 'error',
                 })
             })
@@ -234,7 +281,7 @@
         // 还原为未修改前的数据
         walletForm.status = form.status;
         walletForm.balance = form.balance;
-        
+
         // 对话框不可见
         dialogEditVisible.value = false;
     }
