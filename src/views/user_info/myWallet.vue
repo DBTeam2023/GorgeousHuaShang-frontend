@@ -89,7 +89,7 @@
 
     import { getWallet, updateWalletStatus, rechargeWallet,addWallet} from '@/api/mywallet'
 
-    const walletExit=ref(false);//是否开通钱包功能标志
+    const walletExit=ref(true);//是否开通钱包功能标志
 
     // 钱包：从后端获取的数据
     const walletForm=reactive({
@@ -295,8 +295,8 @@
         text-align: center;
     }
     .row{
-        margin-left:8em;
-        margin-right:8em;
+        margin-left:11em;
+        margin-right:11em;
         width:50em;
     }
     .balance{

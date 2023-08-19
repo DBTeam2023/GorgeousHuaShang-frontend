@@ -143,8 +143,8 @@
         text-align: center;
     }
     .row{
-        margin-left:8em;
-        margin-right:8em;
+        margin-left:11em;
+        margin-right:11em;
         // padding-top:1em;
         // justify-content: center;
         // padding-right:3em;
