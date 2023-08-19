@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import emoji from '../emoji/emoji'
+import emoji from '../../emoji/emoji'
 import { reactive } from 'vue'
 import { UToast, createObjectURL } from 'undraw-ui'
 

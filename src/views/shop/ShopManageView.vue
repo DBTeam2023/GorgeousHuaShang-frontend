@@ -82,11 +82,11 @@
     Setting,
   } from '@element-plus/icons-vue'
   import { ref } from 'vue'
-  import ShopInfo from '@/views/shop_subs/ShopInfoView.vue'
-  import OrderManage from '@/views/shop_subs/OrderManageView.vue'
-  import ProductIncrease from '@/views/shop_subs/ProductIncreaseView.vue';
-  import ProductManagement from '@/views/shop_subs/ProductManagementView.vue';
-  import ShopAnalysis from '@/views/shop_subs/ShopAnalysisView.vue';
+  import ShopInfo from '@/views/shop/ShopInfoView.vue'
+  import OrderManage from '@/views/shop/OrderManageView.vue'
+  import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
+  import ProductManagement from '@/views/shop/ProductManagementView.vue';
+  import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
 
 
 //   const handleOpen = (key, keyPath) => {

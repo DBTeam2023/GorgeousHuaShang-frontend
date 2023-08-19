@@ -46,9 +46,9 @@
   
   <script setup>
   import { ref } from 'vue';
-  import mjpic from "../assets/product/1.png";
-  import yfpic from "../assets/product/2.png";
-  import lgpic from "../assets/product/3.png";
+  import mjpic from "../../assets/product/1.png";
+  import yfpic from "../../assets/product/2.png";
+  import lgpic from "../../assets/product/3.png";
   import CommentView from './CommentView.vue';
   const product = {
     name: '商品名称',

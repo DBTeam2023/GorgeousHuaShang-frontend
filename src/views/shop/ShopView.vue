@@ -65,7 +65,7 @@
 
   <script setup>
   import {onMounted, ref} from 'vue';
-  import AllItems from '@/views/shop_subs/ALLItemsView.vue'
+  import AllItems from '@/views/shop/ALLItemsView.vue'
   import {checkPermission} from "@/utils/auth";
     const selectedMenu=ref('AllItems')
 
