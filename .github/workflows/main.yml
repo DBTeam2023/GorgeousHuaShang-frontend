@@ -35,4 +35,4 @@ jobs:
           pass: ${{ secrets.USER_PASS }}
           connect_timeout: 10s
           local: './dist/*'
-          remote: /www/wwwroot/www.huashangyicai.com
+          remote: /www/wwwroot/
