@@ -1,20 +1,19 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import LoginView from "@/views/LoginView.vue";
-import RegisterView from "@/views/RegisterView.vue";
-import HomePageView from "@/views/HomePageView/HomePageView.vue";
-import ClassificationView from "@/views/HomePageView/ClassificationView.vue";
-import ShopSelectView from "@/views/ShopSelectView.vue";
-import ShopManageView from "@/views/ShopManageView.vue";
-import ShopView from "@/views/ShopView.vue";
+import LoginView from "@/views/login/LoginView.vue";
+import RegisterView from "@/views/login/RegisterView.vue";
+import HomePageView from "@/views/homePage/HomePageView.vue";
+import ClassificationView from "@/views/homePage/ClassificationView.vue";
+import ShopSelectView from "@/views/shop/ShopSelectView.vue";
+import ShopManageView from "@/views/shop/ShopManageView.vue";
+import ShopView from "@/views/shop/ShopView.vue";
 import CartView from "@/views/cart/CartView.vue";
-import OrderDetailView from "@/views/OrderDetailView.vue";
-import OrderView from "@/views/OrderView.vue";
-import GoodsdetailView from "@/views/GoodsdetailView.vue";
-import UserInfoView from "@/views/UserInfoView.vue"
+import OrderDetailView from "@/views/order/OrderDetailView.vue";
+import OrderView from "@/views/order/OrderView.vue";
+import GoodsdetailView from "@/views/goods/GoodsdetailView.vue";
+import UserInfoView from "@/views/userinfo/UserInfoView.vue"
 import store from "@/store";
 import { ElMessage } from "element-plus";
-import NotFound from "@/views/NotFound.vue";
+import NotFound from "@/views/NotFoundView.vue";
 
 /// requestAuth 代表是否需要登录才能访问界面
 
@@ -24,7 +23,7 @@ const routes =
       path: '/',
       name: 'home',
       redirect: "/homepage/",
-      component: HomeView,
+      component: HomePageView,
       meta: {
         requestAuth: false,
       }

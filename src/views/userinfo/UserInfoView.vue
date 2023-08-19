@@ -1,10 +1,10 @@
 <script setup>
-    import BasicInfo from '@/views/user_info/BasicInfo.vue';
-    import ImgUpload from '@/views/user_info/ImgUpload.vue';
-    import FollowedShop from '@/views/user_info/FollowedShop.vue';
-    import CollectedItem from '@/views/user_info/CollectedItem.vue';
-    import AccountSetting from '@/views/user_info/AccountSetting.vue';
-    import OrderViewVue from '@/views/OrderView.vue';
+    import BasicInfo from '@/views/userinfo/BasicInfo.vue';
+    import ImgUpload from '@/views/userinfo/ImgUpload.vue';
+    import FollowedShop from '@/views/userinfo/FollowedShop.vue';
+    import CollectedItem from '@/views/userinfo/CollectedItem.vue';
+    import AccountSetting from '@/views/userinfo/AccountSetting.vue';
+    import OrderViewVue from '@/views/order/OrderView.vue';
    
 
     // 左侧菜单栏用到的
