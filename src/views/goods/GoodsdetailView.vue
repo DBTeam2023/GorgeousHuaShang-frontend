@@ -1,97 +1,102 @@
 <template>
 <div class="product-detail">
-    <div class="left-section">
-      <div class="search">
-        <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
-      </div>
-     <div class="thumbnail-images">
-      <div v-for="item in product.images" :key="item.index">
-       <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
-      </div>
-     </div>
+  <div class="left-section">
+    <div class="search">
+      <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
     </div>
-    <div class="right-section">
-     <h2>{{ product.name }}</h2>
-     <p>{{ product.info }}</p >
-     <div class="color-selection">
-      <h3>颜色</h3>
-      <el-radio-group v-model="selectedColor">
-       <el-radio label="黑色">黑色</el-radio>
-       <el-radio label="白色">白色</el-radio>
-       <el-radio label="红色">红色</el-radio>
-      </el-radio-group>
-     </div>
-     <div class="size-selection">
-      <h3>尺寸</h3>
-      <el-radio-group v-model="selectedSize">
-       <el-radio label="155">155</el-radio>
-       <el-radio label="160">160</el-radio>
-       <el-radio label="165">165</el-radio>
-       <el-radio label="170">170</el-radio>
-       <el-radio label="175">175</el-radio>
-      </el-radio-group>
-     </div>
-     <div class="quantity-selection">
-      <h3>数量</h3>
-      <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
-     </div>
-     <div class="buttons">
-      <el-button type="primary" @click="addToCart">加入购物车</el-button>
-       <el-button type="success" @click="buyNow">立即购买</el-button>
-     </div>
+   <div class="thumbnail-images">
+    <div v-for="item in product.images" :key="item.index">
+     <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
     </div>
    </div>
-   <comment-view/>
-  </template>
+  </div>
+  <div class="right-section">
+   <h2>{{ product.productName }}</h2>
+   <p>{{ product.description }}</p >
+   <div class="color-selection">
+    <h3>颜色</h3>
+    <el-radio-group v-model="selectedColor">
+     <el-radio label="黑色">黑色</el-radio>
+     <el-radio label="白色">白色</el-radio>
+     <el-radio label="红色">红色</el-radio>
+    </el-radio-group>
+   </div>
+   <div class="size-selection">
+    <h3>尺寸</h3>
+    <el-radio-group v-model="selectedSize">
+     <el-radio label="155">155</el-radio>
+     <el-radio label="160">160</el-radio>
+     <el-radio label="165">165</el-radio>
+     <el-radio label="170">170</el-radio>
+     <el-radio label="175">175</el-radio>
+    </el-radio-group>
+   </div>
+   <div class="quantity-selection">
+    <h3>数量</h3>
+    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
+   </div>
+   <div class="buttons">
+    <el-button type="primary" @click="addToCart">加入购物车</el-button>
+    <el-button type="success" @click="buyNow">立即购买</el-button>
+   </div>
+  </div>
+ </div>
+  <comment-view/>
+</template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup>
+import { ref } from 'vue';
   import mjpic from "../../assets/product/1.png";
   import yfpic from "../../assets/product/2.png";
   import lgpic from "../../assets/product/3.png";
   import CommentView from './CommentView.vue';
-  const product = {
-    name: '商品名称',
-    info: '商品信息',
-    images: [
-      {
-        index: 1,
-        info: "YF",
-        imgsrc: mjpic
-      },
-      {
-        index: 2,
-        info: "MJ",
-        imgsrc: yfpic
-      },
-      {
-        index: 3,
-        info: "LG",
-        imgsrc: lgpic
-      }
-    ]
-  };
-  
-  const selectedImage = ref('');
-  const selectedColor = ref('');
-  const selectedSize = ref('');
-  const selectedQuantity = ref(1);
-  
-  // 默认选中第一张图片
-  selectedImage.value = product.images[0].imgsrc;
-  
-  function selectImage(image) {
-    selectedImage.value = image;
-  }
-  
-  function addToCart() {
-    console.log(2); // 加入购物车
-  }
-  
-  function buyNow() {
-    console.log(1); // 立即购买
-  }
-  </script>
+
+
+const product = {
+  productName: '商品名称',
+  description: '商品信息',
+  images: [
+    {
+      index: 1,
+      info: "YF",
+      imgsrc: mjpic
+    },
+    {
+      index: 2,
+      info: "MJ",
+      imgsrc: yfpic
+    },
+    {
+      index: 3,
+      info: "LG",
+      imgsrc: lgpic
+    }
+  ]
+};
+
+const selectedImage = ref('');
+const selectedColor = ref('');
+const selectedSize = ref('');
+const selectedQuantity = ref(1);
+
+// 默认选中第一张图片
+selectedImage.value = product.images[0].imgsrc;
+
+function selectImage(image) {
+  selectedImage.value = image;
+}
+
+function addToCart() {
+  console.log(2); // 加入购物车
+}
+
+function buyNow() {
+  console.log(1); // 立即购买
+}
+</script>
+
+
+
 <!--CSS风格-->
 <style scoped>
 .header {

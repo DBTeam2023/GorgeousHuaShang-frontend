@@ -24,8 +24,7 @@
         </el-row>
         <el-row class="pagination">
             <!-- <div class="demonstration">Jump to</div> -->
-            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :small="small"
-                :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="itemList.length"
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"  layout="prev, pager, next, jumper" :total="itemList.length"
                 @current-change="handleCurrentChange" />
 
         </el-row>
@@ -209,9 +208,10 @@ const itemList = [
     },
 
 ]
+
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页
-const pageSize = 25  //每页的图片数量，设置为25
+const pageSize = 15  //每页的图片数量，设置为25
 // 计算属性，计算imageList中图片对应的行；每行4列
 const itemRows = computed(() => {
     const start = (currentPage.value - 1) * pageSize; //当前页的起始数据编号
@@ -222,6 +222,7 @@ const itemRows = computed(() => {
     const rowCount = pageSize / rowSize //行数
     for (let i = 0; i < rowCount; i++) {
         rows.push(paginatedItemRows.slice(i * rowSize, (i + 1) * rowSize))
+      console.log(rows)
     }
     return rows
 })
@@ -254,7 +255,8 @@ const fetchData = () => {
 }
 
 .recommend {
-    margin: 10px 100px;
+  padding-bottom: 20px;
+    margin: 10px 140px;
     /*上下左右四个方向的外部空白区域 */
     border: 0;
     /* 设置边框样式 */
@@ -275,8 +277,8 @@ const fetchData = () => {
     margin-left: 2%;
     margin-right: -16%;
     margin-top: 30px;
-}
 
+}
 
 .itemcol {
     border: 0;
@@ -334,5 +336,6 @@ const fetchData = () => {
 
     justify-content: center;
     text-align: center;
+  margin-bottom: 20px;
 }
 </style>

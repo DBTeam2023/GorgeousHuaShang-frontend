@@ -2,40 +2,45 @@
 <!--html模板-->
 <template>
   <el-container class="container">
-
-    <!--把搜索栏、购物车固定在顶部-->
-    <div>
-      <SearchBar />
-    </div>
-    <!--分类标签-->
-    <!-- <el-tag v-for="tag in tags" :key="tag.name" class="mx-1" closable :type="tag.type">
-      {{ tag.name }}
-    </el-tag> -->
-    <!--分类和轮播图、个人信息-->
-    <div class="homeBanner">
-      <HomeBanner />
-    </div>
-
-
+    <el-main class="my-main">
+      <!--把搜索栏、购物车固定在顶部-->
+      <div>
+        <SearchBar @performSearch="receiveSearchVal" />
+      </div>
+      <!--分类标签-->
+      <!-- <el-tag v-for="tag in tags" :key="tag.name" class="mx-1" closable :type="tag.type">
+        {{ tag.name }}
+      </el-tag> -->
+      <!--分类和轮播图、个人信息-->
+      <div class="homeBanner">
+        <HomeBanner />
+      </div>
 
 
-    <!--排序-->
-    <div class="sort">
-      <SortRow />
-    </div>
+      <div class="divCenter">
+        <img src="../../assets/homePage/fire.png">
+        <div class="custom-font">
+          为你推荐
+        </div>
+      </div>
 
 
-    <!--推荐商品-->
-    <div>
-      <RecommendCol />
-    </div>
+  <!--    &lt;!&ndash;排序&ndash;&gt;-->
+  <!--    <div class="sort">-->
+  <!--      <SortRow />-->
+  <!--    </div>-->
 
+
+      <!--推荐商品-->
+      <div style="width: 98%">
+        <RecommendCol />
+      </div>
+    </el-main>
     <!--底部-->
-    <el-footer class="footer" justify="center">
-      footer
 
+    <el-footer class="my-footer">
+      <img src="../../assets/homePage/footer.png">
     </el-footer>
-
 
   </el-container>
 </template>
@@ -47,7 +52,14 @@ import SearchBar from "@/components/HomePage/SearchBar.vue"
 import HomeBanner from "@/components/HomePage/HomeBanner.vue"
 import RecommendCol from "@/components/HomePage/RecommendCol.vue"
 import SortRow from "@/components/HomePage/SortRow.vue"
-// import { ref } from 'vue'
+import { ref } from 'vue'
+
+let searchVal = ref("")
+
+const receiveSearchVal = (val) => {
+  searchVal.value = val;
+  console.log(searchVal.value)
+}
 
 // const tags = ref([
 //   { name: 'Tag 1', type: '' },
@@ -63,8 +75,15 @@ import SortRow from "@/components/HomePage/SortRow.vue"
 
   <!--CSS风格-->
 <style scoped>
+.my-footer {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
 .container {
-  background-color: #b6e0eb;
+  background-color: #F4F4F4;
   margin-top: 5px;
   height: 100%;
 }
@@ -79,16 +98,24 @@ import SortRow from "@/components/HomePage/SortRow.vue"
 
 .homeBanner {
   border-radius: 10px;
-
+  width: 95%;
 }
 
-.footer {
-  margin: 10px 60px;
-  /*上下左右四个方向的外部空白区域均为 20px */
-  border: 1px solid #fffcfc;
-  /* 设置边框样式 */
-  border-radius: 10px;
-  /* 设置圆角半径 */
-  background-color: #f5f5f5;
+
+</style>
+
+<style lang="scss" scoped>
+
+.custom-font {
+  font-family: 'Poppins', sans-serif; /* 应用 Poppins 字体 */
+  font-weight: 600; /* 加粗 */
+  font-size: 24px; /* 字号较大 */
 }
+
+.divCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>
