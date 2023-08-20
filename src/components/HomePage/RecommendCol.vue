@@ -222,7 +222,6 @@ const itemRows = computed(() => {
     const rowCount = pageSize / rowSize //行数
     for (let i = 0; i < rowCount; i++) {
         rows.push(paginatedItemRows.slice(i * rowSize, (i + 1) * rowSize))
-      console.log(rows)
     }
     return rows
 })

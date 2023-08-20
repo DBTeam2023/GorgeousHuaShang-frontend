@@ -13,7 +13,6 @@
         />
         <el-button type="primary" @click="performSearch" class="search-button">搜索</el-button>
       </div>
-
     </div>
   </div>
 </template>
@@ -47,6 +46,7 @@ const performSearch = () => {
   justify-content: center;
   align-items: center;
   height: 8vh; /* 可以根据需要调整居中方式 */
+  margin-top: 20px;
 }
 
 .my-search-box-in{

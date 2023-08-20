@@ -1,5 +1,3 @@
-<!--首页-->
-<!--html模板-->
 <template>
   <el-container class="container">
     <el-main class="my-main">
@@ -7,15 +5,11 @@
       <div>
         <SearchBar @performSearch="receiveSearchVal" />
       </div>
-      <!--分类标签-->
-      <!-- <el-tag v-for="tag in tags" :key="tag.name" class="mx-1" closable :type="tag.type">
-        {{ tag.name }}
-      </el-tag> -->
+
       <!--分类和轮播图、个人信息-->
       <div class="homeBanner">
         <HomeBanner />
       </div>
-
 
       <div class="divCenter">
         <img src="../../assets/homePage/fire.png">
@@ -23,13 +17,6 @@
           为你推荐
         </div>
       </div>
-
-
-  <!--    &lt;!&ndash;排序&ndash;&gt;-->
-  <!--    <div class="sort">-->
-  <!--      <SortRow />-->
-  <!--    </div>-->
-
 
       <!--推荐商品-->
       <div style="width: 98%">
@@ -47,11 +34,9 @@
 
   <!--js脚本函数-->
 <script setup>
-//import { ElHeader, ElMenu, ElMenuItem, ElSubMenu, ElButton, ElRow, ElCol, ElInput } from 'element-plus';
 import SearchBar from "@/components/HomePage/SearchBar.vue"
 import HomeBanner from "@/components/HomePage/HomeBanner.vue"
 import RecommendCol from "@/components/HomePage/RecommendCol.vue"
-import SortRow from "@/components/HomePage/SortRow.vue"
 import { ref } from 'vue'
 
 let searchVal = ref("")
