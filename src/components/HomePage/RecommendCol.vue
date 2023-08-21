@@ -15,9 +15,9 @@
                         </div>
                         <div class="info">
                             <!-- 商品名称 -->
-                            <div class="name">{{ item.itemName }}</div>
+                            <div class="name">{{ item.productName }}</div>
                             <!-- 商品价格 -->
-                            <div class="price">￥{{ item.itemPrice }}</div>
+                            <div class="price">￥{{ item.price }}</div>
                         </div>
                     </RouterLink>
                 </Card>
@@ -26,7 +26,7 @@
         <el-row class="pagination">
             <!-- <div class="demonstration">Jump to</div> -->
             <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" 
-             layout="prev, pager, next, jumper" :total="itemList.length"
+             layout="prev, pager, next, jumper" :total="pages.total"
                 @current-change="handleCurrentChange" />
 
         </el-row>
@@ -36,194 +36,37 @@
 
 <script setup>
 import Card from "@/components/common/Card.vue"
-import {computed, onMounted} from 'vue'
+import {computed, onMounted, toRefs} from 'vue'
 import { defineProps } from 'vue'
 import { ref } from 'vue'
 
 const emit = defineEmits(["pageOption"])
-const props = defineProps(['pageValue'])
+const props = defineProps(['value'])
+
+let pages = props
 
 const itemList = [
     {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '199.99'
+      url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
+        productName: '商品名称',
+        price: '199.99'
     },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '299.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '399.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '499.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '599.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '699.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '799.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '899.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    }, {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
+];
 
-]
+// let itemList = ref(pages.value.records);
+// console.log(pages.value)
+
 
 onMounted(() => {
   emit("pageOption", {
     pageIndex: currentPage.value,
     pageSize: pageSize,
   })
-
-  
 })
+
+// setInterval(() => {
+//   console.log(pages.value.records)
+// }, 1000)
 
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页
@@ -321,16 +164,6 @@ const fetchData = () => {
     color: red
 }
 
-
-.logo {
-    display: inline-block;
-    display: flex;
-    /*布局*/
-    align-items: center;
-    height: 50px;
-    margin-right: 10px;
-}
-
 .logo img {
     height: 32px;
     margin-right: 10px;
@@ -339,10 +172,6 @@ const fetchData = () => {
 /* 禁用 router-link 的下划线 */
 .router-link-active {
     text-decoration: none;
-}
-
-.login {
-    color: #fff;
 }
 
 /*分页栏样式 */

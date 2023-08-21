@@ -20,17 +20,21 @@
 <script setup>
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
+import {useRoute} from "vue-router";
+import router from "@/router";
 
+const route = useRoute()
 const emit = defineEmits(['performSearch'])
 // 绑定搜索关键词
-const searchKeyword = ref('');
+let searchKeyword = ref('');
 
 // 执行搜索的函数
 const performSearch = () => {
-  if (searchKeyword.value.trim() !== '') {
-    emit('performSearch', searchKeyword.value)
-    // 在这里调用你的搜索逻辑函数
-    // 例如：调用API，发送搜索请求等
+  emit('performSearch', searchKeyword.value)
+
+  if (route.path === "/homepage/") {
+    router.push({path: '/classify', query: {search: searchKeyword.value}})
+
   }
 };
 </script>

@@ -13,9 +13,9 @@
 
   <!-- 右侧 -->
   <div class="right-section">
-    <div v-if="showGoods()">
-      <h2>{{ product.productName }}</h2>
-      <p>{{ product.description }}</p>
+    <div v-if="showGoodsDescriptionVar">
+      <h2>{{ route.query.productName }}</h2>
+      <p>{{ selectedcommodity.value.description }}</p>
     </div>
     <div v-else>
       <h2>商品未加载</h2>
@@ -25,7 +25,7 @@
 
     <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
       <h3>{{ idx1 }}</h3>
-      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties[idx1]" class="my-selection-item">
+      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties.value[idx1]" class="my-selection-item">
         <el-radio :label="properity">{{ properity }}</el-radio>
       </el-radio-group>
     </div>
@@ -37,15 +37,12 @@
 
 
     <!-- 商品价格 -->
-    <div v-if="showGoods()">
-      <div class="price">￥{{ 300 }}</div>
+    <div v-if="showGoodsDescriptionVar">
+      <div class="price">￥{{ selectedcommodity.value.price }}</div>
     </div>
     <div v-else>
       <div class="price">￥ *** </div>
     </div>
-
-
-
 
    <div class="buttons">
     <el-button type="primary" @click="addToCart">加入购物车</el-button>
@@ -55,9 +52,16 @@
  </div>
   <comment-view/>
 </template>
-  
+
+
+
+
+
+
+
+
 <script setup>
-import {onMounted, ref} from 'vue';
+import {onMounted, reactive, ref, watch} from 'vue';
 import mjpic from "../../assets/product/1.png";
 import yfpic from "../../assets/product/2.png";
 import lgpic from "../../assets/product/3.png";
@@ -93,8 +97,6 @@ const product = {
 };
 
 const selectedImage = ref('');
-const selectedColor = ref('');
-const selectedSize = ref('');
 const selectedQuantity = ref(1);
 
 // 默认选中第一张图片
@@ -106,7 +108,31 @@ let commodityIdToBackend = ref({
 
 let response; // 接收后端的数据resp
 let mergedProperties = ref([]); // 产品的所有属性
-let selectProperties = ref({}); // 顾客选中的属性
+let selectProperties = reactive({}); // 顾客选中的属性
+let selectIndex = ref(0);       // 选中产品对应的index
+let selectedcommodity = reactive({});// 选中属性对应的那个产品
+
+// todo: 加入购物车，加入订单
+/*
+{
+  commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
+  description: "小哥哥小姐姐都可以穿的汉服哟！",
+  price: 300,
+  property: {
+    尺码: "S"
+    男女款: "男款"
+    颜色: "白"
+  }
+}
+  */
+
+watch(selectProperties, (newVal) => {
+  selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
+  selectedcommodity.value = {
+    ...response.commodityInfo[selectIndex.value],
+    commodityId: route.query.goodsId,
+  }
+});
 
 function selectImage(image) {
   selectedImage.value = image;
@@ -120,14 +146,20 @@ function buyNow() {
   console.log(1); // 立即购买
 }
 
+
 getGoodsDetail(commodityIdToBackend.value)
     .then(resp => {
       if (resp.code === 200)
       {
-        // console.log(resp)
         response = resp.data;
-        mergedProperties.value = mergeSimilarProperties(response);
+        mergedProperties.value = mergeSimilarProperties(response.commodityInfo);
         selectProperties.value = handleSelectProperties(_.cloneDeep(mergedProperties.value));
+        selectIndex.value = findIndicesWithProperties(response.commodityInfo, selectProperties.value)
+        selectedcommodity.value = {
+          ...response.commodityInfo[selectIndex.value],
+          commodityId: route.query.goodsId,
+        }
+        showGoodsDescriptionVar = true;
       }
     })
     .catch(resp => {
@@ -169,14 +201,40 @@ const handleSelectProperties = (inputObject) => {
   return inputObject;
 }
 
-const showGoods = () => {
-  if (1) {
-    return true;
+let showGoodsDescriptionVar = ref(false)
+// const showGoodsDescription = () => {
+//   if (showGoodsDescriptionVar.value) {
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+// }
+
+function findIndicesWithProperties(array, properties) {
+  const indices = [];
+
+  for (let index = 0; index < array.length; index++) {
+    const item = array[index];
+    let match = true;
+
+    for (const key in properties) {
+      if (properties.hasOwnProperty(key)) {
+        if (item.property[key] !== properties[key]) {
+          match = false;
+          break;
+        }
+      }
+    }
+
+    if (match) {
+      indices.push(index);
+    }
   }
-  else {
-    return false;
-  }
+
+  return indices[0];
 }
+
 
 </script>
 

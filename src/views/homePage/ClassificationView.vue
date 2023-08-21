@@ -6,6 +6,16 @@
       <div>
         <SearchBar @performSearch="receiveSearchVal" />
       </div>
+
+      <div style="margin-left: 10vw;">
+        <el-button @click="() => {router.push({path: 'classify', query: {class: 'peishi'}});
+                                  }" text bg>配饰</el-button>
+        <el-button @click="() => {router.push({path: 'classify', query: {class: 'nanzhuang'}})}" text bg>男装</el-button>
+        <el-button @click="() => {router.push({path: 'classify', query: {class: 'nvzhuang'}})}" text bg>女装</el-button>
+      </div>
+
+
+
       <div class="my-classificaion-1" v-if="route.query.class === 'peishi'">
         <el-card class="top-card" shadow="always">
           <div class="custom-font">
@@ -142,6 +152,7 @@
       </el-card>
     </div>
 
+
       <div class="classification-tag">
       <!-- 已选筛选条件标签 -->
         <div v-if="selectedTags.length > 0" class="selected-tags">
@@ -163,7 +174,39 @@
 
       <!--推荐商品-->
       <div style="width: 98%">
-        <RecommendCol @pageOption="receivePageVal" :pageValue="commodities"/>
+<!--        <RecommendCol @pageOption="receivePageVal" :value="commodities"/>-->
+        <div class="recommend">
+          <!-- 行 -->
+          <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow">
+            <!-- 列 -->
+            <el-col v-for="(item, i) in row" :key="i" class="itemcol" :xs="24" :sm="12" :md="8"
+                    :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
+              <Card class="card">
+<!--                query: {goodsId: itemList.value[index * rowSize + i].productId-->
+                <div class="router-link-active" @click="turnToProduct(index, i)">
+                  <!-- 商品图片 -->
+                  <div class="item">
+                    <img :src="item.url" class="img" />
+                  </div>
+                  <div class="info">
+                    <!-- 商品名称 -->
+                    <div class="name">{{ item.productName }}</div>
+                    <!-- 商品价格 -->
+                    <div class="price">￥{{ item.price }}</div>
+                  </div>
+                </div>
+              </Card>
+            </el-col>
+          </el-row>
+          <el-row class="pagination">
+            <!-- <div class="demonstration">Jump to</div> -->
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
+                           layout="prev, pager, next, jumper" :total="total"
+                           @current-change="handleCurrentChange" />
+
+          </el-row>
+
+        </div>
       </div>
 
 
@@ -177,27 +220,26 @@
 <!--js脚本函数-->
 <script setup>
 import store from "@/store";
-import {onMounted, ref, watch} from "vue";
-import RecommendCol from "@/components/HomePage/RecommendCol.vue";
+import {computed, onMounted, ref, watch} from "vue";
 import SearchBar from "@/components/HomePage/SearchBar.vue";
 import SortRow from "@/components/HomePage/SortRow.vue";
 import {useRoute} from "vue-router";
-import {getGoodsInPage} from '../../api/goods.js'
+import {getGoodsInPage} from '@/api/goods'
 import { ElMessage } from "element-plus";
+import Card from "@/components/common/Card.vue";
+import router from "@/router";
 const route = useRoute()
 
 const selectedTags = ref([])
 
 let filters = ref({
-  pageSize: 10,
+  pageSize: 15,
   pageIndex: 1,
   searchVal: "",
   selectedTag: [],
   minPrice: 0,
   maxPrice: Infinity,
 })
-
-let commodities = ref();
 
 watch(selectedTags, (newValue) => {
   filters.value.selectedTag = newValue
@@ -215,11 +257,18 @@ onMounted(() => {
     selectedTags.value.push({value: '女装'})
   }
 
+  if (route.query.search !== null) {
+    filters.value.searchVal = route.query.search;
+  }
+  getCommodities();
+})
+
+watch(filters.value, (newVal) => {
   getCommodities();
 })
 
 // setInterval(() => {
-//   console.log(filters.value)
+//   console.log(itemList.value[0].productId)
 // },1000)
 //分类筛选标签
 
@@ -240,18 +289,13 @@ const toggleSelection = (value) => {
 
 const removeTag = (tag) => {
   selectedTags.value = selectedTags.value.filter(t => t !== tag);//过滤函数，将不等于传入值的元素保留下来
-  // if (store.state.homepage.selectClassification === tag.value) {
-  //   store.commit("setSelectClassification", "")
-  // }
-
 };
 
 const clearAllTags = () => {
   selectedTags.value = [];
-  // store.commit("setSelectClassification", "")
 };
 
-const types = ['primary', 'success', 'info', 'warning', 'danger']
+const types = ['primary']
 const colorIndex = ref(0); //响应式变量，跟踪当前使用的颜色索引
 const getRandomColor = () => {
 
@@ -269,11 +313,6 @@ const receivePriceVal = (val) => {
   filters.value.maxPrice = val[1];
 }
 
-const receivePageVal = (val) => {
-  filters.value.pageSize = val.pageSize;
-  filters.value.pageIndex = val.pageIndex;
-}
-
 
 const ethnicities = ref([
   "汉族", "蒙古族", "回族", "藏族", "维吾尔族", "苗族", "彝族", "壮族", "布依族", "朝鲜族",
@@ -284,6 +323,34 @@ const ethnicities = ref([
   "独龙族", "鄂伦春族", "赫哲族", "门巴族", "珞巴族", "基诺族"
 ])
 
+const itemList = ref([]);
+
+// 分页栏用到的数据
+const currentPage = ref(1)  //当前页数，默认为第1页
+const pageSize = 5  //每页的图片数量
+const rowSize = 5  //每行rowSize个商品
+
+let total = ref(6);
+
+filters.value.pageSize = pageSize;
+filters.value.pageIndex = currentPage;
+
+// 计算属性，计算imageList中图片对应的行；每行4列
+const itemRows = computed(() => {
+  const start = 0; //当前页的起始数据编号
+  const end = start + pageSize;  //当前页的最后数据号
+  const paginatedItemRows = itemList.value.slice(start, end);
+  const rows = []
+  const rowCount = pageSize / rowSize //行数
+  for (let i = 0; i < rowCount; i++) {
+    rows.push(paginatedItemRows.slice(i * rowSize, (i + 1) * rowSize))
+  }
+  return rows
+})
+const handleCurrentChange = (page) => {
+  currentPage.value = page;
+};
+
 const getCommodities = () => {
   getGoodsInPage({
     pageSize: filters.value.pageSize,
@@ -292,20 +359,31 @@ const getCommodities = () => {
     storeId: null,
     pricemin: filters.value.minPrice,
     pricemax: filters.value.maxPrice,
-    type: null,
-    name: filters.value.sear,
+    type: filters.value.selectedTag.length > 0 ? filters.value.selectedTag[0].value : null,
+    name: filters.value.searchVal,
     description: ""
   })
     .then(resp => {
-      commodities = {
-
+      itemList.value = resp.data.records;
+      total = resp.data.total;
+      // todo： 写死url
+      for (const item of itemList.value) {
+        item.url = 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1';
       }
+
     })
     .catch(resp => {
       ElMessage("商品拉取失败")
     })
 }
 
+function turnToProduct(index, i) {
+  router.push({path: '/goodsdetail',
+    query: {
+      goodsId: itemList.value[index * rowSize + i].productId},
+      productName: 123,
+  });
+}
 </script>
   
   
@@ -409,6 +487,91 @@ const getCommodities = () => {
   margin: 5px 0; /* 调整分割线的上下间距 */
 }
 
+.card {
+  width: 100%;
+  height: auto;
+  border: 0;
+  /*被覆盖了？ */
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+  /* 设置卡片之间的水平间距 */
+
+}
+
+.recommend {
+  padding-bottom: 20px;
+  margin: 10px 140px;
+  /*上下左右四个方向的外部空白区域 */
+  border: 0;
+  /* 设置边框样式 */
+  border-radius: 10px;
+  /* 设置圆角半径 */
+  background-color: #ffffff;
+}
+
+.recommend h2 {
+  font-size: 24px;
+  /*字体大小 */
+  font-weight: bold;
+  /*加粗 */
+  margin-bottom: 20px;
+}
+
+.itemrow {
+  margin-left: 2%;
+  margin-right: -16%;
+  margin-top: 30px;
+
+}
+
+.itemcol {
+  border: 0;
+  /*1像素宽度、实现样式、灰色颜色的边框 */
+  border-radius: 5px;
+  /*5像素的圆角边框 */
+  padding: 1px;
+  /*元素内部内容与边框之间的距离 */
+  text-align: center;
+}
+
+.item img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.info .name {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.info .price {
+  font-size: 18px;
+  font-weight: bold;
+  color: red
+}
+
+.logo img {
+  height: 32px;
+  margin-right: 10px;
+}
+
+/* 禁用 router-link 的下划线 */
+.router-link-active {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/*分页栏样式 */
+.pagination {
+  margin-top: 10px;
+
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 </style>
 
 <style lang="scss" scoped>
@@ -425,5 +588,7 @@ const getCommodities = () => {
   justify-content: center;
   align-items: center;
 }
+
+
 
 </style>
