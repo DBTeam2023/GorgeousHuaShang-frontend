@@ -41,8 +41,8 @@ const OrderState=reactive({
 
 .orderState-card{
     margin-top: 30px;
-    margin-left: 20px;
-    margin-right: 30px;
+    margin-left: 50px;
+    margin-right: 60px;
 }
     
 </style>

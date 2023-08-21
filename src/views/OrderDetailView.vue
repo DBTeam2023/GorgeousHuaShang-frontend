@@ -60,7 +60,7 @@ console.log("ddd")
         margin-top: 10px;
     }
     .returnButton {
-        margin-left: 20px;
+        margin-left: 50px;
     }
     .row-1-text {
         display: flex;

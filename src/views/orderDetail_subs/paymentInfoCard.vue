@@ -23,8 +23,8 @@
 /* 订单支付信息卡片 */
 .row-4-card {
     margin-top: 30px;
-    width: 1180px;
-    margin-left: 20px;
-    margin-right: 30px;
+    width: 1300px;
+    margin-left: 50px;
+    margin-right: 60px;
 }
 </style>

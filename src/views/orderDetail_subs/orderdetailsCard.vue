@@ -48,8 +48,8 @@ const formatQuantity = (row, column, cellValue) => {
 <style scoped>
 .row-3-card {
     margin-top: 30px;
-    margin-left: 20px;
-    margin-right: 30px;
-    /* width: 1080px; */
+    margin-left: 50px;
+    margin-right: 60px;
+    width: 1300px;
 }
 </style>
