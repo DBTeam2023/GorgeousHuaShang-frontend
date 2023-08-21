@@ -7,7 +7,7 @@
             <el-col v-for="(item, i) in row" :key="i" class="itemcol" :xs="24" :sm="12" :md="8"
                 :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
                 <Card class="card">
-                    <RouterLink to="/home/" class="router-link-active">
+                    <RouterLink :to="{path: '/goodsdetail', query: {goodsId: 'a618c78d-3329-4126-a7fe-4120b050e54c'}}" class="router-link-active">
                         <!-- 商品图片 -->
                         <div class="item">
                             <img :src="item.url" class="img" />
@@ -34,8 +34,11 @@
 
 <script setup>
 import Card from "@/components/common/Card.vue"
-import { computed } from 'vue'
+import {computed, onMounted} from 'vue'
 import { ref } from 'vue'
+
+const emit = defineEmits(["pageOption"])
+
 const itemList = [
     {
         url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
@@ -208,6 +211,13 @@ const itemList = [
     },
 
 ]
+
+onMounted(() => {
+  emit("pageOption", {
+    pageIndex: currentPage.value,
+    pageSize: pageSize,
+  })
+})
 
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页

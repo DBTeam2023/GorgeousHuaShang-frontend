@@ -10,31 +10,43 @@
     </div>
    </div>
   </div>
+
+  <!-- 右侧 -->
   <div class="right-section">
-   <h2>{{ product.productName }}</h2>
-   <p>{{ product.description }}</p >
-   <div class="color-selection">
-    <h3>颜色</h3>
-    <el-radio-group v-model="selectedColor">
-     <el-radio label="黑色">黑色</el-radio>
-     <el-radio label="白色">白色</el-radio>
-     <el-radio label="红色">红色</el-radio>
-    </el-radio-group>
-   </div>
-   <div class="size-selection">
-    <h3>尺寸</h3>
-    <el-radio-group v-model="selectedSize">
-     <el-radio label="155">155</el-radio>
-     <el-radio label="160">160</el-radio>
-     <el-radio label="165">165</el-radio>
-     <el-radio label="170">170</el-radio>
-     <el-radio label="175">175</el-radio>
-    </el-radio-group>
-   </div>
-   <div class="quantity-selection">
-    <h3>数量</h3>
-    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
-   </div>
+    <div v-if="showGoods()">
+      <h2>{{ product.productName }}</h2>
+      <p>{{ product.description }}</p>
+    </div>
+    <div v-else>
+      <h2>商品未加载</h2>
+      <p>商品描述未加载</p>
+    </div>
+
+
+    <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
+      <h3>{{ idx1 }}</h3>
+      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties[idx1]" class="my-selection-item">
+        <el-radio :label="properity">{{ properity }}</el-radio>
+      </el-radio-group>
+    </div>
+
+    <!--   <div class="my-selection">-->
+    <!--    <h3>数量</h3>-->
+    <!--    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>-->
+    <!--   </div>-->
+
+
+    <!-- 商品价格 -->
+    <div v-if="showGoods()">
+      <div class="price">￥{{ 300 }}</div>
+    </div>
+    <div v-else>
+      <div class="price">￥ *** </div>
+    </div>
+
+
+
+
    <div class="buttons">
     <el-button type="primary" @click="addToCart">加入购物车</el-button>
     <el-button type="success" @click="buyNow">立即购买</el-button>
@@ -45,12 +57,18 @@
 </template>
   
 <script setup>
-import { ref } from 'vue';
-  import mjpic from "../../assets/product/1.png";
-  import yfpic from "../../assets/product/2.png";
-  import lgpic from "../../assets/product/3.png";
-  import CommentView from './CommentView.vue';
+import {onMounted, ref} from 'vue';
+import mjpic from "../../assets/product/1.png";
+import yfpic from "../../assets/product/2.png";
+import lgpic from "../../assets/product/3.png";
+import CommentView from './CommentView.vue';
+import router from "@/router";
+import {useRoute} from "vue-router";
+import {getGoodsDetail} from "@/api/goods";
+import {ElMessage} from "element-plus";
 
+const route = useRoute()
+const _ = require('lodash');
 
 const product = {
   productName: '商品名称',
@@ -82,6 +100,14 @@ const selectedQuantity = ref(1);
 // 默认选中第一张图片
 selectedImage.value = product.images[0].imgsrc;
 
+let commodityIdToBackend = ref({
+  commodityId: route.query.goodsId,
+})
+
+let response; // 接收后端的数据resp
+let mergedProperties = ref([]); // 产品的所有属性
+let selectProperties = ref({}); // 顾客选中的属性
+
 function selectImage(image) {
   selectedImage.value = image;
 }
@@ -93,6 +119,65 @@ function addToCart() {
 function buyNow() {
   console.log(1); // 立即购买
 }
+
+getGoodsDetail(commodityIdToBackend.value)
+    .then(resp => {
+      if (resp.code === 200)
+      {
+        // console.log(resp)
+        response = resp.data;
+        mergedProperties.value = mergeSimilarProperties(response);
+        selectProperties.value = handleSelectProperties(_.cloneDeep(mergedProperties.value));
+      }
+    })
+    .catch(resp => {
+      ElMessage({
+        message: "商品已下架!",
+        type: "warning",
+      });
+    })
+
+
+
+// ***************  处理接收的数据  ***************
+function mergeSimilarProperties(array) {
+  const mergedProperties = {};
+
+  array.forEach(item => {
+    const property = item.property;
+
+    for (const key in property) {
+      if (property.hasOwnProperty(key)) {
+        const value = property[key];
+
+        if (!mergedProperties[key]) {
+          mergedProperties[key] = [value];
+        } else if (!mergedProperties[key].includes(value)) {
+          mergedProperties[key].push(value);
+        }
+      }
+    }
+  });
+
+  return mergedProperties;
+}
+
+const handleSelectProperties = (inputObject) => {
+  for (const key in inputObject) {
+    inputObject[key] = inputObject[key][0];
+  }
+  return inputObject;
+}
+
+const showGoods = () => {
+  if (1) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
 </script>
 
 
@@ -266,13 +351,22 @@ h2 {
   margin-bottom: 10px;
 }
 
-.color-selection,
-.size-selection,
-.quantity-selection {
+.my-selection {
   margin-bottom: 10px;
+}
+
+.my-selection-item {
+  margin-right: 20px;
 }
 
 .buttons {
   margin-top: 20px;
+}
+
+.price {
+  color:orangered;
+  margin-bottom: 20px;
+  font-size: 35px;
+  font-weight: bold;
 }
 </style>

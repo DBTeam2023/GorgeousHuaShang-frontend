@@ -46,14 +46,6 @@ const receiveSearchVal = (val) => {
   console.log(searchVal.value)
 }
 
-// const tags = ref([
-//   { name: 'Tag 1', type: '' },
-//   { name: 'Tag 2', type: 'success' },
-//   { name: 'Tag 3', type: 'info' },
-//   { name: 'Tag 4', type: 'warning' },
-//   { name: 'Tag 5', type: 'danger' },
-// ])
-
   //可以使用v-model指令将搜索框中的文本内容与search数据属性进行双向绑定，以便在组件中可以实时获取和更新搜索框中的内容
 </script>
 

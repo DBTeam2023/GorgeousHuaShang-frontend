@@ -2,126 +2,50 @@
 <template>
   <div class="d-center">
 
-    <!-- 已选筛选条件标签 -->
-<!--    <div v-if="selectedTags.length > 0" class="selected-tags">-->
-<!--      <el-tag v-for="(tag, index) in    selectedTags   " :key="index" class="tag" closable @close="removeTag(tag)"-->
-<!--        :type=getRandomColor()>-->
-<!--        {{ tag.value }}-->
-<!--      </el-tag>-->
-
-<!--      <el-button class="clear-all-btn" size="small" @click="clearAllTags">清空</el-button>-->
-<!--    </div>-->
-
     <el-row justify="center" :gutter="45">
 
       <!--分类栏-->
       <el-col :span="5" class="center-left">
-        <!--这里应该是从后端获取的分类类别-->
-<!--        <el-card class="top-card" shadow="always">-->
-<!--          <ul>-->
-<!--            <li>-->
-<!--&lt;!&ndash;              <span style="">朝代：</span>&ndash;&gt;-->
-<!--              <span class="classification-item" @click="selectClassification('唐代')">唐朝</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('朝代', '宋朝')">宋朝</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('朝代', '明朝')">明朝</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('朝代', '清朝')">清朝</span>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--&lt;!&ndash;              <span>适用人群：</span>&ndash;&gt;-->
-<!--              <span class="classification-item" @click="toggleSelection('适用人群', '男')">男</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('适用人群', '女')">女</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('适用人群', '儿童')">儿童</span>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--&lt;!&ndash;              <span>类别：</span>&ndash;&gt;-->
-<!--              <span class="classification-item" @click="toggleSelection('类别', '上衣')">上衣</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('类别', '下衣')">下衣</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('类别', '鞋')">鞋</span>-->
-<!--            </li>-->
-
-<!--            <li>-->
-<!--&lt;!&ndash;              <span>服饰配件：</span>&ndash;&gt;-->
-<!--              <span class="classification-item" @click="toggleSelection('服饰配件', '帽子')">帽子</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('服饰配件', '项链')">项链</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('服饰配件', '手工艺品')">手工艺品</span>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--&lt;!&ndash;              <span>民族：</span>&ndash;&gt;-->
-<!--              <span class="classification-item" @click="toggleSelection('民族', '苗族')">苗族</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('民族', '汉族')">汉族</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('民族', '藏族')">藏族</span>-->
-<!--              <span>/</span>-->
-<!--              <span class="classification-item" @click="toggleSelection('民族', '蒙古族')">蒙古族</span>-->
-<!--            </li>-->
-<!--          </ul>-->
-<!--        </el-card>-->
-
         <div class="my-classificaion">
           <el-card class="top-card" shadow="always">
             <div class="custom-font-recommend divCenter">
               <el-icon><ShoppingBag /></el-icon>
               筛选类别
             </div>
-            <ul>
+            <ul style="margin-top: 30px;">
               <li>
-<!--                <span class="my-classification-item-head">朝代</span>-->
-                <span class="classification-item" @click="selectClassification('唐朝')">唐朝</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('宋朝')">宋朝</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('明朝')">明朝</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('清朝')">清朝</span>
+                <span class="my-classification-item-head" @click="selectClassification('配饰')">配饰</span>
+                <span style="display: block">
+                  <span class="classification-item" @click="selectClassification('配饰')">民族</span>
+                </span>
               </li>
               <el-divider border-style="dashed" class="small-divider"/>
               <li>
-<!--                <span class="my-classification-item-head">适用人群</span>-->
-                <span class="classification-item" @click="selectClassification('男')">男</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('女')">女</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('儿童')">儿童</span>
+                <span class="my-classification-item-head" @click="selectClassification('男装')">男装</span>
+                <span style="display: inline-block">
+                  <span class="classification-item" @click="selectClassification('男装')">上衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">下衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">鞋</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">民族</span>
+                </span>
               </li>
-              <el-divider border-style="dashed"   class="small-divider"/>
+              <el-divider border-style="dashed" class="small-divider"/>
               <li>
-<!--                <span class="my-classification-item-head">类别</span>-->
-                <span class="classification-item" @click="selectClassification('上衣')">上衣</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('下衣')">下衣</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification( '鞋')">鞋</span>
+                <span class="my-classification-item-head" @click="selectClassification('女装')">女装</span>
+                <span style="display: inline-block">
+                  <span class="classification-item" @click="selectClassification('女装')">上衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('女装')">下衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification( '女装')">鞋</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('女装')">民族</span>
+                </span>
               </li>
-              <el-divider border-style="dashed"   class="small-divider"/>
-              <li>
-<!--                <span class="my-classification-item-head">服饰配件</span>-->
-                <span class="classification-item" @click="selectClassification('帽子')">帽子</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('项链')">项链</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('手工艺品')">手工艺品</span>
-              </li>
-              <el-divider border-style="dashed"   class="small-divider"/>
-              <li>
-<!--                <span class="my-classification-item-head">民族</span>-->
-                <span class="classification-item" @click="selectClassification('苗族')">苗族</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('汉族')">汉族</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('藏族')">藏族</span>
-                <span> / </span>
-                <span class="classification-item" @click="selectClassification('蒙古族')">蒙古族</span>
-              </li>
+
             </ul>
           </el-card>
         </div>
@@ -246,8 +170,15 @@ const info = reactive({
 })
 
 const selectClassification = (classification) => {
-  store.commit("setSelectClassification", classification);
-  router.push({ name: "Classify" })
+  let EN_class;
+  if (classification === '配饰') {
+    EN_class = 'peishi';
+  }  else if (classification === '男装') {
+    EN_class = 'nanzhuang';
+  } else {
+    EN_class = 'nvzhuang';
+  }
+  router.push({ path: "/classify", query: { class: EN_class } })
 }
 
 //轮播图
@@ -458,6 +389,22 @@ const goToPage = (page) => {
 .small-divider {
   height: 1px; /* 设置分割线的高度 */
   margin: 5px 0; /* 调整分割线的上下间距 */
+}
+
+.my-classification-item-head {
+  display: inline-block;
+  width: 60px;
+  cursor: pointer;
+  transition: all .5s;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 600; /* 加粗 */
+}
+
+.my-classification-item-head:hover {
+  background-color: white;
+  color: blue;
+  padding-left: 10px;
 }
 </style>
 

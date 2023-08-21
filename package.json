@@ -11,6 +11,7 @@
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.7",
+    "lodash": "^4.17.21",
     "sass-loader": "^13.3.2",
     "undraw-ui": "^0.9.6",
     "vue": "^3.2.13",

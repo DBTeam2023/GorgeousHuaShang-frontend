@@ -4,7 +4,7 @@ import store from "@/store/index";
 
 export default {
     state: {
-        selectClassification: "",
+        selectClassification: "", // 现在一直都是空值 不用了
     },
     getters: {
     },

@@ -6,73 +6,146 @@
       <div>
         <SearchBar @performSearch="receiveSearchVal" />
       </div>
-      <div class="my-classificaion">
+      <div class="my-classificaion-1" v-if="route.query.class === 'peishi'">
         <el-card class="top-card" shadow="always">
           <div class="custom-font">
             筛选类别
           </div>
           <ul>
             <li>
-              <span class="my-classification-item-head">朝代</span>
-              <span class="classification-item" @click="toggleSelection( '朝代,唐朝')">唐朝</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '朝代,宋朝')">宋朝</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '朝代,明朝')">明朝</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection('朝代,清朝')">清朝</span>
-            </li>
-            <el-divider border-style="dashed" class="small-divider"/>
-            <li>
-              <span class="my-classification-item-head">适用人群</span>
-              <span class="classification-item" @click="toggleSelection('男')">男</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '女')">女</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '儿童')">儿童</span>
-            </li>
-            <el-divider border-style="dashed"   class="small-divider"/>
-            <li>
-              <span class="my-classification-item-head">类别</span>
-              <span class="classification-item" @click="toggleSelection('上衣')">上衣</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '下衣')">下衣</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection('鞋')">鞋</span>
-            </li>
-            <el-divider border-style="dashed"   class="small-divider"/>
-            <li>
-              <span class="my-classification-item-head">服饰配件</span>
-              <span class="classification-item" @click="toggleSelection('帽子')">帽子</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '项链')">项链</span>
-              <span> / </span>
-              <span class="classification-item" @click="toggleSelection('手工艺品')">手工艺品</span>
-            </li>
-            <el-divider border-style="dashed"   class="small-divider"/>
-            <li>
               <span class="my-classification-item-head">民族</span>
-              <span class="classification-item" @click="toggleSelection( '苗族')">苗族</span>
+              <span class="classification-item" @click="toggleSelection('配饰,民族,头饰')">头饰</span>
               <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '汉族')">汉族</span>
+              <span class="classification-item" @click="toggleSelection('配饰,民族,耳饰')">耳饰</span>
               <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '藏族')">藏族</span>
+              <span class="classification-item" @click="toggleSelection('配饰,民族,腰饰')">腰饰</span>
               <span> / </span>
-              <span class="classification-item" @click="toggleSelection( '蒙古族')">蒙古族</span>
+              <span class="classification-item" @click="toggleSelection('配饰,民族,项链')">项链</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('配饰,民族,手饰')">手饰</span>
             </li>
           </ul>
         </el-card>
       </div>
+      <div class="my-classificaion-2" v-else-if="route.query.class === 'nanzhuang'">
+        <el-card class="top-card" shadow="always">
+          <div class="custom-font">
+            筛选类别
+          </div>
+          <ul>
+            <li>
+              <span class="my-classification-item-head">上衣</span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,麻布大褂')">麻布大褂</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,鱼皮衣')">鱼皮衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,羊皮大衣')">羊皮大衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,土布衣')">土布衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,中山装')">中山装</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,马褂')">马褂</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,上衣,长袍')">长袍</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider"/>
+            <li>
+              <span class="my-classification-item-head">下衣</span>
+              <span class="classification-item" @click="toggleSelection('男装,下衣,腰裙')">腰裙</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,下衣,膝裤')">膝裤</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,下衣,裤裙')">裤裙</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,下衣,长裤')">长裤</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider"/>
+            <li>
+              <span class="my-classification-item-head">鞋</span>
+              <span class="classification-item" @click="toggleSelection('男装,鞋,长筒靴')">长筒靴</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,鞋,牛皮靴')">牛皮靴</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,鞋,布鞋')">布鞋</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('男装,鞋,草鞋')">草鞋</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider"/>
+            <li>
+              <span class="my-classification-item-head">民族</span>
+<!--              <span class="classification-item" @click="toggleSelection('男装,民族,汉族')">汉族</span>-->
+<!--              <span> / </span>-->
+              <span v-for="(ethnicity, index) in ethnicities" :key="index">
+                <span class="classification-item" @click="toggleSelection(`男装,民族,${ethnicity}`)">{{ ethnicity }}</span>
+                <span v-if="index < ethnicities.length - 1"> / </span>
+              </span>
+            </li>
+          </ul>
+      </el-card>
+      </div>
+      <div class="my-classificaion-2" v-else-if="route.query.class === 'nvzhuang'">
+
+
+      <el-card class="top-card" shadow="always">
+        <div class="custom-font">
+          筛选类别
+        </div>
+        <ul>
+          <li>
+            <span class="my-classification-item-head">上衣</span>
+            <span class="classification-item" @click="toggleSelection('女装,上衣,坎肩')">坎肩</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,上衣,鱼皮衣')">鱼皮衣</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,上衣,羊皮大衣')">羊皮大衣</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,上衣,土布衣')">土布衣</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,上衣,长袍')">长袍</span>
+          </li>
+          <el-divider border-style="dashed" class="small-divider"/>
+          <li>
+            <span class="my-classification-item-head">下衣</span>
+            <span class="classification-item" @click="toggleSelection('女装,下衣,凤尾裙')">凤尾裙</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,下衣,裤裙')">裤裙</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,下衣,筒裙')">筒裙</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,下衣,长裤')">长裤</span>
+          </li>
+          <el-divider border-style="dashed" class="small-divider"/>
+          <li>
+            <span class="my-classification-item-head">鞋</span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,长筒靴')">长筒靴</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,牛皮靴')">牛皮靴</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,布鞋')">布鞋</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,草鞋')">草鞋</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,绣花鞋')">绣花鞋</span>
+            <span> / </span>
+            <span class="classification-item" @click="toggleSelection('女装,鞋,锦鞋')">锦鞋</span>
+          </li>
+          <el-divider border-style="dashed" class="small-divider"/>
+          <li>
+            <span class="my-classification-item-head">民族</span>
+            <span v-for="(ethnicity, index) in ethnicities" :key="index">
+                <span class="classification-item" @click="toggleSelection(`女装,民族,${ethnicity}`)">{{ ethnicity }}</span>
+                <span v-if="index < ethnicities.length - 1"> / </span>
+              </span>
+          </li>
+        </ul>
+      </el-card>
+    </div>
 
       <div class="classification-tag">
-        <!--分类标签-->
-<!--        <el-tag v-for="tag in tags" :key="tag.name" class="mx-1" closable :type="tag.type">-->
-<!--          {{ tag.name }}-->
-<!--        </el-tag>-->
-
       <!-- 已选筛选条件标签 -->
         <div v-if="selectedTags.length > 0" class="selected-tags">
-          <el-tag v-for="(tag, index) in    selectedTags   " :key="index" class="tag" closable @close="removeTag(tag)"
+          <el-tag v-for="(tag, index) in selectedTags" :key="index" class="tag" closable @close="removeTag(tag)"
             :type=getRandomColor()>
             {{ tag.value }}
           </el-tag>
@@ -84,13 +157,13 @@
 
       <!--排序-->
       <div class="sort">
-        <SortRow />
+        <SortRow @PriceChange="receivePriceVal"/>
       </div>
 
 
       <!--推荐商品-->
       <div style="width: 98%">
-        <RecommendCol />
+        <RecommendCol @pageOption="receivePageVal"/>
       </div>
 
 
@@ -104,49 +177,59 @@
 <!--js脚本函数-->
 <script setup>
 import store from "@/store";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import RecommendCol from "@/components/HomePage/RecommendCol.vue";
 import SearchBar from "@/components/HomePage/SearchBar.vue";
 import SortRow from "@/components/HomePage/SortRow.vue";
+import {useRoute} from "vue-router";
+const route = useRoute()
 
-let filters = ref({
-  selectClassification: "",
-  searchVal: "",
-})
-//分类筛选标签
 const selectedTags = ref([])
 
-onMounted(() => {
-  // 页面跳转后选择的类别
-  filters.value.selectClassification = store.state.homepage.selectClassification;
-  if (filters.value.selectClassification !== "") {
-    selectedTags.value.push({
-      value: filters.value.selectClassification
-    });
-  }
-});
+let filters = ref({
+  pageSize: 10,
+  pageIndex: 1,
+  searchVal: "",
+  selectedTag: route.query.class.toString(),
+  minPrice: 0,
+  maxPrice: Infinity,
+})
+
+watch(selectedTags, (newValue) => {
+  filters.value.selectedTag = newValue
+})
+
+setInterval(() => {
+  console.log(filters.value.selectedTag)
+},1000)
+//分类筛选标签
 
 const toggleSelection = (value) => {
   const existingTag = selectedTags.value.find(tag => tag.value === value);
-  console.log(selectedTags.value)
+  // console.log(selectedTags.value)
   if (existingTag) {
     removeTag(existingTag);
   } else {
+    selectedTags.value.push({ value });
+  }
+
+  if (selectedTags.value.length > 1) {
+    clearAllTags();
     selectedTags.value.push({ value });
   }
 };
 
 const removeTag = (tag) => {
   selectedTags.value = selectedTags.value.filter(t => t !== tag);//过滤函数，将不等于传入值的元素保留下来
-  if (store.state.homepage.selectClassification === tag.value) {
-    store.commit("setSelectClassification", "")
-  }
+  // if (store.state.homepage.selectClassification === tag.value) {
+  //   store.commit("setSelectClassification", "")
+  // }
 
 };
 
 const clearAllTags = () => {
   selectedTags.value = [];
-  store.commit("setSelectClassification", "")
+  // store.commit("setSelectClassification", "")
 };
 
 const types = ['primary', 'success', 'info', 'warning', 'danger']
@@ -161,6 +244,26 @@ const getRandomColor = () => {
 const receiveSearchVal = (val) => {
   filters.value.searchVal = val;
 }
+
+const receivePriceVal = (val) => {
+  filters.value.minPrice = val[0];
+  filters.value.maxPrice = val[1];
+}
+
+const receivePageVal = (val) => {
+  filters.value.pageSize = val.pageSize;
+  filters.value.pageIndex = val.pageIndex;
+}
+
+
+const ethnicities = ref([
+  "汉族", "蒙古族", "回族", "藏族", "维吾尔族", "苗族", "彝族", "壮族", "布依族", "朝鲜族",
+  "满族", "侗族", "瑶族", "白族", "土家族", "哈尼族", "哈萨克族", "傣族", "黎族", "僳僳族",
+  "佤族", "畲族", "高山族", "拉祜族", "水族", "东乡族", "纳西族", "景颇族", "柯尔克孜族", "土族",
+  "达斡尔族", "仫佬族", "羌族", "布朗族", "撒拉族", "毛南族", "仡佬族", "锡伯族", "阿昌族", "普米族",
+  "塔吉克族", "怒族", "乌孜别克族", "俄罗斯族", "鄂温克族", "崩龙族", "保安族", "裕固族", "京族", "塔塔尔族",
+  "独龙族", "鄂伦春族", "赫哲族", "门巴族", "珞巴族", "基诺族"
+])
 
 </script>
   
@@ -202,9 +305,18 @@ const receiveSearchVal = (val) => {
   width: 100px;
 }
 
-.my-classificaion {
+.my-classificaion-1 {
   display: flex;
-  height: 250px;
+  height: 110px;
+  width: auto;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.my-classificaion-2 {
+  display: flex;
+  height: 275px;
   width: auto;
   justify-content: center;
   margin-bottom: 20px;
