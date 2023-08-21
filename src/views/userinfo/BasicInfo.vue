@@ -74,7 +74,7 @@
     import { ElMessage } from 'element-plus' //消息框提示
 
 
-    import ImgUpload from '@/views/user_info/ImgUpload.vue';
+    import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import { getUserInfo, updateUserInfo } from '@/api/userinfo';
 
     //用户输入的个人信息表

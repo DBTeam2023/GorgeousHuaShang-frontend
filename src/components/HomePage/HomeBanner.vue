@@ -162,7 +162,7 @@ const goToPage = (page) => {
   switch (page) {
     case '我的收藏':
       // 跳转到我的钱包页面
-      router.push({ path: '/userinfo/${collectedItem}' })
+      router.push({ path: '/userinfo/collectedItem' })
       break;
     case '购物车':
       // 跳转到购物车页面
@@ -170,7 +170,7 @@ const goToPage = (page) => {
       break;
     case '我的订单':
       // 跳转到我的订单页面
-      router.push({ path: '/userinfo/${myOrder}' })
+      router.push({ path: '/userinfo/myOrder' })
       break;
     case '消息':
       // 跳转到消息页面
