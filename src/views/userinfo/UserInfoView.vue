@@ -1,11 +1,12 @@
 <script setup>
-    import BasicInfo from '@/views/user_info/BasicInfo.vue';
-    import FollowedShop from '@/views/user_info/FollowedShop.vue';
-    import CollectedItem from '@/views/user_info/CollectedItem.vue';
-    import AccountSetting from '@/views/user_info/AccountSetting.vue';
-    import OrderViewVue from '@/views/OrderView.vue';
-    import myWallet from '@/views/user_info/myWallet.vue';
-    import myCoupon from '@/views/user_info/Coupon.vue';
+    import BasicInfo from '@/views/userinfo/BasicInfo.vue';
+    import FollowedShop from '@/views/userinfo/FollowedShop.vue';
+    import CollectedItem from '@/views/userinfo/CollectedItem.vue';
+    import AccountSetting from '@/views/userinfo/AccountSetting.vue';
+    import OrderViewVue from '@/views/order/OrderView.vue';
+
+    import myWallet from '@/views/userinfo/myWallet.vue';
+    import myCoupon from '@/views/userinfo/Coupon.vue';
 
     import { watchEffect } from 'vue';
     import { useRoute } from 'vue-router';

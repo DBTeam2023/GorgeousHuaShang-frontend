@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import HuashangLogo from '../assets/login/HuashangLogo.png'
+import HuashangLogo from '../../assets/login/HuashangLogo.png'
 import {computed, onMounted, ref} from "vue";
 import {doRegister} from "@/api/login";
 import {ElMessage} from "element-plus";
@@ -116,11 +116,6 @@ let passwordConfirm = ref("");
 let showError = computed(() => {
   return passwordConfirm.value !== RegisterForm.value.password && passwordConfirm.value > 0;
 });
-
-onMounted(() => {
-  console.log(store.state.user);
-})
-
 
 const register = () => {
 
@@ -425,7 +420,7 @@ body {
 }
 
 .page-bg {
-  background: $color-bg url("../assets/login/LoginBG.jpg") no-repeat top
+  background: $color-bg url("../../assets/login/LoginBG.jpg") no-repeat top
   center;
   background-size: cover;
   z-index: -1;

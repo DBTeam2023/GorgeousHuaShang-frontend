@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import HuashangLogo from '../assets/login/HuashangLogo.png'
+import HuashangLogo from '../../assets/login/HuashangLogo.png'
 import {doLogin, getUserInfo} from "@/api/login";
 import store from "@/store";
 import {onMounted, ref} from "vue";
@@ -440,7 +440,7 @@ body {
 }
 
 .page-bg {
-  background: $color-bg url("../assets/login/LoginBG.jpg") no-repeat top
+  background: $color-bg url("../../assets/login/LoginBG.jpg") no-repeat top
   center;
   background-size: cover;
   z-index: -1;

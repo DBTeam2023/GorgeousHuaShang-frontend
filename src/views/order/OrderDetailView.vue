@@ -27,12 +27,12 @@
 
 <!--js脚本函数-->
 <script>
-import userInfoMenu from "../components/common/userInfoMenu.vue"
-import orderStateCard from "../views/orderDetail_subs/orderStateCard.vue"
-import timelineCard from "../views/orderDetail_subs/timelineCard.vue"
-import orderdetailsCard from "../views/orderDetail_subs/orderdetailsCard.vue"
-import paymentInfoCard from "../views/orderDetail_subs/paymentInfoCard.vue"
-import logisticsCard from "../views/orderDetail_subs/logisticsCard.vue"
+import userInfoMenu from "../../components/common/userInfoMenu.vue"
+import orderStateCard from "@/views/order/orderStateCard.vue"
+import timelineCard from "@/views/order/timelineCard.vue"
+import orderdetailsCard from "@/views/order/orderdetailsCard.vue"
+import paymentInfoCard from "@/views/order/paymentInfoCard.vue"
+import logisticsCard from "@/views/order/logisticsCard.vue"
 import { defineComponent } from 'vue';
 import { ElAside, ElMain, ElMenu ,ElMenuItem, ElSubMenu} from 'element-plus';
 

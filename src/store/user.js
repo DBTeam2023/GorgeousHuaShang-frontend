@@ -52,8 +52,6 @@ export default {
                 .then((resp) => {
                     context.commit("setIsLogin", true);
                     context.commit("setUsername", resp.data.nickName);
-                    // context.commit("setToken", localStorage.getItem("jwtToken"))
-                    console.log(resp.data.type);
                     context.commit("setRole",resp.data.type);
                     resolve(store.state.user.isLogin);
                 })

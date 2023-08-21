@@ -14,7 +14,7 @@
     <!--  添加其他导航  -->
 
     <div class="flex-grow" />
-    <el-menu-item index="1">购物车（测试）</el-menu-item>
+<!--    <el-menu-item index="1">购物车（测试）</el-menu-item>-->
 
     <!--  添加其他导航  -->
 
