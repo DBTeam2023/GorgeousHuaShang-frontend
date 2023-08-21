@@ -7,7 +7,8 @@
             <el-col v-for="(item, i) in row" :key="i" class="itemcol" :xs="24" :sm="12" :md="8"
                 :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
                 <Card class="card">
-                    <RouterLink :to="{path: '/goodsdetail', query: {goodsId: 'a618c78d-3329-4126-a7fe-4120b050e54c'}}" class="router-link-active">
+                    <RouterLink :to="{path: '/goodsdetail', query: {goodsId: 'a618c78d-3329-4126-a7fe-4120b050e54c'}}" 
+                    class="router-link-active">
                         <!-- 商品图片 -->
                         <div class="item">
                             <img :src="item.url" class="img" />
@@ -24,7 +25,8 @@
         </el-row>
         <el-row class="pagination">
             <!-- <div class="demonstration">Jump to</div> -->
-            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"  layout="prev, pager, next, jumper" :total="itemList.length"
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" 
+             layout="prev, pager, next, jumper" :total="itemList.length"
                 @current-change="handleCurrentChange" />
 
         </el-row>
@@ -35,9 +37,11 @@
 <script setup>
 import Card from "@/components/common/Card.vue"
 import {computed, onMounted} from 'vue'
+import { defineProps } from 'vue'
 import { ref } from 'vue'
 
 const emit = defineEmits(["pageOption"])
+const props = defineProps(['pageValue'])
 
 const itemList = [
     {
@@ -217,6 +221,8 @@ onMounted(() => {
     pageIndex: currentPage.value,
     pageSize: pageSize,
   })
+
+  
 })
 
 // 分页栏用到的数据
@@ -224,7 +230,7 @@ const currentPage = ref(1)  //当前页数，默认为第1页
 const pageSize = 15  //每页的图片数量，设置为25
 // 计算属性，计算imageList中图片对应的行；每行4列
 const itemRows = computed(() => {
-    const start = (currentPage.value - 1) * pageSize; //当前页的起始数据编号
+    const start = 0; //当前页的起始数据编号
     const end = start + pageSize;  //当前页的最后数据号
     const paginatedItemRows = itemList.slice(start, end);
     const rows = []

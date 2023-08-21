@@ -8,3 +8,11 @@ export function getGoodsDetail(data) {
         data: data,
     });
 }
+
+export function getGoodsInPage(data) {
+    return request({
+        url: "http://47.115.231.142:1030/Product/CommoditypageQuery/",
+        method: "POST",
+        data: data,
+    });
+}
