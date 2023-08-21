@@ -317,8 +317,8 @@
 </template>
 
 <script>
-import userInfoMenu from "../components/common/userInfoMenu.vue"
-import OrderDetailView from '@/views/OrderDetailView.vue';
+import userInfoMenu from "../../components/common/userInfoMenu.vue"
+import OrderDetailView from '@/views/order/OrderDetailView.vue';
 import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
