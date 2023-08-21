@@ -169,6 +169,10 @@
         if(resp.code === 404){
             //新建钱包
             console.log('用户钱包不存在，新建钱包！')
+            addWallet({
+            token:"Bearer " + localStorage.getItem("jwtToken"),        
+            balance:0,
+        })
         }
         else{
             ElMessage({
@@ -181,10 +185,12 @@
 
 
     // 钩子函数：
-    onMounted(() => {   
-        getWallet();
+    // onMounted(() => {   
+    //     getWallet({
+    //     token:"Bearer " + localStorage.getItem("jwtToken"),        
+    // });
  
-    })
+    // })
 
 
     // 充值处理函数

@@ -23,8 +23,8 @@
                             autocomplete="off"
                             />
                         </el-form-item>
-                        <el-form-item >
-                            <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
+                        <el-form-item style="margin-left:23%">
+                            <el-button style="margin-right:50px" type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
                             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
                         </el-form-item>
                 </el-form>
