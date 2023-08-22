@@ -37,7 +37,7 @@ const routes =
       }
     },
     {
-      path: '/classify/',
+      path: '/classify',
       name: "Classify",
       component: ClassificationView,
       meta: {

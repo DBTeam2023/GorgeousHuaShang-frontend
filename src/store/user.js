@@ -33,6 +33,7 @@ export default {
         },
         logout(state) {
             state.isLogin = false;
+            state.role = "";
             state.token = "";
             if (localStorage.getItem("jwtToken") != null) {
                 localStorage.removeItem("jwtToken");

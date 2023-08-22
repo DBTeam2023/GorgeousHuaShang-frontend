@@ -2,116 +2,140 @@
 <template>
   <div class="d-center">
 
-    <!-- 已选筛选条件标签 -->
-    <div v-if="selectedTags.length > 0" class="selected-tags">
-      <el-tag v-for="(tag, index) in    selectedTags   " :key="index" class="tag" closable @close="removeTag(tag)"
-        :type=getRandomColor()>
-        {{ tag.value }}
-      </el-tag>
-
-      <el-button class="clear-all-btn" size="small" @click="clearAllTags">清空</el-button>
-    </div>
-
     <el-row justify="center" :gutter="45">
 
       <!--分类栏-->
-      <el-col span="4" class="center-left">
-        <!--这里应该是从后端获取的分类类别-->
-        <ul>
-          <li>
-            <span>朝代：</span>
-            <span @click="toggleSelection('朝代', '唐朝')">唐朝 </span>
-            <span @click="toggleSelection('朝代', '宋朝')">宋朝 </span>
-            <span @click="toggleSelection('朝代', '明朝')">明朝 </span>
-            <span @click="toggleSelection('朝代', '清朝')">清朝 </span>
-          </li>
-          <li>
-            <span>适用人群：</span>
-            <span @click="toggleSelection('适用人群', '男')">男 </span>
-            <span @click="toggleSelection('适用人群', '女')">女 </span>
-            <span @click="toggleSelection('适用人群', '儿童')">儿童 </span>
-          </li>
-          <li>
-            <span>类别：</span>
-            <span @click="toggleSelection('类别', '上衣')">上衣 </span>
-            <span @click="toggleSelection('类别', '下衣')">下衣 </span>
-            <span @click="toggleSelection('类别', '鞋')">鞋 </span>
-          </li>
+      <el-col :span="5" class="center-left">
+        <div class="my-classificaion">
+          <el-card class="top-card" shadow="always">
+            <div class="custom-font-recommend divCenter">
+              <el-icon><ShoppingBag /></el-icon>
+              筛选类别
+            </div>
+            <ul style="margin-top: 30px;">
+              <li>
+                <span class="my-classification-item-head" @click="selectClassification('配饰')">配饰</span>
+                <span style="display: block">
+                  <span class="classification-item" @click="selectClassification('配饰')">民族</span>
+                </span>
+              </li>
+              <el-divider border-style="dashed" class="small-divider"/>
+              <li>
+                <span class="my-classification-item-head" @click="selectClassification('男装')">男装</span>
+                <span style="display: inline-block">
+                  <span class="classification-item" @click="selectClassification('男装')">上衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">下衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">鞋</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('男装')">民族</span>
+                </span>
+              </li>
+              <el-divider border-style="dashed" class="small-divider"/>
+              <li>
+                <span class="my-classification-item-head" @click="selectClassification('女装')">女装</span>
+                <span style="display: inline-block">
+                  <span class="classification-item" @click="selectClassification('女装')">上衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('女装')">下衣</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification( '女装')">鞋</span>
+                  <span> / </span>
+                  <span class="classification-item" @click="selectClassification('女装')">民族</span>
+                </span>
+              </li>
 
-          <li>
-            <span>服饰配件：</span>
-            <span @click="toggleSelection('服饰配件', '帽子')">帽子 </span>
-            <span @click="toggleSelection('服饰配件', '项链')">项链 </span>
-            <span @click="toggleSelection('服饰配件', '手工艺品')">手工艺品 </span>
-          </li>
-          <li>
-            <span>民族：</span>
-            <span @click="toggleSelection('民族', '苗族')">苗族 </span>
-            <span @click="toggleSelection('民族', '汉族')">汉族 </span>
-            <span @click="toggleSelection('民族', '藏族')">藏族 </span>
-            <span @click="toggleSelection('民族', '蒙古族')">蒙古族 </span>
-          </li>
-
-        </ul>
+            </ul>
+          </el-card>
+        </div>
       </el-col>
 
       <!--轮播图-->
-      <el-col span="15" class="center">
-
+      <el-col :span="10" class="center">
+        <el-card class="top-card" shadow="always">
         <el-carousel :interval="5000" arrow="hover" indicator-position="outside">
           <el-carousel-item v-for="(   item, index   ) in    carouselItems   " :key="index">
             <img :src="item.imgUrl" alt="" style="width: 100%; height: 100%;">
           </el-carousel-item>
         </el-carousel>
-
+        </el-card>
       </el-col>
       <!--个人信息栏-->
-      <el-col span="4" class="center-right">
+      <el-col :span="5" class="center-right">
+        <el-card class="top-card" shadow="always">
 
-        <div class="user-profile">
-          <!--用户头像-->
-          <el-row class="avatar-row">
-            <el-avatar :size="100" :src="info.avatarUrl" />
-          </el-row>
-          <!--用户姓名-->
-          <el-row class="name-row">{{ info.userName }}</el-row>
-          <!-- 我的钱包 -->
-          <div class="info-item" @click="goToPage('我的收藏')">
-            <span>
-              <el-icon>
-                <Goods />
-              </el-icon>
-              <span class="label">我的收藏</span>
-            </span>
+          <div class="user-profile">
+            <!--用户头像-->
+            <el-row class="avatar-row">
+              <el-avatar :size="100" :src="info.avatarUrl" />
+            </el-row>
+            <!--用户姓名-->
+            <el-row class="name-row">{{ info.userName }}</el-row>
+
+            <!--       未登录时显示       -->
+            <div class="not-login" v-if="!store.state.user.isLogin">
+              <span class="not-login-button" @click="() => {
+                 router.push({ path: '/register/' })
+              }">
+                注册
+              </span>
+              <span class=""> | </span>
+              <span class="not-login-button" @click="() => {
+                 router.push({ path: '/login/' })
+              }">
+                登录
+              </span>
+            </div>
+
+            <div class="newpeople-card">
+              <img src="../../assets/homePage/newpeople-card.png">
+            </div>
+
+            <div v-if="store.state.user.isLogin" class="personal-container">
+              <!-- 我的钱包 -->
+              <div class="info-item" @click="goToPage('我的收藏')">
+              <div>
+                <el-icon :size="40">
+                  <Goods />
+                </el-icon>
+                <div class="label">我的收藏</div>
+              </div>
+              </div>
+              <!-- 购物车 -->
+              <div class="info-item" @click="goToPage('购物车')">
+              <div>
+                <el-icon :size="40">
+                  <ShoppingCart />
+                </el-icon>
+                <div class="label">购物车</div>
+              </div>
+              </div>
+              <!-- 我的订单 -->
+              <div class="info-item" @click="goToPage('我的订单')">
+              <div>
+                <el-icon :size="40">
+                  <Tickets />
+                </el-icon>
+                <div class="label">我的订单</div>
+              </div>
+              </div>
+              <!--消息-->
+              <div class="info-item" @click="goToPage('消息')">
+              <div>
+                <el-icon :size="40">
+                  <Message />
+                </el-icon>
+                <div class="label">消息</div>
+              </div>
+              </div>
+            </div>
           </div>
-          <!-- 购物车 -->
-          <div class="info-item" @click="goToPage('购物车')">
-            <span>
-              <el-icon>
-                <ShoppingCart />
-              </el-icon>
-              <span class="label">购物车</span>
-            </span>
+          <div class="news-container">
+            <el-link href="https://baijiahao.baidu.com/s?id=1767510355289202566&wfr=spider&for=pc"
+                     :underline="false" type="danger">[电商资讯] 刘文强：我国工业绿色发展取得七个方面重大成就</el-link>
           </div>
-          <!-- 我的订单 -->
-          <div class="info-item" @click="goToPage('我的订单')">
-            <span>
-              <el-icon>
-                <Tickets />
-              </el-icon>
-              <span class="label">我的订单</span>
-            </span>
-          </div>
-          <!--消息-->
-          <div class="info-item" @click="goToPage('消息')">
-            <span>
-              <el-icon>
-                <Message />
-              </el-icon>
-              <span class="label">消息</span>
-            </span>
-          </div>
-        </div>
+        </el-card>
       </el-col>
     </el-row>
 
@@ -120,14 +144,42 @@
 </template>
 
 <script setup>
-import { Van, Box, ShoppingCart, DocumentCopy, CreditCard, Goods, Tickets, Message, } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { Van, Box, ShoppingCart, DocumentCopy, CreditCard, Goods, Tickets, Message, ShoppingBag} from '@element-plus/icons-vue'
+import {computed, reactive} from 'vue'
 import router from '@/router'
 import { ref } from 'vue'
+import store from "@/store";
+
 const info = reactive({
-  avatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-  userName: 'userName',
+  avatarUrl: computed(() => {
+    if (store.state.user.isLogin) {
+      return store.state.user.userPhoto;
+    }
+    else {
+      return "https://avatars.githubusercontent.com/u/583231?v=4";
+    }
+  }),
+  userName: computed(() => {
+    if (store.state.user.isLogin) {
+      return store.state.user.username;
+    }
+    else {
+      return "未登录";
+    }
+  })
 })
+
+const selectClassification = (classification) => {
+  let EN_class;
+  if (classification === '配饰') {
+    EN_class = 'peishi';
+  }  else if (classification === '男装') {
+    EN_class = 'nanzhuang';
+  } else {
+    EN_class = 'nvzhuang';
+  }
+  router.push({ path: "/classify", query: { class: EN_class } })
+}
 
 //轮播图
 const carouselItems = [
@@ -157,6 +209,16 @@ const removeTag = (tag) => {
 const clearAllTags = () => {
   selectedTags.value = [];
 };
+
+const types = ['primary', 'success', 'info', 'warning', 'danger']
+const colorIndex = ref(0); //响应式变量，跟踪当前使用的颜色索引
+const getRandomColor = () => {
+
+  const color = types[colorIndex.value];
+  colorIndex.value = (colorIndex.value + 1) % types.length;
+  return color;
+}
+
 // 根据点击的选项进行页面跳转逻辑
 const goToPage = (page) => {
   switch (page) {
@@ -180,52 +242,83 @@ const goToPage = (page) => {
   }
 };
 
-const types = ['primary', 'success', 'info', 'warning', 'danger']
-const colorIndex = ref(0); //响应式变量，跟踪当前使用的颜色索引
-const getRandomColor = () => {
 
-  const color = types[colorIndex.value];
-  colorIndex.value = (colorIndex.value + 1) % types.length;
-  return color;
-}
 </script>
+
+
 <style scoped>
+.newpeople-card {
+  scale: 130%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.news-container {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  //text-overflow: ellipsis;
+  margin-top: 10px;
+  //flex-direction: column-reverse; /* 子元素从下到上排列 */
+
+}
+
+
+
+
+.label {
+  display: flex;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.not-login {
+  display: inline;
+  font-weight: 600; /* 数值可以根据需要调整 */
+  margin-top: 5px;
+}
+
+.not-login-button:hover {
+  cursor: pointer;
+}
+
 .d-center {
   width: 100%;
-  margin: 30px;
+  margin: 10px;
   padding: 20px;
-
 }
 
 
 .center-left {
-  margin-top: 30px;
-  width: 220px;
-  color: white;
-  border-radius: 10px;
-  border-color: rgb(8, 184, 243);
-  background-color: rgb(8, 184, 243);
-
+  //color: white;
+  //border-color: white;
+  //background-color: white;
 }
 
+.top-card {
+  height: 350px;
+}
 
 .center {
-  margin-top: 30px;
-  width: 500px;
-  color: white;
-  float: left;
+  //width: 700px;
+  //color: white;
+  //float: left;
   border-radius: 10px;
-  background-color: #b6e0eb;
+  //background-color: white;
 }
 
 .center-right {
-  margin-top: 30px;
-  width: 220px;
-  color: white;
+  //width: 250px;
+  color: black;
   border-radius: 10px;
-  border-color: rgb(8, 184, 243);
-  background-color: rgb(8, 184, 243);
 
+  //border-color: white;
+  //background-color: white;
+}
+
+.classification-item {
+  cursor: pointer;
+  transition: all .5s;
 }
 
 .center-left li {
@@ -234,12 +327,7 @@ const getRandomColor = () => {
   /* 调整水平间距 */
   margin-bottom: 10px;
   /* 调整垂直间距 */
-  background-color: rgb(8, 184, 243);
-  cursor: pointer;
-  transition: all .5s;
-  width: 250px;
-  height: 30px;
-  font-size: 13px;
+  background-color: white;
 }
 
 .center-left ul {
@@ -251,11 +339,10 @@ const getRandomColor = () => {
   flex-wrap: wrap;
 }
 
-.center-left li:hover {
+.classification-item:hover {
   background-color: white;
-  color: rgb(8, 184, 243);
+  color: blue;
   padding-left: 10px;
-
 }
 
 .user-profile {
@@ -276,19 +363,64 @@ const getRandomColor = () => {
   margin-right: 10px;
 }
 
+.personal-container {
+  display: flex;
+  //flex-direction: column; /* 垂直方向排列 */
+  //margin-top: 20px; /* 调整垂直间距 */
+  //align-items: center; /* 垂直居中 */
+}
+
 .info-item {
   display: flex;
-  align-items: center;
-  margin-right: 20px;
+  align-items: center; /* 水平居中 */
+  text-align: left; /* 左对齐文本 */
   cursor: pointer;
 }
 
-.label {
-  font-size: 10px;
+.info-item:hover {
+  color: red;
 }
 
 .info-item i {
   font-size: 18px;
-  margin-right: 5px;
+  margin: 5px;
 }
+
+.small-divider {
+  height: 1px; /* 设置分割线的高度 */
+  margin: 5px 0; /* 调整分割线的上下间距 */
+}
+
+.my-classification-item-head {
+  display: inline-block;
+  width: 60px;
+  cursor: pointer;
+  transition: all .5s;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 600; /* 加粗 */
+}
+
+.my-classification-item-head:hover {
+  background-color: white;
+  color: blue;
+  padding-left: 10px;
+}
+</style>
+
+<style lang="scss" scoped>
+
+.custom-font-recommend {
+  font-family: 'Poppins', sans-serif; /* 应用 Poppins 字体 */
+  font-weight: 700; /* 加粗 */
+  font-size: 18px; /* 字号较大 */
+  margin-bottom: 20px;
+}
+
+.divCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>

@@ -7,16 +7,17 @@
             <el-col v-for="(item, i) in row" :key="i" class="itemcol" :xs="24" :sm="12" :md="8"
                 :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
                 <Card class="card">
-                    <RouterLink to="/home/" class="router-link-active">
+                    <RouterLink :to="{path: '/goodsdetail', query: {goodsId: 'a618c78d-3329-4126-a7fe-4120b050e54c'}}" 
+                    class="router-link-active">
                         <!-- 商品图片 -->
                         <div class="item">
                             <img :src="item.url" class="img" />
                         </div>
                         <div class="info">
                             <!-- 商品名称 -->
-                            <div class="name">{{ item.itemName }}</div>
+                            <div class="name">{{ item.productName }}</div>
                             <!-- 商品价格 -->
-                            <div class="price">￥{{ item.itemPrice }}</div>
+                            <div class="price">￥{{ item.price }}</div>
                         </div>
                     </RouterLink>
                 </Card>
@@ -24,8 +25,8 @@
         </el-row>
         <el-row class="pagination">
             <!-- <div class="demonstration">Jump to</div> -->
-            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :small="small"
-                :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="itemList.length"
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" 
+             layout="prev, pager, next, jumper" :total="pages.total"
                 @current-change="handleCurrentChange" />
 
         </el-row>
@@ -35,186 +36,44 @@
 
 <script setup>
 import Card from "@/components/common/Card.vue"
-import { computed } from 'vue'
+import {computed, onMounted, toRefs} from 'vue'
+import { defineProps } from 'vue'
 import { ref } from 'vue'
+
+const emit = defineEmits(["pageOption"])
+const props = defineProps(['value'])
+
+let pages = props
+
 const itemList = [
     {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '199.99'
+      url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
+        productName: '商品名称',
+        price: '199.99'
     },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '299.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '399.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '499.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '599.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '699.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '799.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '899.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    }, {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
-    {
-        url: 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1',
-        itemName: '商品名称',
-        itemPrice: '999.99'
-    },
+];
 
-]
+// let itemList = ref(pages.value.records);
+// console.log(pages.value)
+
+
+onMounted(() => {
+  emit("pageOption", {
+    pageIndex: currentPage.value,
+    pageSize: pageSize,
+  })
+})
+
+// setInterval(() => {
+//   console.log(pages.value.records)
+// }, 1000)
+
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页
-const pageSize = 25  //每页的图片数量，设置为25
+const pageSize = 15  //每页的图片数量，设置为25
 // 计算属性，计算imageList中图片对应的行；每行4列
 const itemRows = computed(() => {
-    const start = (currentPage.value - 1) * pageSize; //当前页的起始数据编号
+    const start = 0; //当前页的起始数据编号
     const end = start + pageSize;  //当前页的最后数据号
     const paginatedItemRows = itemList.slice(start, end);
     const rows = []
@@ -254,7 +113,8 @@ const fetchData = () => {
 }
 
 .recommend {
-    margin: 10px 100px;
+  padding-bottom: 20px;
+    margin: 10px 140px;
     /*上下左右四个方向的外部空白区域 */
     border: 0;
     /* 设置边框样式 */
@@ -275,8 +135,8 @@ const fetchData = () => {
     margin-left: 2%;
     margin-right: -16%;
     margin-top: 30px;
-}
 
+}
 
 .itemcol {
     border: 0;
@@ -304,16 +164,6 @@ const fetchData = () => {
     color: red
 }
 
-
-.logo {
-    display: inline-block;
-    display: flex;
-    /*布局*/
-    align-items: center;
-    height: 50px;
-    margin-right: 10px;
-}
-
 .logo img {
     height: 32px;
     margin-right: 10px;
@@ -324,15 +174,12 @@ const fetchData = () => {
     text-decoration: none;
 }
 
-.login {
-    color: #fff;
-}
-
 /*分页栏样式 */
 .pagination {
     margin-top: 10px;
 
     justify-content: center;
     text-align: center;
+  margin-bottom: 20px;
 }
 </style>

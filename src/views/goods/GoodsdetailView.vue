@@ -1,97 +1,245 @@
 <template>
 <div class="product-detail">
-    <div class="left-section">
-      <div class="search">
-        <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
-      </div>
-     <div class="thumbnail-images">
-      <div v-for="item in product.images" :key="item.index">
-       <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
-      </div>
-     </div>
+  <div class="left-section">
+    <div class="search">
+      <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
     </div>
-    <div class="right-section">
-     <h2>{{ product.name }}</h2>
-     <p>{{ product.info }}</p >
-     <div class="color-selection">
-      <h3>颜色</h3>
-      <el-radio-group v-model="selectedColor">
-       <el-radio label="黑色">黑色</el-radio>
-       <el-radio label="白色">白色</el-radio>
-       <el-radio label="红色">红色</el-radio>
-      </el-radio-group>
-     </div>
-     <div class="size-selection">
-      <h3>尺寸</h3>
-      <el-radio-group v-model="selectedSize">
-       <el-radio label="155">155</el-radio>
-       <el-radio label="160">160</el-radio>
-       <el-radio label="165">165</el-radio>
-       <el-radio label="170">170</el-radio>
-       <el-radio label="175">175</el-radio>
-      </el-radio-group>
-     </div>
-     <div class="quantity-selection">
-      <h3>数量</h3>
-      <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
-     </div>
-     <div class="buttons">
-      <el-button type="primary" @click="addToCart">加入购物车</el-button>
-       <el-button type="success" @click="buyNow">立即购买</el-button>
-     </div>
+   <div class="thumbnail-images">
+    <div v-for="item in product.images" :key="item.index">
+     <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
     </div>
    </div>
-   <comment-view/>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import mjpic from "../../assets/product/1.png";
-  import yfpic from "../../assets/product/2.png";
-  import lgpic from "../../assets/product/3.png";
-  import CommentView from './CommentView.vue';
-  const product = {
-    name: '商品名称',
-    info: '商品信息',
-    images: [
+  </div>
+
+  <!-- 右侧 -->
+  <div class="right-section">
+    <div v-if="showGoodsDescriptionVar">
+      <h2>{{ route.query.productName }}</h2>
+      <p>{{ selectedcommodity.value.description }}</p>
+    </div>
+    <div v-else>
+      <h2>商品未加载</h2>
+      <p>商品描述未加载</p>
+    </div>
+
+
+    <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
+      <h3>{{ idx1 }}</h3>
+      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties.value[idx1]" class="my-selection-item">
+        <el-radio :label="properity">{{ properity }}</el-radio>
+      </el-radio-group>
+    </div>
+
+    <!--   <div class="my-selection">-->
+    <!--    <h3>数量</h3>-->
+    <!--    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>-->
+    <!--   </div>-->
+
+
+    <!-- 商品价格 -->
+    <div v-if="showGoodsDescriptionVar">
+      <div class="price">￥{{ selectedcommodity.value.price }}</div>
+    </div>
+    <div v-else>
+      <div class="price">￥ *** </div>
+    </div>
+
+   <div class="buttons">
+    <el-button type="primary" @click="addToCart">加入购物车</el-button>
+    <el-button type="success" @click="buyNow">立即购买</el-button>
+   </div>
+  </div>
+ </div>
+  <comment-view/>
+</template>
+
+
+
+
+
+
+
+
+<script setup>
+import {onMounted, reactive, ref, watch} from 'vue';
+import mjpic from "../../assets/product/1.png";
+import yfpic from "../../assets/product/2.png";
+import lgpic from "../../assets/product/3.png";
+import CommentView from './CommentView.vue';
+import router from "@/router";
+import {useRoute} from "vue-router";
+import {getGoodsDetail} from "@/api/goods";
+import {ElMessage} from "element-plus";
+
+const route = useRoute()
+const _ = require('lodash');
+
+const product = {
+  productName: '商品名称',
+  description: '商品信息',
+  images: [
+    {
+      index: 1,
+      info: "YF",
+      imgsrc: mjpic
+    },
+    {
+      index: 2,
+      info: "MJ",
+      imgsrc: yfpic
+    },
+    {
+      index: 3,
+      info: "LG",
+      imgsrc: lgpic
+    }
+  ]
+};
+
+const selectedImage = ref('');
+const selectedQuantity = ref(1);
+
+// 默认选中第一张图片
+selectedImage.value = product.images[0].imgsrc;
+
+let commodityIdToBackend = ref({
+  commodityId: route.query.goodsId,
+})
+
+let response; // 接收后端的数据resp
+let mergedProperties = ref([]); // 产品的所有属性
+let selectProperties = reactive({}); // 顾客选中的属性
+let selectIndex = ref(0);       // 选中产品对应的index
+let selectedcommodity = reactive({});// 选中属性对应的那个产品
+
+// todo: 加入购物车，加入订单
+/*
+{
+  commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
+  description: "小哥哥小姐姐都可以穿的汉服哟！",
+  price: 300,
+  property: {
+    尺码: "S"
+    男女款: "男款"
+    颜色: "白"
+  }
+}
+  */
+
+watch(selectProperties, (newVal) => {
+  selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
+  selectedcommodity.value = {
+    ...response.commodityInfo[selectIndex.value],
+    commodityId: route.query.goodsId,
+  }
+});
+
+function selectImage(image) {
+  selectedImage.value = image;
+}
+
+function addToCart() {
+  console.log(2); // 加入购物车
+}
+
+function buyNow() {
+  console.log(1); // 立即购买
+}
+
+
+getGoodsDetail(commodityIdToBackend.value)
+    .then(resp => {
+      if (resp.code === 200)
       {
-        index: 1,
-        info: "YF",
-        imgsrc: mjpic
-      },
-      {
-        index: 2,
-        info: "MJ",
-        imgsrc: yfpic
-      },
-      {
-        index: 3,
-        info: "LG",
-        imgsrc: lgpic
+        response = resp.data;
+        mergedProperties.value = mergeSimilarProperties(response.commodityInfo);
+        selectProperties.value = handleSelectProperties(_.cloneDeep(mergedProperties.value));
+        selectIndex.value = findIndicesWithProperties(response.commodityInfo, selectProperties.value)
+        selectedcommodity.value = {
+          ...response.commodityInfo[selectIndex.value],
+          commodityId: route.query.goodsId,
+        }
+        showGoodsDescriptionVar = true;
       }
-    ]
-  };
-  
-  const selectedImage = ref('');
-  const selectedColor = ref('');
-  const selectedSize = ref('');
-  const selectedQuantity = ref(1);
-  
-  // 默认选中第一张图片
-  selectedImage.value = product.images[0].imgsrc;
-  
-  function selectImage(image) {
-    selectedImage.value = image;
+    })
+    .catch(resp => {
+      ElMessage({
+        message: "商品已下架!",
+        type: "warning",
+      });
+    })
+
+
+
+// ***************  处理接收的数据  ***************
+function mergeSimilarProperties(array) {
+  const mergedProperties = {};
+
+  array.forEach(item => {
+    const property = item.property;
+
+    for (const key in property) {
+      if (property.hasOwnProperty(key)) {
+        const value = property[key];
+
+        if (!mergedProperties[key]) {
+          mergedProperties[key] = [value];
+        } else if (!mergedProperties[key].includes(value)) {
+          mergedProperties[key].push(value);
+        }
+      }
+    }
+  });
+
+  return mergedProperties;
+}
+
+const handleSelectProperties = (inputObject) => {
+  for (const key in inputObject) {
+    inputObject[key] = inputObject[key][0];
   }
-  
-  function addToCart() {
-    console.log(2); // 加入购物车
+  return inputObject;
+}
+
+let showGoodsDescriptionVar = ref(false)
+// const showGoodsDescription = () => {
+//   if (showGoodsDescriptionVar.value) {
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+// }
+
+function findIndicesWithProperties(array, properties) {
+  const indices = [];
+
+  for (let index = 0; index < array.length; index++) {
+    const item = array[index];
+    let match = true;
+
+    for (const key in properties) {
+      if (properties.hasOwnProperty(key)) {
+        if (item.property[key] !== properties[key]) {
+          match = false;
+          break;
+        }
+      }
+    }
+
+    if (match) {
+      indices.push(index);
+    }
   }
-  
-  function buyNow() {
-    console.log(1); // 立即购买
-  }
-  </script>
+
+  return indices[0];
+}
+
+
+</script>
+
+
+
 <!--CSS风格-->
 <style scoped>
 .header {
@@ -261,13 +409,22 @@ h2 {
   margin-bottom: 10px;
 }
 
-.color-selection,
-.size-selection,
-.quantity-selection {
+.my-selection {
   margin-bottom: 10px;
+}
+
+.my-selection-item {
+  margin-right: 20px;
 }
 
 .buttons {
   margin-top: 20px;
+}
+
+.price {
+  color:orangered;
+  margin-bottom: 20px;
+  font-size: 35px;
+  font-weight: bold;
 }
 </style>

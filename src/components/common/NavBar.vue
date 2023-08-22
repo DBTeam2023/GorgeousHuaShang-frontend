@@ -14,8 +14,9 @@
     <!--  添加其他导航  -->
 
     <div class="flex-grow" />
-<!--    <el-menu-item index="1">购物车（测试）</el-menu-item>-->
-
+    <el-menu-item index="1" v-if="store.state.user.role === 'buyer'">我的购物车</el-menu-item>
+    <el-menu-item index="2" v-if="store.state.user.role === 'seller'">我的店铺</el-menu-item>
+    <el-menu-item index="3" v-if="store.state.user.role === 'buyer'">我的订单</el-menu-item>
     <!--  添加其他导航  -->
 
     <el-sub-menu index="2" v-if="store.state.user.isLogin">
@@ -47,7 +48,7 @@ import { ref } from 'vue'
 import router from "@/router";
 import store from "@/store";
 
-const activeIndex = ref('1')
+// let activeIndex = ref('0')
 const handleSelect = (key, keyPath) => {
   keyPath; // 用不到但是要写
   if (key === '0'){
@@ -62,8 +63,12 @@ const handleSelect = (key, keyPath) => {
     router.push('/userinfo/');
   } else if (key === '1') {
     router.push('/cart/');
+  } else if (key === '2') {
+    router.push('/shopmanage/')
+  } else if (key === '3') {
+    // todo: 可能需要加路由参数
+    router.push('/order/')
   }
-
 
 }
 
