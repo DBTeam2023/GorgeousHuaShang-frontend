@@ -1,11 +1,12 @@
 <!--html模板-->
 <template>
     <el-container class="orderDetailMainView">
-
         <el-main>
             <el-row class="row-1"><!--返回按钮+页面功能描述-->
                 <el-col :span="2" class="row-1-text">
-                    <el-button class="returnButton" type="return" plain>返回</el-button><!--返回按钮，返回我的订单-->
+                    <router-link to="/order/"><!--添加路由跳转-->
+                        <el-button class="returnButton" type="return" plain @click="onReturnButtonClick">返回</el-button><!--返回按钮，返回我的订单-->
+                    </router-link>
                 </el-col>
                 <el-col :span="3" class="row-1-text">
                     <el-text  tag="b" >我的订单/订单详情</el-text>
@@ -50,8 +51,12 @@ export default defineComponent({
 </script>
 
 <script setup>
-// 里面不能没东西？
-console.log("ddd")
+import { useRouter } from 'vue-router';
+
+const router = useRouter(); // 获取路由实例
+const onReturnButtonClick = () => { // 点击返回按钮时的跳转逻辑
+    router.push('/order/');
+}
 </script>
 
 <style scoped>
