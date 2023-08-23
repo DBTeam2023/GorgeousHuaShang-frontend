@@ -4,25 +4,40 @@
     import CollectedItem from '@/views/userinfo/CollectedItem.vue';
     import AccountSetting from '@/views/userinfo/AccountSetting.vue';
     import OrderViewVue from '@/views/order/OrderView.vue';
-
     import myWallet from '@/views/userinfo/myWallet.vue';
     import myCoupon from '@/views/userinfo/Coupon.vue';
+    import store from '@/store';
 
     import { watchEffect } from 'vue';
     import { useRoute } from 'vue-router';
+    import { reactive, ref, computed} from 'vue'
+
+    // 左侧菜单栏头部：用户名/用户头像
+    const info = reactive({
+    avatarUrl: computed(() => {
+        if (store.state.user.isLogin) {
+            return store.state.user.userPhoto;
+        }
+        else {
+            return "https://avatars.githubusercontent.com/u/583231?v=4";
+        }
+    }),
+    userName: computed(() => {
+        if (store.state.user.isLogin) {
+            return store.state.user.username;
+        }
+        else {
+            return "未登录";
+        }
+    })
+    })
    
 
     // 左侧菜单栏用到的
-    import { reactive} from 'vue'
-    import {ref} from 'vue'
+
     import {
         Setting,User,Tickets,CollectionTag,Goods,Wallet,Position,
     } from '@element-plus/icons-vue'
-
-    const info=reactive({
-        avatarUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-        userName:'userName',
-    })
 
     const handleOpen = (key, keyPath) => {
         console.log(key, keyPath)
