@@ -1,9 +1,5 @@
 <template>
   <el-card>
-    <!-- 提示语 -->
-    <!-- <div class="upload-container" v-if="uploadClass === 'showUpload'">
-      <h4>点击选择图片</h4>
-    </div> -->
     <!-- 图片选择框 -->
     <div class="upload-container" >
       <el-upload 
@@ -21,7 +17,7 @@
         <el-icon><Plus /></el-icon>
         <template #tip v-if="uploadClass === 'showUpload'">
           <div class="el-upload__tip">
-            不超过5MB的jpg/png文件
+            不超过500KB的jpg/png文件
           </div>
         </template>
 
@@ -32,10 +28,15 @@
             <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture"/>
           </div>
       </el-dialog>
+
+    </div>
+
+    <!-- 进度条显示上传进度 -->
+    <div class="upload-container">
+      <el-progress v-if="showProgress" :percentage="50" :indeterminate="true"><span></span></el-progress>
     </div>
 
     <!-- 保存修改 -->
-
     <div class="upload-container" style="margin-top:30px">
         <el-button type="primary" @click="onSubmit">保存</el-button>
         <el-button @click="onCancel">取消</el-button>
@@ -60,28 +61,16 @@ const fileList = reactive([]) //选择的图片列表
 
 const isSelectedShow = ref(true) //是否显示上传的图片列表
 
+const showProgress = ref(false) //是否显示进度条
+
 //el-upload类，根据fileList的大小选择是否显示上传框
 const uploadClass = computed(()=>{
   return fileList.length >=1 ? 'hideUpload':'showUpload';
 })
 
-
 // 图片上传成功操作
 // const handlePictureSuccess = (response, uploadFile) => {
 //   imageUrl.value = URL.createObjectURL(uploadFile.raw)
-// }
-
-// 图片上传前检查操作
-// const beforePictureUpload = (rawFile) => {
-//   console.log("beforePictureUpload");
-//   if (rawFile.type !== 'image/jpeg') {
-//     ElMessage.error('picture picture must be JPG format!')
-//     return false
-//   } else if (rawFile.size / 1024 / 1024 > 10) {
-//     ElMessage.error('picture picture size can not exceed 2MB!')
-//     return false
-//   }
-//   return true
 // }
 
 const token ={
@@ -129,38 +118,37 @@ const handlePreview = (uploadFile) =>{
 const handleRemove = (uploadFile,uploadFiles) =>{
   console.log('Remove');
   fileList.splice(0, 1);//删除fileList的第一个元素
+  
 }
 
 // 上传图片到后端数据库
 const onSubmit = () =>{
   console.log('Submit');
   // 获取文件列表
-  console.log('fileList',fileList)
+  showProgress.value = true; //显示进度条
 
   // // 将图片发送到后端服务器
   fileList.forEach(file => {
     const formData = new FormData();
     formData.append('file',file.raw);//将文件添加到formData
-
-
     //发送请求到自定义上传API
     modifyUserAvatar(formData)
     .then(resp => {
+      showProgress.value = false; //取消进度条显示
       console.log(resp);
       ElMessage.success('图片上传成功！')
       fileList.splice(0, 1);//删除fileList的第一个元素
       uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
       //修改store对应的用户头像
-      store.commit("setUserPhoto",resp.data.pictureURL); 
+      store.commit("setUserPhoto",resp.data.pictureURL);
+      // console.log(resp.data.pictureURL); 
     })
     .catch(err => {
       console.log(err);
       ElMessage.error('图片上传失败，请重试！')
-    })
-    
+      showProgress.value = false; //取消进度条显示
+    }) 
   });
-
-
 }
 
 // 取消选择
@@ -168,10 +156,12 @@ const onCancel = () =>{
   console.log('Cancel');
   fileList.splice(0, 1);//删除fileList的第一个元素
   uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
+  showProgress.value = false; //取消进度条显示
 };
 
-
 </script>
+
+
 
 <style lang='scss'>
   // 强行覆盖elementUI的格式
@@ -185,8 +175,6 @@ const onCancel = () =>{
     object-fit: cover;
     object-position: center;
   }
-
-
 </style>
   
 <style lang='scss' scoped>
@@ -205,11 +193,15 @@ const onCancel = () =>{
     object-position: center;
   }
 
-
   .upload-container{
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  </style>
+  .el-progress--line {
+    margin-top:20px;
+    margin-left:5%;
+    width: 50%;
+  }
+</style>
   
