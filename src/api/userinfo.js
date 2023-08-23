@@ -19,3 +19,16 @@ export function updateUserInfo(data){
         data:data,
     })
 }
+
+// 修改用户头像
+export function modifyUserAvatar(data){
+    return request({
+        url:" https://mock.apifox.cn/m1/2970478-0-default/api/UserSystem/modifyUserAvatar/",
+        method:"POST",
+        headers: {
+            'Content-Type': 'application/form-data',
+            'Authorization': "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data:data,
+    })
+}
