@@ -49,7 +49,7 @@
 
     const route = useRoute(); // 获取路由对象
     // 使用路由参数作为初始值，如果未传递参数，则默认为 'basicinfo'
-    const selectedMenu = ref(route.params.selected || 'basicInfo');
+    const selectedMenu = ref(route.params.selected || 'basicInfo' );
     // 监听路由参数的变化
     watchEffect(() => {
     	selectedMenu.value = route.params.selected || 'basicInfo';
@@ -87,7 +87,7 @@
                                 background-color="#545c64"
                                 class="el-menu-vertical-demo"
                                 text-color="#fff"
-                                default-active="basicInfo"
+                                :default-active="selectedMenu"
                                 @selected="handleMenuSelect"
                                 @open="handleOpen"
                                 @close="handleClose"

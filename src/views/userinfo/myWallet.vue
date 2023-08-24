@@ -1,18 +1,18 @@
 <template>
-    <h2>我的钱包</h2>
     <!-- 未开通钱包功能 -->
-    <el-row class="row" v-if="walletExit === false">
-        <el-col :span="24" style="justify-content: center; align-items: center;">
-            <el-card>
-                <el-empty description="您还没有开通钱包功能哦~">
-                    <el-button type="primary" @click="handleAdd">开通钱包</el-button>
-                </el-empty>
-            </el-card>
-        </el-col>
-    </el-row>
+    <div class="row" v-if="walletExit === false">
+        <h2>我的钱包</h2>
+        <el-card>
+            <el-empty description="您还没有开通钱包功能哦~">
+                <el-button type="primary" @click="handleAdd">开通钱包</el-button>
+            </el-empty>
+        </el-card>
+    </div>
+    
 
     <!-- 可用余额 -->
     <el-row class="row" v-if="walletExit === true">
+        <h2 style="width:100%;">我的钱包</h2>
         <el-col :span="24" style="justify-content: center; align-items: center;">
             <el-card>
                 <el-row class="wallet">
@@ -200,9 +200,10 @@
     h2,h3,h4{
         text-align: center;
     }
+
     .row{
-        margin-left:11em;
-        margin-right:11em;
+        margin-left:10em;
+        margin-right:10em;
         width:50em;
     }
     .balance{
