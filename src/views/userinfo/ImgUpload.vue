@@ -17,7 +17,7 @@
         <el-icon><Plus /></el-icon>
         <template #tip v-if="uploadClass === 'showUpload'">
           <div class="el-upload__tip">
-            不超过500KB的jpg/png文件
+            不超过500KB的png文件
           </div>
         </template>
 
@@ -50,7 +50,7 @@ import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import store from '@/store'
 
-import { modifyUserAvatar } from '@/api/userinfo'
+import { modifyUserAvatar, getUserAvatar } from '@/api/userinfo'
 
 const dialogImageUrl = ref('')  //上传图片的url
 const dialogVisible = ref(false) //缩略图是否可见
@@ -68,27 +68,18 @@ const uploadClass = computed(()=>{
   return fileList.length >=1 ? 'hideUpload':'showUpload';
 })
 
-// 图片上传成功操作
-// const handlePictureSuccess = (response, uploadFile) => {
-//   imageUrl.value = URL.createObjectURL(uploadFile.raw)
-// }
-
-const token ={
-  Authorization:"Bearer " + localStorage.getItem("jwtToken"),
-}
-
 // 选择图片后操作：
 const handleChange = (File, FileList) =>{
   console.log('Change');
 
-  const isJPG = File.raw.type === 'image/jpeg';  //文件类型jpg
+  // const isJPG = File.raw.type === 'image/jpeg';  //文件类型jpg
   const isPNG = File.raw.type === 'image/png';  //文件类型png
 
   const isLt500K = File.raw.size / 1024 / 1024 < 0.5;// 文件大小转换为MB单位,判断是否小于5MB
 
   // 文件格式错误
-  if(!isPNG && !isJPG) {
-    ElMessage.error('上传图片只能是JPG/PNG格式!');
+  if(!isPNG) {
+    ElMessage.error('上传图片只能是PNG格式!');
     uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
     isSelectedShow.value = false;  //不显示上传的文件列表
     return false;
@@ -121,6 +112,43 @@ const handleRemove = (uploadFile,uploadFiles) =>{
   
 }
 
+// 获取用户头像信息
+const getAvatar = () =>{
+  getUserAvatar()
+  .then(resp => {
+    console.log('获取头像成功');
+    // 头像信息解析为url
+    const imageSrc =ref('');
+    try {
+      // 使用 atob() 函数解码 Base64 编码的数据
+      const decodedData = atob(resp.data.fileContents);
+      // 创建一个 Uint8Array 来存储解码后的数据
+      const uint8Array = new Uint8Array(decodedData.length);
+      // 将解码后的数据的每个字符的 Unicode 编码值存储到 Uint8Array
+      for (let i = 0; i < decodedData.length; ++i) {
+        uint8Array[i] = decodedData.charCodeAt(i);
+      }
+
+      // 使用 Blob 对象创建一个 Blob，将 Uint8Array 作为参数传入
+      // 设置 MIME 类型为 'image/png' 表示图片是 PNG 格式
+      const blob = new Blob([uint8Array], { type: 'image/png' });
+
+      // 使用 URL.createObjectURL() 创建一个可用于图片 src 属性的 URL
+      imageSrc.value = URL.createObjectURL(blob);
+      console.log(imageSrc.value);
+
+      //修改store对应的用户头像
+      store.commit("setUserPhoto",imageSrc);
+    } catch (error) {
+      // 如果发生错误，将错误信息打印到控制台
+      console.error('Base64编码错误', error);
+    }
+  })
+  .catch(err =>{
+      console.log('获取头像失败');
+  })
+}
+
 // 上传图片到后端数据库
 const onSubmit = () =>{
   console.log('Submit');
@@ -130,21 +158,19 @@ const onSubmit = () =>{
   // // 将图片发送到后端服务器
   fileList.forEach(file => {
     const formData = new FormData();
-    formData.append('file',file.raw);//将文件添加到formData
+    formData.append('avatar',file.raw);//将文件添加到formData
     //发送请求到自定义上传API
     modifyUserAvatar(formData)
     .then(resp => {
-      showProgress.value = false; //取消进度条显示
-      console.log(resp);
       ElMessage.success('图片上传成功！')
+      showProgress.value = false; //取消进度条显示
       fileList.splice(0, 1);//删除fileList的第一个元素
       uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
-      //修改store对应的用户头像
-      store.commit("setUserPhoto",resp.data.pictureURL);
-      // console.log(resp.data.pictureURL); 
+
+      // 获取用户头像
+      getAvatar();
     })
     .catch(err => {
-      console.log(err);
       ElMessage.error('图片上传失败，请重试！')
       showProgress.value = false; //取消进度条显示
     }) 
