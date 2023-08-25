@@ -50,8 +50,9 @@ import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import store from '@/store'
 
-import { modifyUserAvatar } from '@/api/userinfo'
+import { modifyUserAvatar,getUserAvatar } from '@/api/userinfo'
 import {getAvatar} from '@/utils/avatar'
+import { base64ToUrl } from '@/utils/photo'
 
 const dialogImageUrl = ref('')  //上传图片的url
 const dialogVisible = ref(false) //缩略图是否可见
@@ -132,10 +133,21 @@ const onSubmit = () =>{
       uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
 
       // 获取用户头像
-      getAvatar((error,imageSrc) => {
-        if(!error) {
-          store.commit('setUserPhoto', imageSrc);
-        }
+      // getAvatar((error,imageSrc) => {
+      //   if(!error) {
+      //     store.commit('setUserPhoto', imageSrc);
+      //   }
+      // });
+      getUserAvatar()
+      .then(resp => {
+        console.log('获取头像成功');
+        // 转为可见链接
+        const imageUrl = base64ToUrl(resp.data.fileContents,'image/png');
+        store.commit('setUserPhoto', imageUrl);
+      })
+      .catch(error => {
+        console.error('获取头像失败', error);
+        callback(error,null);
       });
     })
     .catch(err => {
