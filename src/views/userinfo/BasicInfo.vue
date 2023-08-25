@@ -20,9 +20,9 @@
             <el-card class="card">
                 <div class="form-container">
                     <el-form :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="200px">
-                        <el-form-item label="昵称">
-                            <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate"
-                                maxlenghth="100" show-word-limit/>
+                        <el-form-item label="昵称" prop="name">
+                            <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
+                                maxlength="25" show-word-limit/>
                         </el-form-item>
                         <el-form-item label="年龄" prop="age">
                             <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate"/>
@@ -43,11 +43,11 @@
                             <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
                                 maxlength="100" show-word-limit/>
                         </el-form-item>
-                        <el-form-item label="收货人姓名">
+                        <!-- <el-form-item label="收货人姓名">
                             <el-input class="input" v-model="InfoForm.name" :disabled="isUpdate"
                                 maxlenghth="100" show-word-limit/>
-                        </el-form-item>
-                        <el-form-item label="手机号码">
+                        </el-form-item> -->
+                        <el-form-item label="手机号码" prop="tel">
                             <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate"/>
                         </el-form-item>
                         <!-- 编辑个人信息 -->
@@ -108,11 +108,39 @@
         "sellerInfo":'',
     })
 
+    // 昵称验证条件
+    const validateName = (rule, value, callback) => {
+        value=InfoForm.name;
+        if(!value){
+            callback(new Error('昵称不能为空'));
+        }
+        else{
+            callback();
+        }
+    }
+
+    // 电话验证条件
+    const validateTel = (rule, value, callback) => {
+        const phoneNum = InfoForm.phonenumber;
+        //正则验证是否为130/150/180开头的11位数字（手机号码不一定存在）
+        // 后期可以引入电话号码验证 https://github.com/google/libphonenumber
+        const reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        if (reg.test(phoneNum)){
+            callback();
+        }
+        else{
+            console.log(4)
+            callback(new Error('请输入合法11位手机号码'));
+        }
+    }
+
+
     // 年龄验证条件
     const validateAge = (rule, value, callback) => {
         value=InfoForm.age;
         if (!value) {
-            return callback(new Error('请输入年龄'));
+            // return callback(new Error('请输入年龄'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -129,7 +157,8 @@
     const validateHeight=(rule,value,callback)=>{
         value=InfoForm.height;
         if (!value) {
-            return callback(new Error('请输入身高'));
+            // return callback(new Error('请输入身高'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -146,7 +175,8 @@
     const validateWeight=(rule,value,callback)=>{
         value=InfoForm.weight;
         if (!value) {
-            return callback(new Error('请输入体重'));
+            // return callback(new Error('请输入体重'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -161,6 +191,9 @@
 
     // 个人信息验证规则
     const InfoRules = reactive({
+    name:[
+        {validator: validateName, trigger: 'change'},
+    ],
     age: [
         { validator: validateAge, trigger: 'change' },
     ],
@@ -170,6 +203,9 @@
     weight:[
         { validator: validateWeight, trigger: 'change' },
     ],
+    tel:[
+        {validator: validateTel, trigger: 'change'},
+    ]
     });
 
     // 创建表单引用
