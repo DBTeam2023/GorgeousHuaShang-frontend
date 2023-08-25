@@ -76,6 +76,7 @@
 
     import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import { getUserInfo, updateUserInfo } from '@/api/userinfo';
+    import { getAvatar} from '@/utils/avatar';
 
     //用户输入的个人信息表
     const InfoForm=reactive({
@@ -236,7 +237,6 @@
     // 钩子函数：
     onMounted(() => {   
         getUserInfo();
- 
     })
 
     const isButtonDisabled=ref('false'); //按钮禁用标志

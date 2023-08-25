@@ -51,7 +51,7 @@ import { Plus } from '@element-plus/icons-vue'
 import store from '@/store'
 
 import { modifyUserAvatar } from '@/api/userinfo'
-import getAvatar from '@/utils/avatar'
+import {getAvatar} from '@/utils/avatar'
 
 const dialogImageUrl = ref('')  //上传图片的url
 const dialogVisible = ref(false) //缩略图是否可见
@@ -132,7 +132,11 @@ const onSubmit = () =>{
       uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
 
       // 获取用户头像
-      getAvatar();
+      getAvatar((error,imageSrc) => {
+        if(!error) {
+          store.commit('setUserPhoto', imageSrc);
+        }
+      });
     })
     .catch(err => {
       ElMessage.error('图片上传失败，请重试！')
