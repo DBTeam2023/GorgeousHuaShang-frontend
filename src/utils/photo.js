@@ -38,9 +38,6 @@ export function base64ToUrl(base64String,fileFormat) {
     const blob = new Blob([uint8Array], { type: fileFormat });
     // 使用 URL.createObjectURL() 创建一个可用于图片 src 属性的 URL
     imageSrc.value = URL.createObjectURL(blob);
-    console.log(typeof imageSrc);
-    console.log(typeof imageSrc.value);
-
 
     // 方法2： 直接点击imageSrc.value可见（data:image/png;base64,...）
     // const imgString = base64String;//fileContents是返回响应中的base64字符串
