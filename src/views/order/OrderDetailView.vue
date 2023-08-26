@@ -26,7 +26,6 @@
     </el-container>
 </template>
 
-<!--js脚本函数-->
 <script>
 import userInfoMenu from "../../components/common/userInfoMenu.vue"
 import orderStateCard from "@/views/order/orderStateCard.vue"

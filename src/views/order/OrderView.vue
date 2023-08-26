@@ -64,9 +64,6 @@
                                             <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                         </div>
                                         <div>
-                                            <el-link :icon="Edit" :underline="false">修改订单</el-link>
-                                        </div>
-                                        <div>
                                             <el-link
                                             :icon="Delete"
                                             :underline="false"
@@ -115,9 +112,6 @@
                                         <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
-                                        <el-link :icon="Edit" :underline="false">修改订单</el-link>
-                                    </div>
-                                    <div>
                                         <el-link :icon="Delete" :underline="false">删除订单</el-link>
                                     </div>
                                 </div>
@@ -153,9 +147,6 @@
                                 <div>
                                     <div>
                                         <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
-                                    </div>
-                                    <div>
-                                        <el-link :icon="Edit" :underline="false">修改订单</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Delete" :underline="false" disabled>删除订单</el-link>
@@ -195,9 +186,6 @@
                                         <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
-                                        <el-link :icon="Edit" :underline="false">修改订单</el-link>
-                                    </div>
-                                    <div>
                                         <el-link :icon="Delete" :underline="false" disabled>删除订单</el-link>
                                     </div>
                                 </div>
@@ -235,9 +223,6 @@
                                         <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
-                                        <el-link :icon="Edit" :underline="false">修改订单</el-link>
-                                    </div>
-                                    <div>
                                         <el-link :icon="Delete" :underline="false">删除订单</el-link>
                                     </div>
                                 </div>
@@ -273,9 +258,6 @@
                                 <div>
                                     <div>
                                         <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
-                                    </div>
-                                    <div>
-                                        <el-link :icon="Edit" :underline="false">修改订单</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Delete" :underline="false">删除订单</el-link>
