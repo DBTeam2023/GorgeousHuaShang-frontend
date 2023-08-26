@@ -135,9 +135,7 @@
     })
 
     // 获取用户钱包信息
-    getWallet({
-        // token:"Bearer " + localStorage.getItem("jwtToken"),        
-    })
+    getWallet()
     .then(resp => {
         walletForm.balance=resp.data.balance;
         walletForm.status=resp.data.status;
@@ -158,7 +156,6 @@
         formRef.value.validate((valid) => {
             if(valid){
                 rechargeWallet({
-                    // token:"Bearer " + localStorage.getItem("jwtToken"), 
                     amount:updateForm.amount,
                 })
                 .then(resp=>{

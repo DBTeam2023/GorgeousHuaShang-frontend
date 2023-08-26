@@ -61,6 +61,9 @@
         console.log(selectedMenu);
     }
 
+    //用户角色：buyer/seller
+    const role = store.state.user.role;//"seller"或"buyer"
+
 </script>
 
 
@@ -98,25 +101,25 @@
                                         <span style="margin-left:10px">个人信息</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="collectedItem" class="menu-item" @click="MenuSelect('collectedItem')">
+                                <el-menu-item v-if="role === 'buyer'" index="collectedItem" class="menu-item" @click="MenuSelect('collectedItem')">
                                     <span>
                                         <el-icon><Goods /></el-icon>
                                         <span style="margin-left:10px">我的收藏</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="followedShop" class="menu-item" @click="MenuSelect('followedShop')">
+                                <el-menu-item v-if="role === 'buyer'" index="followedShop" class="menu-item" @click="MenuSelect('followedShop')">
                                     <span>
                                         <el-icon><CollectionTag /></el-icon>
                                         <span style="margin-left:10px">关注店铺</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="myOrder" class="menu-item" @click="MenuSelect('myOrder')">
+                                <el-menu-item v-if="role === 'buyer'" index="myOrder" class="menu-item" @click="MenuSelect('myOrder')">
                                     <span>
                                         <el-icon><Tickets /></el-icon>
                                         <span style="margin-left:10px">我的订单</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('myCoupon')">
+                                <el-menu-item v-if="role === 'buyer'" index="footprint" class="menu-item" @click="MenuSelect('myCoupon')">
                                     <span>
                                         <el-icon><Position /></el-icon>
                                         <span style="margin-left:10px">我的优惠券</span>
@@ -126,7 +129,6 @@
                                     <span>
                                         <el-icon><Wallet /></el-icon>
                                         <span style="margin-left:10px">我的钱包</span>
-                                        
                                     </span>
                                 </el-menu-item>
                                 <el-menu-item index="accountSetting" class="menu-item" @click="MenuSelect('accountSetting')">
