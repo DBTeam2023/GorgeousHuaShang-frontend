@@ -1,6 +1,6 @@
 <template>
   <div class="product-management">
-    <h1 class="title">已上架商品管理</h1>
+    <h1 class="title">全部宝贝</h1>
     <el-row :gutter="20" class="filters">
       <el-col :span="6">
         <div class="search-box">
