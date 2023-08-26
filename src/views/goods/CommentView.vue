@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import emoji from '../emoji/emoji'
+import emoji from '../../emoji/emoji'
 import { reactive } from 'vue'
 import { UToast, createObjectURL } from 'undraw-ui'
 
@@ -67,7 +67,7 @@ config.comments = [
     id: '1',
     parentId: null,
     uid: '1',
-    address: '来自上海',
+    // address: '来自上海',
     content:
       '张靖凯好帅好帅呜呜呜[喝酒]',
     likes: 2,

@@ -23,8 +23,8 @@
                             autocomplete="off"
                             />
                         </el-form-item>
-                        <el-form-item >
-                            <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
+                        <el-form-item style="margin-left:23%">
+                            <el-button style="margin-right:50px" type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
                             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
                         </el-form-item>
                 </el-form>
@@ -47,7 +47,7 @@
                 <p>1.账号近期不存在交易</p>
                 <p>2.账号相关财产权益已清结</p>
                 <p>3.账号下不存在尚未注销的店铺</p>
-                <p>4.账号不存在位完结的服务</p>
+                <p>4.账号不存在未完结的服务</p>
                 <el-form :model="logoutForm" class="center-button">
                     <el-button type="danger" @click="logout" style="text-align: center;">注销账号</el-button>
                 </el-form>
@@ -58,6 +58,9 @@
   
   <script setup>
     import { reactive, ref } from 'vue'
+    import { ElMessage } from 'element-plus'
+    import { updateUserInfo } from '@/api/userinfo';
+
 
     const validatePass = (rule, value, callback) => {
     if (value === '') {
@@ -84,8 +87,12 @@
     // 数据：用户两次输入的密码
     const ruleFormRef = ref()
     const ruleForm = reactive({
-    pass: '',
-    checkPass: ''
+        pass: '',
+        checkPass: ''
+    })
+    // 向数据库提交的数据
+    const updateForm=ref({
+        pwd:'',
     })
 
     // 数据：密码输入规则
@@ -98,17 +105,34 @@
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-        console.log('提交!')
+            // 调用后端api修改信息
+            updateForm.value.pwd=ruleForm.pass;
+            updateUserInfo(updateForm)
+                .then(response=>{
+                    ElMessage({
+                        message: '修改成功！',
+                        type: 'success',
+                    })
+                })
+                .catch(err=>{
+                    ElMessage({
+                        message: '密码修改失败！',
+                        type: 'error',
+                    })
+                })
+
+
+            console.log('提交!')
         } else {
-        console.log('提交错误')
-        return false
+            console.log('提交错误')
+            return false
         }
     })
     }
 
     const resetForm = (formEl) => {
     if (!formEl) return
-    formEl.resetFields()
+        formEl.resetFields()
     }
 
 </script>
@@ -119,8 +143,9 @@
         text-align: center;
     }
     .row{
-        margin-left:8em;
-        margin-right:8em;
+        margin-left:10em;
+        margin-right:10em;
+        // margin-right:50%;
         // padding-top:1em;
         // justify-content: center;
         // padding-right:3em;

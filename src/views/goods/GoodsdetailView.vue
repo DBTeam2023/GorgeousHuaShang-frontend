@@ -1,0 +1,430 @@
+<template>
+<div class="product-detail">
+  <div class="left-section">
+    <div class="search">
+      <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
+    </div>
+   <div class="thumbnail-images">
+    <div v-for="item in product.images" :key="item.index">
+     <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
+    </div>
+   </div>
+  </div>
+
+  <!-- 右侧 -->
+  <div class="right-section">
+    <div v-if="showGoodsDescriptionVar">
+      <h2>{{ route.query.productName }}</h2>
+      <p>{{ selectedcommodity.value.description }}</p>
+    </div>
+    <div v-else>
+      <h2>商品未加载</h2>
+      <p>商品描述未加载</p>
+    </div>
+
+
+    <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
+      <h3>{{ idx1 }}</h3>
+      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties.value[idx1]" class="my-selection-item">
+        <el-radio :label="properity">{{ properity }}</el-radio>
+      </el-radio-group>
+    </div>
+
+    <!--   <div class="my-selection">-->
+    <!--    <h3>数量</h3>-->
+    <!--    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>-->
+    <!--   </div>-->
+
+
+    <!-- 商品价格 -->
+    <div v-if="showGoodsDescriptionVar">
+      <div class="price">￥{{ selectedcommodity.value.price }}</div>
+    </div>
+    <div v-else>
+      <div class="price">￥ *** </div>
+    </div>
+
+   <div class="buttons">
+    <el-button type="primary" @click="addToCart">加入购物车</el-button>
+    <el-button type="success" @click="buyNow">立即购买</el-button>
+   </div>
+  </div>
+ </div>
+  <comment-view/>
+</template>
+
+
+
+
+
+
+
+
+<script setup>
+import {onMounted, reactive, ref, watch} from 'vue';
+import mjpic from "../../assets/product/1.png";
+import yfpic from "../../assets/product/2.png";
+import lgpic from "../../assets/product/3.png";
+import CommentView from './CommentView.vue';
+import router from "@/router";
+import {useRoute} from "vue-router";
+import {getGoodsDetail} from "@/api/goods";
+import {ElMessage} from "element-plus";
+
+const route = useRoute()
+const _ = require('lodash');
+
+const product = {
+  productName: '商品名称',
+  description: '商品信息',
+  images: [
+    {
+      index: 1,
+      info: "YF",
+      imgsrc: mjpic
+    },
+    {
+      index: 2,
+      info: "MJ",
+      imgsrc: yfpic
+    },
+    {
+      index: 3,
+      info: "LG",
+      imgsrc: lgpic
+    }
+  ]
+};
+
+const selectedImage = ref('');
+const selectedQuantity = ref(1);
+
+// 默认选中第一张图片
+selectedImage.value = product.images[0].imgsrc;
+
+let commodityIdToBackend = ref({
+  commodityId: route.query.goodsId,
+})
+
+let response; // 接收后端的数据resp
+let mergedProperties = ref([]); // 产品的所有属性
+let selectProperties = reactive({}); // 顾客选中的属性
+let selectIndex = ref(0);       // 选中产品对应的index
+let selectedcommodity = reactive({});// 选中属性对应的那个产品
+
+// todo: 加入购物车，加入订单
+/*
+{
+  commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
+  description: "小哥哥小姐姐都可以穿的汉服哟！",
+  price: 300,
+  property: {
+    尺码: "S"
+    男女款: "男款"
+    颜色: "白"
+  }
+}
+  */
+
+watch(selectProperties, (newVal) => {
+  selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
+  selectedcommodity.value = {
+    ...response.commodityInfo[selectIndex.value],
+    commodityId: route.query.goodsId,
+  }
+});
+
+function selectImage(image) {
+  selectedImage.value = image;
+}
+
+function addToCart() {
+  console.log(2); // 加入购物车
+}
+
+function buyNow() {
+  console.log(1); // 立即购买
+}
+
+
+getGoodsDetail(commodityIdToBackend.value)
+    .then(resp => {
+      if (resp.code === 200)
+      {
+        response = resp.data;
+        mergedProperties.value = mergeSimilarProperties(response.commodityInfo);
+        selectProperties.value = handleSelectProperties(_.cloneDeep(mergedProperties.value));
+        selectIndex.value = findIndicesWithProperties(response.commodityInfo, selectProperties.value)
+        selectedcommodity.value = {
+          ...response.commodityInfo[selectIndex.value],
+          commodityId: route.query.goodsId,
+        }
+        showGoodsDescriptionVar = true;
+      }
+    })
+    .catch(resp => {
+      ElMessage({
+        message: "商品已下架!",
+        type: "warning",
+      });
+    })
+
+
+
+// ***************  处理接收的数据  ***************
+function mergeSimilarProperties(array) {
+  const mergedProperties = {};
+
+  array.forEach(item => {
+    const property = item.property;
+
+    for (const key in property) {
+      if (property.hasOwnProperty(key)) {
+        const value = property[key];
+
+        if (!mergedProperties[key]) {
+          mergedProperties[key] = [value];
+        } else if (!mergedProperties[key].includes(value)) {
+          mergedProperties[key].push(value);
+        }
+      }
+    }
+  });
+
+  return mergedProperties;
+}
+
+const handleSelectProperties = (inputObject) => {
+  for (const key in inputObject) {
+    inputObject[key] = inputObject[key][0];
+  }
+  return inputObject;
+}
+
+let showGoodsDescriptionVar = ref(false)
+// const showGoodsDescription = () => {
+//   if (showGoodsDescriptionVar.value) {
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+// }
+
+function findIndicesWithProperties(array, properties) {
+  const indices = [];
+
+  for (let index = 0; index < array.length; index++) {
+    const item = array[index];
+    let match = true;
+
+    for (const key in properties) {
+      if (properties.hasOwnProperty(key)) {
+        if (item.property[key] !== properties[key]) {
+          match = false;
+          break;
+        }
+      }
+    }
+
+    if (match) {
+      indices.push(index);
+    }
+  }
+
+  return indices[0];
+}
+
+
+</script>
+
+
+
+<!--CSS风格-->
+<style scoped>
+.header {
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;/*子元素沿着主轴等间距地分布，并且第一个子元素和最后一个子元素分别对齐容器的起始端和末尾端 */
+  align-items: center;/*子元素在垂直方向上居中对齐 */
+  padding: 0 20px;/*容器的左右内边距为 20px，padding 属性可以用来控制元素的内部空白区域的大小，上下填充空间为0，左右留出间距20，还可以用百分比*/
+}
+
+.logo {
+  display: flex;/*布局*/ 
+  align-items: center;
+}
+
+.logo img {
+  height: 32px;
+  margin-right: 10px;
+}
+
+.menu {
+  background-color: #fff;
+}
+
+.submenu {
+  background-color: #fff;
+}
+
+.login {
+  color: #fff;
+}
+
+.banner img {
+  width: 50%;
+}
+
+.recommend {
+  margin: 20px;/*上下左右四个方向的外部空白区域均为 20px */
+}
+
+.recommend h2 {
+  font-size: 24px; /*字体大小 */
+  font-weight: bold;/*加粗 */
+  margin-bottom: 20px;
+}
+
+.item {
+  border: 1px solid #eee; /*1像素宽度、实现样式、灰色颜色的边框 */
+  border-radius: 5px;/*5像素的圆角边框 */
+  padding: 10px;/*元素内部内容与边框之间的距离 */
+  text-align: center;
+}
+
+.item img {
+  width: 100%;
+}
+
+.item .name {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.item .price {
+  font-size: 18px;
+ font-weight: bold;
+ color:red
+}
+
+.search {
+  width: 300px;
+}
+.shower img {
+  width: 600px;
+}
+
+.mr-cont {
+	margin: 20px auto;
+	height: 565px;
+	width: 950px;
+	border: 1px solid #F00
+}
+.mr-pic {
+	float: left;
+	margin: 50px auto
+}
+.mr-mess {
+	float: left;
+	width: 528px;
+	margin: 30px 20px;
+}
+dl {
+	margin: 20px;
+	text-align: center;
+	width: 340px;
+	height: 435px;
+	border: 1px #999999 solid
+}
+dt {
+	margin-top: 70px;
+}
+dd {
+	float: left;
+	margin: 30px 5px;
+	border: 1px solid #CCC;
+}
+.mr-sel {
+	margin-left: 50px;
+	border: 1px solid #C00;
+}
+ul li {
+	list-style: none;
+	float: left;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+}
+.list1~li {
+	width: 120px;
+	border: 1px dashed #999999;
+	margin: 0 5px;
+}
+.mr-price {
+	background: #FBECFF
+}
+.dul ul{
+	margin:0px auto;
+}
+.product-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.left-section {
+  flex: 1;
+}
+
+.main-image {
+  width: 500px;
+  height: 500px;
+}
+
+.thumbnail-images {
+  display: flex;
+  margin-top: 10px;
+}
+
+.thumbnail-images img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.thumbnail-images img.active {
+  border: 2px solid #000;
+}
+
+.right-section {
+  flex: 1;
+  padding-left: 20px;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.my-selection {
+  margin-bottom: 10px;
+}
+
+.my-selection-item {
+  margin-right: 20px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.price {
+  color:orangered;
+  margin-bottom: 20px;
+  font-size: 35px;
+  font-weight: bold;
+}
+</style>

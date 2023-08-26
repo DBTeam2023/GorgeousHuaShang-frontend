@@ -2,9 +2,7 @@
     <div>
         <!-- 顶栏 -->
         <div class="shop-header">
-
             <div class="shop-avatar">
-              <ElIcon name="el-icon-house"></ElIcon>
                 <img :src="shopAvatar" alt="Shop Avatar" />
             </div>
             <div class="shop-name">{{ shopName }}</div>
@@ -67,9 +65,8 @@
 
   <script setup>
   import {onMounted, ref} from 'vue';
-  import AllItems from '@/views/shop_subs/ALLItemsView.vue'
-  import { ElIcon } from 'element-plus';
-
+  import AllItems from '@/views/shop/ALLItemsView.vue'
+  import {checkPermission} from "@/utils/auth";
     const selectedMenu=ref('AllItems')
 
     const shopAvatar = ref('https://picsum.photos/id/1018/400/200');

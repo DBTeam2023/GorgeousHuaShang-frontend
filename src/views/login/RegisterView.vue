@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div id="login">
-<!--     PARTICLE SYSTEM-->
+    <!-- PARTICLE SYSTEM -->
     <div class="page-bg bg-blur"></div>
 
     <div class="animation-wrapper">
@@ -44,7 +44,7 @@
             >华裳异彩民族服饰电商平台</h>
           </div>
           <div class="horizontal-flex-box" style="margin-top: 5%">
-            <h class="login-font" style="margin-left: 10%">登录</h>
+            <h class="login-font" style="margin-left: 10%">注册</h>
           </div>
           <div class="vertical-flex-box">
             <form style="margin-top: 10%">
@@ -52,28 +52,40 @@
                   type="text"
                   class="email"
                   placeholder="用户名"
-                  v-model="loginForm.username"
+                  v-model="RegisterForm.username"
               />
               <input
                   type="password"
                   class="pwd"
                   placeholder="密码"
-                  v-model="loginForm.password"
+                  v-model="RegisterForm.password"
+              />
+              <input
+                  type="password"
+                  class="pwd"
+                  placeholder="确认密码"
+                  v-model="passwordConfirm"
               />
             </form>
-            <!--登录按钮-->
 
+            <div v-if="showError" style="color:red;">两次输入的密码不一致！</div>
+
+            <div class="mb-2 flex items-center text-sm">
+              <el-radio-group v-model="RegisterForm.type" class="ml-4">
+                <el-radio label="seller" size="large">商家</el-radio>
+                <el-radio label="buyer" size="large">买家</el-radio>
+              </el-radio-group>
+            </div>
+
+            <!--登录按钮-->
             <div
                 class="btn effect01"
                 target="_blank"
                 style="margin-top: 20%"
-                @click="login"
+                @click="register"
             >
-              <span style="margin-left: 40%; font-size: 1.3em">登录</span>
+              <span style="margin-left: 40%; font-size: 1.3em">注册</span>
             </div>
-            <el-checkbox v-model="checkPassword" style="margin-top: 2%"
-            >记住我</el-checkbox
-            >
           </div>
         </div>
       </div>
@@ -82,85 +94,53 @@
 </template>
 
 <script setup>
-import HuashangLogo from '../assets/login/HuashangLogo.png'
-import {doLogin, getUserInfo} from "@/api/login";
-import store from "@/store";
-import {onMounted, ref} from "vue";
+import HuashangLogo from '../../assets/login/HuashangLogo.png'
+import {computed, onMounted, ref} from "vue";
+import {doRegister} from "@/api/login";
 import {ElMessage} from "element-plus";
+import store from "@/store";
 import router from "@/router";
-import axios from "axios";
+
+let radio1 = ref('');
 
 const loginImages = [
   "./assets/login/HuashangLogo.png",
 ];
-let loginForm = ref({
+let RegisterForm = ref({
   username: "",
   password: "",
+  type: radio1.value,
+});
+let passwordConfirm = ref("");
+
+let showError = computed(() => {
+  return passwordConfirm.value !== RegisterForm.value.password && passwordConfirm.value > 0;
 });
 
-let checkPassword = ref(true);
+const register = () => {
 
-const login = () => {
-  doLogin(loginForm.value)
+  if (showError.value) {
+    ElMessage('两次密码不同！');
+    return;
+  }
+  console.log(RegisterForm.value)
+  doRegister(RegisterForm.value)
       .then(resp => {
-        if (resp.msg === 'success') {
-          ElMessage({
-            message: '登录成功',
-            type: 'success',
-          })
-          localStorage.setItem("jwtToken", resp.data.token);
-          store.commit("setToken", resp.data.token);
-          // todo: resolve怎么用
-          // resolve(resp);
-        } else {
-          ElMessage.error('登录错误');
-        }
-      })
-      .then(() => {
-        // 获取用户信息
-        getUserInfo()
-            .then(resp => {
-              store.commit("setIsLogin", true);
-              store.commit("setUsername", resp.data.username);
-              store.commit("setRole",resp.data.type);
-              // store.commit("setUserPhoto", resp.data.userPhoto);
-
-              localStorage.setItem("role", resp.data.type);
-            })
-            .catch(resp => {
-              console.log(resp);
-              console.log("获取用户信息错误");
-            });
-      })
-      .then(() => {
-        // 有token返回就跳转到首页
-        router.push("/");
-
-        //记住密码
-        if (checkPassword.value) {
-          localStorage.setItem("username", loginForm.value.username);
-          localStorage.setItem("password", loginForm.value.password);
-        } else {
-          localStorage.removeItem("username");
-          localStorage.removeItem("password");
-        }
+        ElMessage({
+          message: '登录成功',
+          type: 'success',
+        })
+        console.log(resp);
+        router.push("/login/");
       })
       .catch(resp => {
+        ElMessage({
+          message: '注册失败',
+          type: 'warning',
+        })
         console.log(resp);
-        ElMessage.error('登录异常');
       })
 }
-
-
-// 生命周期 - 创建完成
-onMounted(() => {
-  if (localStorage.getItem("username") != null) {
-    loginForm.value.username = localStorage.getItem("username");
-    loginForm.value.password = localStorage.getItem("password");
-  }
-})
-
-
 
 </script>
 
@@ -342,7 +322,7 @@ input {
   align-items: flex-start;
   justify-content: space-between;
   width: 50vw;
-  height: 25vw;
+  height: 28vw;
   min-width: 600px;
   min-height: 320px;
   border-radius: 10px;
@@ -440,7 +420,7 @@ body {
 }
 
 .page-bg {
-  background: $color-bg url("../assets/login/LoginBG.jpg") no-repeat top
+  background: $color-bg url("../../assets/login/LoginBG.jpg") no-repeat top
   center;
   background-size: cover;
   z-index: -1;
@@ -456,7 +436,7 @@ body {
   -moz-filter: blur(5px);
   -o-filter: blur(5px);
   -ms-filter: blur(5px);
-  filter: blur(2px);
+  filter: blur(5px);
 }
 
 .particle,
