@@ -1,11 +1,11 @@
 import request from '@/utils/request';
 
-export function getLogisticsInfo() {
+export function getLogisticsInfo(orderNumber) {
     return request({
-        url: "/api/order/logisticsDetails/",
-        method: "GET",
+        url: "/api/order/logisticsDetails/${orderNumber}", 
+        method: 'GET',
         headers: {
-            Authorization: "Bearer " + localStorage.getItem("jwtToken")
-        },
-    })
+            Authorization: 'Bearer ' + localStorage.getItem('jwtToken')
+        }
+    });
 }

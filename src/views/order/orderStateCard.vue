@@ -30,6 +30,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getLogisticsInfo } from '@/api/logistics'
+import { useRoute } from 'vue-router';
+
+const route = useRoute(); // 获取路由实例
+
 
 const itemList = ref([])
 
@@ -89,20 +93,18 @@ const cancelEdit = () => {
 // })
 
 onMounted(() => {
-        getLogisticsInfo()
-            .then(response => {
-                const logisticsInfo = response.data 
-                
-                // 更新 OrderState 的属性
-                // OrderState.state = logisticsInfo.state
-                OrderState.shipAddress = logisticsInfo.shipAddress
-                OrderState.pickAddress = logisticsInfo.pickAddress
-                OrderState.company = logisticsInfo.company
-            })
-            .catch(error => {
-                console.error('Error fetching logistics information:', error)
-            })
-    })
+    const orderNumber = route.params.orderID; // 获取订单号
+    getLogisticsInfo(orderNumber)
+        .then(response => {
+            // OrderState.state = response.state;
+            OrderState.shipAddress = response.shipAddress;
+            OrderState.pickAddress = response.pickAddress;
+            OrderState.company = response.company;
+        })
+        .catch(error => {
+            console.error('Error fetching logistics information:', error);
+        });
+});
 
 
 // const sendDataToBackend = () => {

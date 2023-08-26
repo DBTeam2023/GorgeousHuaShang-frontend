@@ -112,7 +112,7 @@
                             <el-table-column property="operationforOder" label="订单操作" width="150" >
                                 <div>
                                     <div>
-                                        <el-link :icon="View" :underline="false">订单详情</el-link>
+                                        <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -152,7 +152,7 @@
                             <el-table-column property="operationforOder" label="订单操作" width="150" >
                                 <div>
                                     <div>
-                                        <el-link :icon="View" :underline="false">订单详情</el-link>
+                                        <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -192,7 +192,7 @@
                             <el-table-column property="operationforOder" label="订单操作" width="150" >
                                 <div>
                                     <div>
-                                        <el-link :icon="View" :underline="false">订单详情</el-link>
+                                        <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -232,7 +232,7 @@
                             <el-table-column property="operationforOder" label="订单操作" width="150" >
                                 <div>
                                     <div>
-                                        <el-link :icon="View" :underline="false">订单详情</el-link>
+                                        <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -272,7 +272,7 @@
                             <el-table-column property="operationforOder" label="订单操作" width="150" >
                                 <div>
                                     <div>
-                                        <el-link :icon="View" :underline="false">订单详情</el-link>
+                                        <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                     </div>
                                     <div>
                                         <el-link :icon="Edit" :underline="false">修改订单</el-link>
