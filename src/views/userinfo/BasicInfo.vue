@@ -25,13 +25,13 @@
                                 maxlength="25" show-word-limit/>
                         </el-form-item>
                         <el-form-item label="年龄" prop="age">
-                            <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate"/>
+                            <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate" placeholder="请输入年龄"/>
                         </el-form-item>
                         <el-form-item label="身高（cm）" prop="height">
-                            <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate"/>
+                            <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate" placeholder="请输入身高"/>
                         </el-form-item>
                         <el-form-item label="体重（kg）" prop="weight">
-                            <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate"/>
+                            <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate" placeholder="请输入体重"/>
                         </el-form-item>
                         <el-form-item label="性别" >
                             <el-radio-group v-model="InfoForm.gender" :disabled="isUpdate">
@@ -47,8 +47,8 @@
                             <el-input class="input" v-model="InfoForm.name" :disabled="isUpdate"
                                 maxlenghth="100" show-word-limit/>
                         </el-form-item> -->
-                        <el-form-item label="手机号码" prop="tel">
-                            <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate"/>
+                        <el-form-item label="手机号码" prop="tel" >
+                            <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate" placeholder="请输入11位合法手机号码"/>
                         </el-form-item>
                         <!-- 编辑个人信息 -->
                         <el-form-item>
@@ -111,13 +111,14 @@
 
     // 昵称验证条件
     const validateName = (rule, value, callback) => {
-        value=InfoForm.name;
-        if(!value){
-            callback(new Error('昵称不能为空'));
-        }
-        else{
-            callback();
-        }
+        // value=InfoForm.name;
+        // if(!value){
+        //     callback(new Error('昵称不能为空'));
+        // }
+        // else{
+        //     callback();
+        // }
+        callback()
     }
 
     // 电话验证条件
