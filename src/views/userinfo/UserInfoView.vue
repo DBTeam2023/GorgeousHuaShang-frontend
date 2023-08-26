@@ -1,23 +1,43 @@
 <script setup>
     import BasicInfo from '@/views/userinfo/BasicInfo.vue';
-    import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import FollowedShop from '@/views/userinfo/FollowedShop.vue';
     import CollectedItem from '@/views/userinfo/CollectedItem.vue';
     import AccountSetting from '@/views/userinfo/AccountSetting.vue';
     import OrderViewVue from '@/views/order/OrderView.vue';
+    import myWallet from '@/views/userinfo/myWallet.vue';
+    import myCoupon from '@/views/userinfo/Coupon.vue';
+    import store from '@/store';
+
+    import { watchEffect } from 'vue';
+    import { useRoute } from 'vue-router';
+    import { reactive, ref, computed} from 'vue'
+
+    // 左侧菜单栏头部：用户名/用户头像
+    const info = reactive({
+    avatarUrl: computed(() => {
+        if (store.state.user.isLogin) {
+            return store.state.user.userPhoto;
+        }
+        else {
+            return "https://avatars.githubusercontent.com/u/583231?v=4";
+        }
+    }),
+    userName: computed(() => {
+        if (store.state.user.isLogin) {
+            return store.state.user.username;
+        }
+        else {
+            return "未登录";
+        }
+    })
+    })
    
 
     // 左侧菜单栏用到的
-    import { reactive} from 'vue'
-    import {ref} from 'vue'
+
     import {
         Setting,User,Tickets,CollectionTag,Goods,Wallet,Position,
     } from '@element-plus/icons-vue'
-
-    const info=reactive({
-        avatarUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-        userName:'userName',
-    })
 
     const handleOpen = (key, keyPath) => {
         console.log(key, keyPath)
@@ -27,8 +47,13 @@
         console.log(key, keyPath)
     }
 
-    // 选择的菜单项
-    const selectedMenu=ref('basicInfo');
+    const route = useRoute(); // 获取路由对象
+    // 使用路由参数作为初始值，如果未传递参数，则默认为 'basicinfo'
+    const selectedMenu = ref(route.params.selected || 'basicInfo' );
+    // 监听路由参数的变化
+    watchEffect(() => {
+    	selectedMenu.value = route.params.selected || 'basicInfo';
+    });
 
     // 菜单项选择响应函数
     const MenuSelect=(menuItem)=>{
@@ -62,7 +87,7 @@
                                 background-color="#545c64"
                                 class="el-menu-vertical-demo"
                                 text-color="#fff"
-                                default-active="basicInfo"
+                                :default-active="selectedMenu"
                                 @selected="handleMenuSelect"
                                 @open="handleOpen"
                                 @close="handleClose"
@@ -91,10 +116,10 @@
                                         <span style="margin-left:10px">我的订单</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('footprint')">
+                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('myCoupon')">
                                     <span>
                                         <el-icon><Position /></el-icon>
-                                        <span style="margin-left:10px">我的足迹</span>
+                                        <span style="margin-left:10px">我的优惠券</span>
                                     </span>
                                 </el-menu-item>
                                 <el-menu-item index="myWallet" class="menu-item" @click="MenuSelect('myWallet')">
@@ -120,7 +145,6 @@
         <el-col span="20" >
             <!-- 个人信息页 -->
             <div v-if="selectedMenu === 'basicInfo'">
-                <ImgUpload />
                 <BasicInfo />
             </div>
 
@@ -142,6 +166,16 @@
             <div v-else-if="selectedMenu === 'myOrder'">
                 <OrderViewVue/>
             </div>
+            <!-- 我的钱包 -->
+            <div v-else-if="selectedMenu === 'myWallet'">
+                <myWallet/>
+            </div>
+
+            <!-- 我的优惠券 -->
+            <div v-else-if="selectedMenu === 'myCoupon'">
+                <myCoupon/>
+            </div>
+
 
         </el-col>
 

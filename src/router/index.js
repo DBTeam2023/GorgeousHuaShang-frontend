@@ -37,7 +37,7 @@ const routes =
       }
     },
     {
-      path: '/classify/',
+      path: '/classify',
       name: "Classify",
       component: ClassificationView,
       meta: {
@@ -105,7 +105,7 @@ const routes =
       name: 'OrderDetail',
       component: OrderDetailView,
       meta: {
-        requestAuth: false,
+        requestAuth: true,
       }
     },
     {
@@ -113,7 +113,7 @@ const routes =
       name: 'Order',
       component: OrderView,
       meta: {
-        requestAuth: false,
+        requestAuth: true,
       }
     },
     {
@@ -130,7 +130,7 @@ const routes =
       component: UserInfoView,
       props: true,
       meta: {
-        requestAuth: false,
+        requestAuth: true,
       }
     },
     {
