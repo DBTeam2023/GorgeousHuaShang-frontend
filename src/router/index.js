@@ -101,11 +101,11 @@ const routes =
       }
     },
     {
-      path: '/orderdetail/',
+      path: '/orderdetail/:orderID',
       name: 'OrderDetail',
       component: OrderDetailView,
       meta: {
-        requestAuth: true,
+        requestAuth: false,
       }
     },
     {
@@ -113,7 +113,7 @@ const routes =
       name: 'Order',
       component: OrderView,
       meta: {
-        requestAuth: true,
+        requestAuth: false,
       }
     },
     {
@@ -130,7 +130,7 @@ const routes =
       component: UserInfoView,
       props: true,
       meta: {
-        requestAuth: true,
+        requestAuth: false,
       }
     },
     {

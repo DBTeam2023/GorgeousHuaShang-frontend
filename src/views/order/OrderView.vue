@@ -1,4 +1,3 @@
-<!--html模板-->
 <template>
     <!-- <div class="common-layout"> -->
     <!-- <div> -->
@@ -62,7 +61,7 @@
                                 <template v-slot="{ row }">
                                     <div>
                                         <div>
-                                            <el-link :icon="View" :underline="false" @click="checkDetails(orderID)">订单详情</el-link>
+                                            <el-link :icon="View" :underline="false" @click="checkDetails(row)">订单详情</el-link>
                                         </div>
                                         <div>
                                             <el-link :icon="Edit" :underline="false">修改订单</el-link>
@@ -322,6 +321,7 @@ import OrderDetailView from '@/views/order/OrderDetailView.vue';
 import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Order',
@@ -335,6 +335,7 @@ export default defineComponent({
   },
 
   setup() {
+    const router = useRouter();
 
     const activeIndex = ref('1');
     const handleSelect = function(index) {
@@ -347,6 +348,9 @@ export default defineComponent({
     const checkDetails = (order) => {
         currentOrder.value = order;
         showDetails.value = true;
+
+        // 构建目标路径，跳转到订单详情页
+        router.push({ name: 'OrderDetail', params: { orderID: order.orderID } });
     };
 
 

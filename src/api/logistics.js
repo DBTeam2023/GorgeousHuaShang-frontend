@@ -1,8 +1,8 @@
 import request from '@/utils/request';
 
-export function getLogisticsInfo(orderId) {
+export function getLogisticsInfo() {
     return request({
-        url: "/api/order/logisticsDetails/${orderId}",
+        url: "/api/order/logisticsDetails/",
         method: "GET",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")

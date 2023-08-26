@@ -13,7 +13,7 @@
                 </el-col>
             </el-row>
             <el-row class="row-2" justify="space-between"><!--订单发货信息-->
-                <el-col :span="24" class="row-2-card"><!--订单状态--><orderStateCard/></el-col>
+                <el-col :span="24" class="row-2-card"><!-- 订单状态 --><orderStateCard/></el-col>
             </el-row>
             <el-row class="row-3" justify="space-between"><!--订单发货信息-->
                 <el-col :span="12" class="row-3-card"><!--物流时间线--><logisticsCard/></el-col>
@@ -48,6 +48,7 @@ export default defineComponent({
     userInfoMenu
   }
 });
+
 </script>
 
 <script setup>
@@ -57,6 +58,8 @@ const router = useRouter(); // 获取路由实例
 const onReturnButtonClick = () => { // 点击返回按钮时的跳转逻辑
     router.push('/order/');
 }
+
+
 </script>
 
 <style scoped>
@@ -66,6 +69,7 @@ const onReturnButtonClick = () => { // 点击返回按钮时的跳转逻辑
     }
     .returnButton {
         margin-left: 50px;
+        text-decoration: none; /* 去掉下划线 */
     }
     .row-1-text {
         display: flex;
