@@ -18,59 +18,62 @@
 </template>
 
 <script setup>
-// import { MoreFilled } from '@element-plus/icons-vue'
+import { MoreFilled } from '@element-plus/icons-vue'
 import {reactive, onMounted} from 'vue'
-import { getLogisticsInfo } from '@/api/logistics'; // 从API模块中导入物流信息的函数
+import { getAllLogisticsInfo } from '@/api/logistics'; // 从API模块中导入物流信息的函数
+import { useRoute } from 'vue-router';
 
-/*  
-const activities = [
-  {
-    content: '【浙江省嘉兴市】',
-    timestamp: '2023-07-02 20:46',
-    size: 'large',
-    type: 'primary',
-    icon: MoreFilled,
-  },
-  {
-    content: '【嘉兴市】快件离开【嘉兴】已发往【上海浦西转运中心】',
-    timestamp: '2023-07-03 17:39',
-  },
-  {
-    content: '到达【上海浦西转运中心】',
-    timestamp: '2023-07-03 22:13',
-    type: 'primary',
-    hollow: true,
-  }
-]
-*/
-
-
+const route = useRoute(); // 获取路由实例
 const LogisticsInfo = reactive([]); // 初始化为空数组
 
-const fetchLogisticsInfo = () => {
-  getLogisticsInfo()
-    .then(resp => {
-      const data = resp.data.data;
-      const details = data.details;
+// const fetchLogisticsInfo = () => {
+//   const orderNumber = route.params.orderID;
+//   getLogisticsInfo({logisticsId:"5df54e19-cf5b-4e7e-ae0c-5955238cd77f"})
+//   // getLogisticsInfo({logisticsId:orderNumber})
+//     .then(resp => {
+//       const data = resp.data.data;
+//       const details = data.details;
 
-      // 将物流时间线信息添加到数组中
-      details.forEach(detail => {
+//       // 将物流时间线信息添加到数组中
+//       details.forEach(detail => {
+//         LogisticsInfo.push({
+//           content: detail.arrivePlace,
+//           timestamp: detail.arriveTime,
+//           color: 'primary', 
+//           hollow: false, // 时间线项空心
+//         });
+//       });
+//     })
+//     .catch(err => {
+//       console.log('获取物流信息错误：', err);
+//     });
+// };
+// onMounted(() => {
+//   fetchLogisticsInfo(); 
+// });
+
+
+onMounted(() => {
+  const orderNumber = route.params.orderID;
+  getAllLogisticsInfo({ logisticsId: "5df54e19-cf5b-4e7e-ae0c-5955238cd77f" })
+  // getAllLogisticsInfo({logisticsId:orderNumber})
+    .then(resp => {
+      const logisticsData = resp.data.data;
+
+      // 遍历后端返回的物流信息数组
+      logisticsData.forEach(detail => {
         LogisticsInfo.push({
           content: detail.arrivePlace,
           timestamp: detail.arriveTime,
-          color: 'primary', 
-          hollow: false, // 时间线项空心
+          color: 'primary',
+          hollow: false,
         });
       });
     })
     .catch(err => {
       console.log('获取物流信息错误：', err);
     });
-};
-onMounted(() => {
-  fetchLogisticsInfo(); 
 });
-
 
 
 </script>

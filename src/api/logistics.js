@@ -8,13 +8,10 @@ export function getLogisticsInfo(data) {
     });
 }
 
-// 获取用户个人信息
-export function getUserInfo() {
+export function getAllLogisticsInfo(data) {
     return request({
-        url: "/api/UserSystem/getUserInfo/",
-        method: "GET",
-        headers: {
-            Authorization: "Bearer " + localStorage.getItem("jwtToken")
-        },
-    })
+        url: "/api/Logistics/getAllLogisticsInfo/", 
+        method: 'POST',
+        data:data,
+    });
 }

@@ -31,7 +31,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getLogisticsInfo, getUserInfo } from '@/api/logistics'
+import { getLogisticsInfo } from '@/api/logistics'
+import { getUserInfo } from '@/api/userinfo'
 import { useRoute } from 'vue-router';
 
 const route = useRoute(); // 获取路由实例
