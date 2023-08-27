@@ -39,8 +39,8 @@
                 <!-- 鼠标悬浮效果 -->
                 <div class="shadow" v-show="showShadow">
                   <!-- goodsId: couponList.value[index * rowSize + i].commodityId -->
-                  <el-icon v-if="coupon.isValid" @click="turnToProduct(index, i)" :size="40" color="yellow"><Position /></el-icon>
-                  <el-icon v-else @click="handleRemove(index,i)" :size="40" color="red"><Delete /></el-icon>
+                  <el-button v-if="coupon.isValid"  type="primary" :icon="Position" size="large" @click="turnToProduct(index, i)" circle style="margin-right:20px"/>
+                  <el-button type="danger" :icon="Delete" size="large" @click="handleRemove(index,i)" circle/>
                 </div>
 
                 <!-- 1、优惠券类型 -->
@@ -124,69 +124,6 @@ import { deleteUserCoupon } from '@/api/coupon';
 
   const showShadow = ref(false);//是否显示阴影块
 
-  // const couponList = [
-  // {
-  //   couponId: "SWAS8sD7EG", //优惠券id
-  //   storeId: "你好哇这是汤姆叔叔的小屋啊啊啊啊啊啊啊啊啊啊啊啊啊", //店铺id
-  //   commodityId: "3", //商品id
-  //   type: "discount", //优惠券类型（折扣
-  //   discount: 8.88, //折扣大小
-  //   bar: 0,//满减门槛
-  //   reduction: 0, //满减金额
-  //   start: "2023-07-28 05:28:20",//起始时间
-  //   end: "2024-07-27 21:28:20",//终止时间
-  //   isValid:true,
-  // },
-  // {
-  //   couponId: "SWAS8sD7EG", //优惠券id
-  //   storeId: "1", //店铺id
-  //   commodityId: "这里是洛丽塔小裙裙啦", //商品id
-  //   type: "maxout", //优惠券类型（折扣
-  //   discount: 0, //折扣大小
-  //   bar: 300,//满减门槛
-  //   reduction: 10, //满减金额
-  //   start: "2023-07-28 05:28:20",//起始时间
-  //   end: "2024-07-27 21:28:20",//终止时间
-  //   isValid:false,
-  // },
-  // {
-  //   couponId: "SWAS8sD7EG", //优惠券id
-  //   storeId: "你好哇这是汤姆叔叔的小屋啊啊啊啊啊啊啊啊啊啊啊啊啊", //店铺id
-  //   commodityId: "3", //商品id
-  //   type: "discount", //优惠券类型（折扣
-  //   discount: 8.88, //折扣大小
-  //   bar: 0,//满减门槛
-  //   reduction: 0, //满减金额
-  //   start: "2023-07-28 05:28:20",//起始时间
-  //   end: "2024-07-27 21:28:20",//终止时间
-  //   isValid:false,
-  // },
-  // {
-  //   couponId: "SWAS8sD7EG", //优惠券id
-  //   storeId: "1", //店铺id
-  //   commodityId: "3", //商品id
-  //   type: "maxout", //优惠券类型（折扣
-  //   discount: 0, //折扣大小
-  //   bar: 300,//满减门槛
-  //   reduction: 10, //满减金额
-  //   start: "2023-07-28 05:28:20",//起始时间
-  //   end: "2024-07-27 21:28:20",//终止时间
-  //   isValid:true,
-  // },
-  // {
-  //   couponId: "SWAS8sD7EG", //优惠券id
-  //   storeId: "1", //店铺id
-  //   commodityId: "3", //商品id
-  //   type: "maxout", //优惠券类型（折扣
-  //   discount: 0, //折扣大小
-  //   bar: 300,//满减门槛
-  //   reduction: 10, //满减金额
-  //   start: "2023-07-28 05:28:20",//起始时间
-  //   end: "2024-07-27 21:28:20",//终止时间
-  //   isValid:false,
-  // },
-  // ]
-
   //获取优惠券API的请求参数
   const queryParams = ref({
     pageNo: 1,
@@ -208,7 +145,7 @@ import { deleteUserCoupon } from '@/api/coupon';
 
   // 计算属性，计算couponList中图片对应的行；每行4列
   const couponRows = computed(() => {
-    const start= (currentPage.value - 1) * pageSize; //当前页的起始数据编号
+    const start= 0; //当前页的起始数据编号
     const end = start + pageSize;//当前页的最后数据号
     const paginatedcouponRows = couponList.value.slice(start, end);
     const rows = [];  //二维数组，rows[i]存储第i行的店铺卡牌（4个）
@@ -251,16 +188,14 @@ import { deleteUserCoupon } from '@/api/coupon';
   }
 
   // 改变页数
-  function handleCurrentChange(){
-      console.log("CurrentChange，get",queryParams.value);
-      // getCoupon();
-  }
+  // function handleCurrentChange(){
+  //     // getCoupon();
+  // }
 
   //选择菜单项
   const handleSelect = (value) => {
     activeTag.value = value;
     currentPage.value = 1; //默认显示菜单的第一页
-    console.log("getPage-select",queryParams.value.pageNo,',',queryParams.value.tag);
     // getCoupon();
   }
 
@@ -270,16 +205,11 @@ import { deleteUserCoupon } from '@/api/coupon';
   })
 
   watch(queryParams.value, (newValue) => {
-    //调用api获取优惠券信息
-    console.log("getPage:watch-queryParams",newValue.pageNo,',',newValue.tag);
     getCoupon();
   })
 
   onMounted(() => {
-    console.log("getPage-onMounted",queryParams.pageNo,',',queryParams.tag);
     getCoupon();
-    getCoupon();
-    console.log(total.value);
   })
 
     // 去使用优惠券
@@ -292,7 +222,6 @@ import { deleteUserCoupon } from '@/api/coupon';
       router.push({path: '/goodsdetail',
         query: {
           goodsId: coupon.commodityId,
-          productName: 123,
         }
       });
     }  
@@ -350,7 +279,7 @@ import { deleteUserCoupon } from '@/api/coupon';
   }
 
   .coupon-gallery {
-      margin-left:10%;
+      // margin-left:10%;
       position:relative;
   }
 
@@ -401,13 +330,6 @@ import { deleteUserCoupon } from '@/api/coupon';
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-
-  .shadow button {
-  padding: 10px 20px;
-  background-color: white;
-  border: none;
-  border-radius: 4px;
-}
 
   .c-container:hover .shadow{
     opacity: 1;
@@ -471,12 +393,6 @@ import { deleteUserCoupon } from '@/api/coupon';
     align-items: center;
     justify-content: center;
     color:#0000008c;
-  }
-
-  // 底部按钮容器
-  .bottom{
-    width:100%;
-    height:10%;
   }
 
   // 根据优惠券是否有效改变颜色

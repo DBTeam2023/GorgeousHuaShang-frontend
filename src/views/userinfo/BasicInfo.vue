@@ -369,7 +369,7 @@
 <style lang="scss" scoped>
 
     .all-container{
-        margin-left:15%;
+        // margin-left:15%;
         width:900px;
     }
   

@@ -1,89 +1,104 @@
 <script setup>
-import {computed} from 'vue'
+import {computed,onMounted} from 'vue'
 import {ref} from 'vue'
 import Card from '@/components/common/Card.vue'
+import { getFollowedStore, unfollowStore } from '@/api/userinfo'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import router from "@/router"
+
 
   const FollowedExit = ref(true);
 
-  const imageList = [
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '神兵小将',
-      shopDescription: '动画片神兵小将联合店铺'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '喜羊羊与灰太狼',
-      shopDescription: '喜羊羊，美羊羊，懒羊羊，沸羊羊，别看我只是一只羊，羊儿的聪明难以想象'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  },
-  {
-      url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-      shopName: '汤姆猫的小店',
-      shopDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶'
-  }
-  ]
+  const storeList = ref([]);
 
   // 分页栏用到的数据
   const currentPage=ref(1) //当前页数，默认为第1页
-  const pageSize=8 //每页的图片数量，设置为8
+  const pageSize = 8 //每页的图片数量，设置为8
+  const rowSize = 4
+  let total = ref(9);
 
-  // 计算属性，计算imageList中图片对应的行；每行3列
+  // 计算属性，计算storeList中图片对应的行；每行3列
   const imageRows = computed(() => {
-    const start=(currentPage.value-1)*pageSize; //当前页的起始数据编号
+    const start=0; //当前页的起始数据编号
     const end=start+pageSize;//当前页的最后数据号
-    const paginatedShopRows=imageList.slice(start,end);
+    const paginatedShopRows=storeList.value.slice(start,end);
     const rows = []  //二维数组，rows[i]存储第i行的店铺卡牌（4个）
-    const rowSize = 4
     const rowCount = pageSize/rowSize; //行数
     for (let i = 0; i < rowCount; i++) {
       rows.push(paginatedShopRows.slice(i * rowSize, (i + 1) * rowSize))
     }
-    return rows
+    return rows;
   })
 
-      function handleCurrentChange(){
+  // 获取用关注店铺
+  const getFollows = () =>{
+    getFollowedStore({
+      pageNo: currentPage.value,
+      pageSize: pageSize,
+    })
+    .then(resp => {
+      console.log(1);
+      storeList.value = resp.data.records;
+      total = resp.data.total;            
+      // 暂时图片写死
+      // for (const store of storeList.value) {
+      //     const imageSrc = base64ToString(store.picture,'image/png');
+      //     store.picture = imageSrc.value;
+      // }
+      console.log('获取关注成功');
+    })
+  }
+
+  onMounted(() =>{
+    getFollows();
+  })
+
+  function handleCurrentChange(){
       console.log("handleCurrentChange");
+      getFollows();
   }
 
-  function handleCancelClick(){
-      //将该店铺从关注页删除
-      console.log("handleCancelButton");
-  }
+  function goDetails(id){
+        //跳转到指定商品详情页
+        console.log("godetail",id);
+        // 跳转到指定店铺详情页
+      //   router.push({path: '/shop',
+      //   query: {
+      //     shopId: id,
+      //     productName: 123,
+      //   }
+      // });
+    }
 
-  function handleDetailsClick(){
-      //跳转到指定店铺详情页
-      console.log("handleDetailsButton");
-  }
+    function cancelFollow(id){
+        //将该商品从关注页删除
+        console.log("remove",id);
+        ElMessageBox.confirm(
+            '是否取消关注该店铺?',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        ).then(()=>{
+            // 调用后端api取消收藏
+            unfollowStore({
+                storeId:id,
+            })
+            .then(resp =>{
+                ElMessage.success('取消关注成功');
+            })
+            .catch(err =>{
+                ElMessage.error('取消关注失败，请重试');
+            })
+            // 重新获取关注店铺列表
+            getFollows();
+
+        })
+        .catch(()=>{
+            ElMessage.info('取消操作');
+        })
+    }
 </script>
 
 <template>
@@ -95,22 +110,22 @@ import Card from '@/components/common/Card.vue'
   <div class="shop-gallery" v-if="FollowedExit === true">
       <h2>店铺关注</h2>
         <!-- 行 -->
-      <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="60">
+      <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="10">
         <!-- 列 -->
-        <el-col v-for="(image, i) in row" :key="i" :span="6" class="shopcol">
-          <Card :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
+        <el-col v-for="(store, i) in row" :key="i" :span="6" class="shopcol">
+          <Card style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
             <!-- 店铺图片 -->
             <div class="shop">
-                <img :src="image.url" class="image" />
+                <img :src="store.picture" class="image" />
             </div>
             <div style="padding: 14px">
               <!-- 店铺名称 -->
-              <div class="name">{{ image.shopName }}</div>
+              <div class="name">{{ store.shopName }}</div>
               <!-- 店铺描述 -->
-              <div class="description">{{ image.shopDescription }}</div>
+              <div class="description">{{ store.shopId }}</div>
               <div class="bottom">
-                <el-button class="details-btn" @click="handleDetailsClick">查看详情</el-button>
-                <el-button class="cancel-btn" @click="handleCancelClick">取消收藏</el-button>
+                <el-button class="details-btn" type="primary" @click="goDetails(store.shopId)">查看详情</el-button>
+                <el-button class="cancel-btn" type="info" @click="cancelFollow(store.shopId)">取消关注</el-button>
               </div>
             </div>
           </Card>
@@ -125,7 +140,7 @@ import Card from '@/components/common/Card.vue'
             :disabled="disabled"
             :background="background"
             layout="prev, pager, next, jumper"
-            :total="imageList.length"
+            :total="total"
             @current-change="handleCurrentChange"
             />
       </el-row>
@@ -138,7 +153,7 @@ import Card from '@/components/common/Card.vue'
   <style lang="scss" scoped>
 
     .shop-gallery {
-        margin-left:10%;
+        // margin-left:10%;
         position:relative;
     }
 
@@ -169,12 +184,13 @@ import Card from '@/components/common/Card.vue'
     }
 
     .description{
+        text-align:center;
         padding-top:10px;
         font-size: 14px;
-        height: 50px; /* 设置固定高度 */
-        overflow: hidden; /* 防止内容溢出 */
-        text-overflow: ellipsis; /* 将溢出的文本替换为省略号 */
-        white-space: nowrap; /* 防止内容换行 */
+        height: 40px; /* 设置固定高度 */
+        // overflow: hidden; /* 防止内容溢出 */
+        // text-overflow: ellipsis; /* 将溢出的文本替换为省略号 */
+        // white-space: nowrap; /* 防止内容换行 */
     }
 
 

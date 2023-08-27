@@ -144,8 +144,8 @@
         console.log('获取失败！');
         console.log(error);
         ElMessage({
-                    message: '获取钱包信息错误，请重试！',
-                    type: 'error',
+                    message: '获取钱包信息错误，请刷新重试！',
+                    type: 'info',
                 })
     });
 

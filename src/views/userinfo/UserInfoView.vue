@@ -67,9 +67,9 @@
 </script>
 
 
-<template>
+<template >
     <el-row>
-        <el-col span="4">
+        <el-col span="4" style="flex-grow:1">
             <!-- 侧边菜单栏 -->
             <div class="aside" >
                 <!-- <div class="container"> -->
@@ -144,7 +144,7 @@
             </div>
         </el-col>
         
-        <el-col span="20" >
+        <el-col span="20" style="flex-grow:1">
             <!-- 个人信息页 -->
             <div v-if="selectedMenu === 'basicInfo'">
                 <BasicInfo />
