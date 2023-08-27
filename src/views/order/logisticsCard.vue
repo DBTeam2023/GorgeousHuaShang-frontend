@@ -58,12 +58,16 @@ onMounted(() => {
 <style scoped>
 .logistics-card {
     margin-top: 30px;
-    margin-left: 50px;
+    margin-left: 70px;
     width: 630px;
 }
 .logisticsText {
-    margin-top: 5px;
+    margin-top: 10px;
     margin-left: 35px;
     margin-bottom: 30px;
+}
+.logistics-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 </style>

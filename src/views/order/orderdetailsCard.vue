@@ -1,8 +1,8 @@
 <template>
     <el-card class="row-3-card">
         <el-table :data="orderTableData" style="width: 100%">
-            <el-table-column prop="orderID" label="订单号" width="220px"/>
-            <el-table-column prop="goods" label="商品" width="220px">
+            <el-table-column prop="orderID" label="订单号" width="300px"/>
+            <el-table-column prop="goods" label="商品" width="250px">
                 <template v-slot="{ row }">
                     <img :src="row.goods.image" alt="goods image" style="width: 50px; height: 50px;"/>
                     <div>{{ row.goods.description }}</div>
@@ -48,8 +48,12 @@ const formatQuantity = (row, column, cellValue) => {
 <style scoped>
 .row-3-card {
     margin-top: 30px;
-    margin-left: 50px;
-    margin-right: 60px;
+    margin-left: 70px;
+    margin-right: 80px;
     width: 1300px;
+}
+.row-3-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 </style>

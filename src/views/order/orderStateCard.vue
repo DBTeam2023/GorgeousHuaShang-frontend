@@ -167,8 +167,12 @@ onMounted(() => {
 
 .orderState-card{
     margin-top: 30px;
-    margin-left: 50px;
-    margin-right: 60px;
+    margin-left: 70px;
+    margin-right: 80px;
+}
+.orderState-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
     
 </style>

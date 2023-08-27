@@ -17,11 +17,13 @@
             </el-row>
             <el-row class="row-3" justify="space-between"><!--订单发货信息-->
                 <el-col :span="12" class="row-3-card"><!--物流时间线--><logisticsCard/></el-col>
-                <el-col :span="12" class="row-3-card"><!--订单时间线--><timelineCard/></el-col>
+                <!-- <el-col :span="12" class="row-3-card"><timelineCard/></el-col> -->
+                <el-col :span="12" class="row-3-card"><paymentInfoCard/></el-col>
                 
             </el-row>
             <el-row class="row-4"><!--订单明细表--><orderdetailsCard/></el-row>
-            <el-row class="row-5" ><!--订单支付信息列表--><paymentInfoCard/></el-row>
+            <!--订单支付信息列表-->
+            <!-- <el-row class="row-5" ><paymentInfoCard/></el-row> -->
         </el-main>
     </el-container>
 </template>
@@ -67,12 +69,13 @@ const onReturnButtonClick = () => { // 点击返回按钮时的跳转逻辑
         margin-top: 10px;
     }
     .returnButton {
-        margin-left: 50px;
+        margin-left: 55px;
         text-decoration: none; /* 去掉下划线 */
     }
     .row-1-text {
         display: flex;
         align-items: center;
+        margin-left: 15px;
     }
     .row-2-card {
         align-self: 100px;
