@@ -107,13 +107,7 @@ onMounted(() => {
             OrderState.value.company = logisticsResponse.data.company;
         })
         .catch(error => {
-            if (error.response) {
-                console.error('Error:', error.response.data);
-            } else if (error.request) {
-                console.error('No response received:', error.request);
-            } else {
-                console.error('Error fetching data:', error.message);
-            }
+            console.error('Error fetching logistics information:', error);
         });
 });
 
