@@ -87,7 +87,13 @@
         })
         .then(resp => {
             itemList.value = resp.data.records;
-            total = resp.data.total;            
+            total = resp.data.total;     
+            if(total === 0){
+                CollectedExit.value = false;
+            }       
+            else{
+                CollectedExit.value = true;
+            }
             // 暂时图片写死
             // for (const commodity of itemList.value) {
             //     const imageSrc = base64ToString(commodity.picture,'image/png');

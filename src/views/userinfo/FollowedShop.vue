@@ -37,9 +37,14 @@ import router from "@/router"
       pageSize: pageSize,
     })
     .then(resp => {
-      console.log(1);
       storeList.value = resp.data.records;
-      total = resp.data.total;            
+      total = resp.data.total;       
+      if(total === 0){
+          FollowedExit.value = false;
+      }       
+      else{
+          FollowedExit.value = true;
+      }     
       // 暂时图片写死
       // for (const store of storeList.value) {
       //     const imageSrc = base64ToString(store.picture,'image/png');
