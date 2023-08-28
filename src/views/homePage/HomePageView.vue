@@ -76,6 +76,7 @@ import Card from "@/components/common/Card.vue";
 import {getGoodsInPage} from "@/api/goods";
 import {ElMessage} from "element-plus";
 import router from "@/router";
+import { base64ToUrl } from '@/utils/photo'
 
 let searchVal = ref("")
 
@@ -123,10 +124,11 @@ const getCommodities = () => {
   })
       .then(resp => {
         itemList.value = resp.data.records;
-        // todo： 写死url
+
         for (const item of itemList.value) {
-          item.url = 'https://th.bing.com/th/id/OIP.Eev9RJ9CWteAfu3lIZgHagHaGQ?pid=ImgDet&rs=1';
+          item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
         }
+
       })
       .catch(resp => {
         ElMessage("商品拉取失败")
