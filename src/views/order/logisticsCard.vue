@@ -1,9 +1,9 @@
 <template>
     <el-card class="logistics-card"><!--物流时间线-->
         <div>
-            <h3 class="logisticsText">物流信息</h3>
+            <h3 class="logisticsText">物流位置信息</h3>
         </div>
-        <el-timeline>
+        <el-timeline v-if="LogisticsInfo.length > 0">
             <el-timeline-item
             v-for="(activity, index) in LogisticsInfo"
             :key="index"
@@ -16,6 +16,9 @@
             {{ activity.content }}
             </el-timeline-item>
         </el-timeline>
+        <div v-else class="not-shipped-text">
+            您的宝贝尚未发货，暂无物流信息，请耐心等待哦~
+        </div>
     </el-card>
 </template>
 
@@ -69,5 +72,12 @@ onMounted(() => {
 .logistics-card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+.not-shipped-text {
+  margin-top: 50px;
+  font-style: italic; 
+  color: #888; 
+  text-align: center;
+  font-size: 20px;
 }
 </style>

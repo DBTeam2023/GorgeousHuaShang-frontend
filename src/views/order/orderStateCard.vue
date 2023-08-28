@@ -2,17 +2,31 @@
     <el-card class="orderState-card">
         <template #header>
         <div class="orderState-card-header">
-            <span style="font-weight: bold;">订单状态</span>
+            <span style="font-weight: bold; font-size: 1.15em;">订单信息</span>
             <!-- <el-button text @click="openAddressDialog">申请修改订单</el-button> -->
         </div>
         </template>
-        <div class="text item">用户编号：{{ OrderState.userID }}</div>
-        <div class="text item">用户昵称：{{ OrderState.nickName }}</div>
-        <div class="text item">手机号：{{ OrderState.phoneNumber }}</div>
+        <!-- <div class="text item">订单编号：{{ OrderState.orderID }}</div>
         <div class="text item">订单状态：{{ OrderState.state }}</div>
+        <div class="text item">用户编号：{{ OrderState.userID }}</div>
+        <div class="text item">用户名：{{ OrderState.username }}</div>
+        <div class="text item">手机号：{{ OrderState.phoneNumber }}</div>
         <div class="text item">仓库地址：{{ OrderState.shipAddress }}</div>
         <div class="text item">收货地址：{{ OrderState.pickAddress }}</div>
-        <div class="text item">快递公司：{{ OrderState.company }}</div>
+        <div class="text item">快递公司：{{ OrderState.company }}</div> -->
+        <el-descriptions
+            class="margin-top"
+            :column="2"
+            :style="blockMargin"
+        >
+            <el-descriptions-item label="订单编号：" >{{ OrderState.orderID }}</el-descriptions-item>
+            <el-descriptions-item label="用户编号：" >{{ OrderState.userID }}</el-descriptions-item>
+            <el-descriptions-item label="用户名：" >{{ OrderState.username }}</el-descriptions-item>
+            <el-descriptions-item label="手机号：" >{{ OrderState.phoneNumber }}</el-descriptions-item>
+            <el-descriptions-item label="仓库地址：" >{{ OrderState.shipAddress }}</el-descriptions-item>
+            <el-descriptions-item label="收货地址：" >{{ OrderState.pickAddress }}</el-descriptions-item>
+            <el-descriptions-item label="快递公司：" >{{ OrderState.company }}</el-descriptions-item>
+        </el-descriptions>    
     </el-card>
     
 
@@ -41,9 +55,10 @@ const route = useRoute(); // 获取路由实例
 // const itemList = ref([])
 
 const OrderState = ref({
+    orderID: '',
     state: '',
     userID: '',
-    nickName: '',
+    username: '',
     phoneNumber: '',
     shipAddress: '',
     pickAddress: '',
@@ -89,13 +104,14 @@ const OrderState = ref({
 
 onMounted(() => {
     const orderNumber = route.params.orderID;
+    OrderState.value.orderID = orderNumber;
 
     // 获取用户信息并更新 OrderState 对象
     getUserInfo()
         .then(userInfoResponse => {
             OrderState.value.userID = userInfoResponse.data.userId;
-            OrderState.value.nickName = userInfoResponse.data.nickName;
-            // OrderState.value.phoneNumber = userInfoResponse.data.phoneNumber;
+            OrderState.value.username = userInfoResponse.data.username;
+            OrderState.value.phoneNumber = userInfoResponse.data.phoneNumber;
 
             // 获取物流信息
             return getLogisticsInfo({ logisticsId: "27f18a02-656b-4450-b659-640ffb57a590" });
@@ -110,22 +126,6 @@ onMounted(() => {
             console.error('Error fetching logistics information:', error);
         });
 });
-
-
-// onMounted(() => {
-//     const orderNumber = route.params.orderID; // 获取订单号
-//     getLogisticsInfo({logisticsId:"27f18a02-656b-4450-b659-640ffb57a590"})
-//     // getLogisticsInfo({logisticsId:orderNumber})
-//         .then(response => {
-//             // OrderState.value.state = response.data.state;
-//             OrderState.value.shipAddress = response.data.shipAddress;
-//             OrderState.value.pickAddress = response.data.pickAddress;
-//             OrderState.value.company = response.data.company;
-//         })
-//         .catch(error => {
-//             console.error('Error fetching logistics information:', error);
-//         });
-// });
 
 
 // const sendDataToBackend = () => {
