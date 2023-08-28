@@ -381,7 +381,7 @@ function turnToProduct(index, i) {
   router.push({path: '/goodsdetail',
     query: {
       goodsId: itemList.value[index * rowSize + i].productId},
-      productName: 123,
+      // productName: 123,
   });
 }
 </script>
