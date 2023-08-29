@@ -70,6 +70,7 @@ import router from "@/router";
 import {useRoute} from "vue-router";
 import {getGoodsDetail} from "@/api/goods";
 import {ElMessage} from "element-plus";
+import { base64ToUrl } from '@/utils/photo'
 
 const route = useRoute()
 const _ = require('lodash');
@@ -85,12 +86,12 @@ const product = {
     },
     {
       index: 2,
-      info: "MJ",
+      // info: "MJ",
       imgsrc: yfpic
     },
     {
       index: 3,
-      info: "LG",
+      // info: "LG",
       imgsrc: lgpic
     }
   ]
