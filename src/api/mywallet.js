@@ -23,3 +23,15 @@ export function rechargeWallet(data){
         data:data,
     })
 }
+
+// 钱包扣钱
+export function deductWallet(data){
+    return request({
+        url:"/api/Payment/Wallet/deduct/",
+        method:"PUT",
+        headers:{
+            token: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data:data,
+    })
+}
