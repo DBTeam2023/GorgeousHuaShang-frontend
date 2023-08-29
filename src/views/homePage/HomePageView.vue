@@ -125,9 +125,9 @@ const getCommodities = () => {
       .then(resp => {
         itemList.value = resp.data.records;
 
-        for (const item of itemList.value) {
-          item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
-        }
+        // for (const item of itemList.value) {
+        //   item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
+        // }
 
       })
       .catch(resp => {

@@ -30,24 +30,67 @@
       </el-radio-group>
     </div>
 
-    <!--   <div class="my-selection">-->
-    <!--    <h3>数量</h3>-->
-    <!--    <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>-->
-    <!--   </div>-->
+    <div class="my-selection">
+      <h3>数量</h3>
+      <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
+    </div>
 
 
     <!-- 商品价格 -->
     <div v-if="showGoodsDescriptionVar">
-      <div class="price">￥{{ selectedcommodity.value.price }}</div>
+      <div class="price">￥{{ selectedcommodity.value.price * selectedcommodity.value.selectedQuantity}}</div>
     </div>
     <div v-else>
       <div class="price">￥ *** </div>
     </div>
 
    <div class="buttons">
-    <el-button type="primary" @click="addToCart">加入购物车</el-button>
-    <el-button type="success" @click="buyNow">立即购买</el-button>
+    <el-button type="primary" @click="dialogVisibleCart = true">加入购物车</el-button>
+    <el-button type="success" @click="dialogVisibleOrder = true">立即购买</el-button>
    </div>
+
+    <el-dialog
+        v-model="dialogVisibleCart"
+        title="加入购物车"
+        width="40%"
+    >
+      <span>
+        <div>商品名称：{{ route.query.productName }}</div>
+        <div>商品描述：{{ selectedcommodity.value.description }}</div>
+        <div>商品单价：{{ selectedcommodity.value.price }}</div>
+        <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
+        <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
+        <div>款式：{{ selectedcommodity.value.property }}</div>
+      </span>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="cancelAddCart">取消</el-button>
+        <el-button type="primary" @click="confirmAddCart">确认加入</el-button>
+      </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+        v-model="dialogVisibleOrder"
+        title="购买"
+        width="40%"
+    >
+      <span>
+        <div>商品名称：{{ route.query.productName }}</div>
+        <div>商品描述：{{ selectedcommodity.value.description }}</div>
+        <div>商品单价：{{ selectedcommodity.value.price }}</div>
+        <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
+        <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
+        <div>款式：{{ selectedcommodity.value.property }}</div>
+      </span>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="cancelAddOrder">取消</el-button>
+        <el-button type="primary" @click="confirmAddOrder">确认支付</el-button>
+      </span>
+      </template>
+    </el-dialog>
+
   </div>
  </div>
   <comment-view/>
@@ -71,6 +114,9 @@ import {useRoute} from "vue-router";
 import {getGoodsDetail} from "@/api/goods";
 import {ElMessage} from "element-plus";
 import { base64ToUrl } from '@/utils/photo'
+import { ElMessageBox } from 'element-plus';
+
+
 
 const route = useRoute()
 const _ = require('lodash');
@@ -98,7 +144,7 @@ const product = {
 };
 
 const selectedImage = ref('');
-const selectedQuantity = ref(1);
+let selectedQuantity = ref(1);
 
 // 默认选中第一张图片
 selectedImage.value = product.images[0].imgsrc;
@@ -119,11 +165,14 @@ let selectedcommodity = reactive({});// 选中属性对应的那个产品
   commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
   description: "小哥哥小姐姐都可以穿的汉服哟！",
   price: 300,
+  totalPrice: 600,
+  selectedQuantity: 2,
   property: {
     尺码: "S"
     男女款: "男款"
     颜色: "白"
   }
+  stock: 0,
 }
   */
 
@@ -132,21 +181,62 @@ watch(selectProperties, (newVal) => {
   selectedcommodity.value = {
     ...response.commodityInfo[selectIndex.value],
     commodityId: route.query.goodsId,
+    selectedQuantity: selectedQuantity.value,
+    totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
   }
+  console.log(selectedcommodity.value)
+});
+
+watch(selectedQuantity, (newVal) => {
+  selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
+  selectedcommodity.value = {
+    ...response.commodityInfo[selectIndex.value],
+    selectedQuantity: selectedQuantity.value,
+    totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
+  }
+  console.log(selectedcommodity.value)
 });
 
 function selectImage(image) {
   selectedImage.value = image;
 }
 
-function addToCart() {
-  console.log(2); // 加入购物车
+const dialogVisibleCart = ref(false);
+const dialogVisibleOrder = ref(false)
+function cancelAddCart() {
+  dialogVisibleCart.value = false
 }
 
-function buyNow() {
-  console.log(1); // 立即购买
+function confirmAddCart() {
+  // 添加购物车
+
+  dialogVisibleCart.value = false
 }
 
+function cancelAddOrder() {
+  // 创建订单
+
+
+  dialogVisibleOrder.value = false
+}
+
+function confirmAddOrder() {
+  // 跳转支付页面
+
+  // 创建订单
+
+  dialogVisibleOrder.value = false
+}
+
+const handleClose = (done) => {
+  ElMessageBox.confirm('Are you sure to close this dialog?')
+      .then(() => {
+        done();
+      })
+      .catch(() => {
+        // catch error
+      });
+};
 
 getGoodsDetail(commodityIdToBackend.value)
     .then(resp => {
