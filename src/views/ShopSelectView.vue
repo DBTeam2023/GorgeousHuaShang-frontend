@@ -1,114 +1,149 @@
 <template>
-    <div class="container">
-      <h1>{{ title }}</h1>
-      <div class="card-group">
-        <ElCard v-for="card in cards" :key="card.id" :header="card.title" :body-style="{ padding: '0' }">
-          <a :href="card.link" target="_blank">
-            <img :src="card.image" style="width: 100%">
-            <div style="padding: 14px;">
-              {{ card.subtitle }}
+    <div :class="{ container: true, 'sign-up-model': vari }">
+        <div class="inner-left-container">
+            <div class="login-content">
+                <h1 style="color: black;">选择店铺</h1>
+                <ElButton type="primary" @click="onClick" size="large">去注册</ElButton>
             </div>
-          </a>
-        </ElCard>
-      </div>
+            <img src="../assets/shop/login-bg.svg" class="image">
+        </div>
+        <div class="inner-right-container">
+            <div class="register-content">
+                <h1 style="color: black;">新建店铺</h1>
+                <ElButton type="primary" @click="onClick" size="large">去选择</ElButton>
+            </div>
+            <img src="../assets/shop/register-bg.svg" class="image">
+        </div>
+        <div class="inner-sign-up-container">
+            <login :class="{ 'sign-up-model': vari }"></login>
+            <register :class="{ 'sign-up-model': vari }"></register>
+        </div>
     </div>
   </template>
 
-  <script>
-  import { ref } from 'vue'
+  <script setup>
+import { ref } from 'vue';
+import login from './shop_subs/loginFrom.vue';
+import register from './shop_subs/registerForm.vue';
 
-  export default {
+const onClick = () => {
+  vari.value = !vari.value;
+};
 
-    setup() {
-      const title = ref('请选择您的店铺')
-      const cards = ref([
-        {
-          id: 1,
-          title: 'Destination A',
-          subtitle: 'Some description about destination A',
-          image: 'https://picsum.photos/id/1018/400/200',
-          link: 'https://www.example.com/destination-a'
-        },
-        {
-          id: 2,
-          title: 'Destination B',
-          subtitle: 'Some description about destination B',
-          image: 'https://picsum.photos/id/1015/400/200',
-          link: 'https://www.example.com/destination-b'
-        },
-        {
-          id: 3,
-          title: 'Destination C',
-          subtitle: 'Some description about destination C',
-          image: 'https://picsum.photos/id/1016/400/200',
-          link: 'https://www.example.com/destination-c'
-        }
-      ])
-
-      //  // 发起 GET 请求，并将返回的数据保存在响应式数据中
-      //  axios.get('https://example.com/cards')
-      //   .then(response => {
-      //     cards.value = response.data
-      //   })
-      //   .catch(error => {
-      //     console.error(error)
-      //   })
-
-      return {
-        title,
-        cards
-      }
-    }
-  }
+let vari = ref(false);
   </script>
-
   <style scoped>
   .container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 24px;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  .card-group {
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    overflow: hidden;
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 24px;
+    flex-direction: row;
+  }
+  .container::before {
+    content: "";
+    width: 2000px;
+    height: 2000px;
+    background-color: #D1DFE8;
+    position: absolute;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    right: 48%;
+    top: -10%;
+    transition: 1.8s ease-in-out;
+    z-index: 2;
+  }
+  .inner-left-container {
+    width: 0;
+    flex: 1;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
+    /* 上边|右边|下边|左边 */
+    padding: 3rem 10% 2rem 10%;
+    pointer-events: all;
+
+  }
+  .inner-right-container {
+    width: 0;
+    flex: 1;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    /* 上边|右边|下边|左边 */
+    padding: 3rem 10% 2rem 10%;
+    pointer-events: none;
+  }
+  .container .inner-right-container .register-content,
+  .container .inner-right-container .image {
+    transform: translateX(1000px);
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
+  }
+  .container .inner-left-container .login-content,
+  .container .inner-left-container .image {
+    transform: translateX(0px);
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
+
+  }
+  .image {
+    width: 100%;
+  }
+  .inner-sign-up-container {
+    width: 50%;
+    height: 50%;
+    position: absolute;
+    right: 0;
+    top: 20%;
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
-  .el-card__header {
-    font-size: 20px;
-    font-weight: bold;
-    padding: 14px;
+  /* 动画 */
+  .container.sign-up-model::before {
+    transform: translate(100%, -50%);
+    transition: 1.8s ease-in-out;
+    right: 52%;
   }
 
-  .el-card__body {
-    cursor: pointer;
-    transition: box-shadow 0.2s ease-in-out;
+  .container.sign-up-model .inner-right-container .register-content,
+  .container.sign-up-model .inner-right-container .image {
+    transform: translateX(0px);
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
   }
 
-  .el-card__body:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  .container.sign-up-model .inner-left-container .login-content,
+  .container.sign-up-model .inner-left-container .image {
+    transform: translateX(-1000px);
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
   }
 
-  img {
-    display: block;
-    height: auto;
-    max-width: 100%;
-    margin: 0 auto;
+  .container.sign-up-model .inner-sign-up-container {
+    width: 50%;
+    height: 50%;
+    top: 20%;
+    right: 50%;
+    transition: 1s ease-in-out;
+    transition-delay: 0.5s;
   }
 
-  .el-card__body > a {
-    color: inherit;
-    text-decoration: none;
+  .container.sign-up-model .inner-right-container {
+    pointer-events: all;
   }
 
-  .el-card__body > a:hover {
-    color: #409EFF;
+  .container.sign-up-model .inner-left-container {
+    pointer-events: none;
   }
+
   </style>

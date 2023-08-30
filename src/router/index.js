@@ -6,7 +6,6 @@ import HomePageView from "@/views/HomePageView.vue";
 import ShopSelectView from "@/views/ShopSelectView.vue";
 import ShopManageView from "@/views/ShopManageView.vue";
 import ShopView from "@/views/ShopView.vue";
-import Test from "@/views/Test.vue";
 import CartView from "@/views/cart/CartView.vue";
 import OrderDetailView from "@/views/OrderDetailView.vue";
 import OrderView from "@/views/OrderView.vue";
@@ -76,14 +75,6 @@ const routes =
           meta: {
               requestAuth: true,
           }
-    },
-    {
-      path : '/test/',
-      name : 'Test',
-        component : Test,
-      meta: {
-          requestAuth: true,
-      }
     },
         {
           path: '/cart/',
