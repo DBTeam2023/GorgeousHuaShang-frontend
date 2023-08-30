@@ -3,6 +3,8 @@ import {computed} from 'vue'
 import {ref} from 'vue'
 import Card from '@/components/common/Card.vue'
 
+  const FollowedExit = ref(true);
+
   const imageList = [
   {
       url: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
@@ -85,8 +87,13 @@ import Card from '@/components/common/Card.vue'
 </script>
 
 <template>
-    <div class="shop-gallery">
-      <h2>关注店铺</h2>
+    <div class="shop-gallery" v-if="FollowedExit === false"  style="width:980px">
+      <h2>店铺关注</h2>
+      <el-empty description="您还没有关注任何店铺哦~"/>
+    </div>
+
+  <div class="shop-gallery" v-if="FollowedExit === true">
+      <h2>店铺关注</h2>
         <!-- 行 -->
       <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="60">
         <!-- 列 -->
@@ -122,8 +129,9 @@ import Card from '@/components/common/Card.vue'
             @current-change="handleCurrentChange"
             />
       </el-row>
-    </div>
-  </template>
+  </div>
+
+</template>
   
 
 
@@ -185,7 +193,7 @@ import Card from '@/components/common/Card.vue'
     }
 
     .pagination{
-        width:900px;
+        width:1000px;
         margin-top:20px;
         margin-bottom:20px;
         justify-content: center;

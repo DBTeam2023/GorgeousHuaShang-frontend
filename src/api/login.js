@@ -26,4 +26,3 @@ export function doRegister(data) {
         data: data,
     })
 }
-
