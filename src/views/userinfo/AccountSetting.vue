@@ -13,14 +13,17 @@
                     label-width="120px"
                     class="pwdform"
                     >   
+                        <el-form-item label="输入旧密码" prop="oldpass">
+                            <el-input v-model="ruleForm.oldpass" :type="showOldPass ? 'password' : 'text'" autocomplete="off" show-password/>
+                        </el-form-item>
                         <el-form-item label="输入新密码" prop="pass">
-                            <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+                            <el-input v-model="ruleForm.pass" :type="showNewPass ? 'password' : 'text'" autocomplete="off" show-password/>
                         </el-form-item>
                         <el-form-item label="确认新密码" prop="checkPass">
                             <el-input
                             v-model="ruleForm.checkPass"
-                            type="password"
-                            autocomplete="off"
+                            :type="showNewPass ? 'password' : 'text'"
+                            autocomplete="off" show-password
                             />
                         </el-form-item>
                         <el-form-item style="margin-left:23%">
@@ -49,7 +52,7 @@
                 <p>3.账号下不存在尚未注销的店铺</p>
                 <p>4.账号不存在未完结的服务</p>
                 <el-form :model="logoutForm" class="center-button">
-                    <el-button type="danger" @click="logout" style="text-align: center;">注销账号</el-button>
+                    <el-button type="danger" @click="handlelogout" style="text-align: center;">注销账号</el-button>
                 </el-form>
             </el-card>
         </el-col>
@@ -57,82 +60,127 @@
 </template>
   
   <script setup>
-    import { reactive, ref } from 'vue'
+    import { reactive, ref, onMounted } from 'vue'
     import { ElMessage } from 'element-plus'
-    import { updateUserInfo } from '@/api/userinfo';
+    import { updateUserInfo, getUserInfo } from '@/api/userinfo';
+    import router from '@/router';
+
+    const oldpassword = ref();
+    const updateForm = ref();
+
+    const showOldPass = ref(false);
+    const showNewPass = ref(false);
 
 
-    const validatePass = (rule, value, callback) => {
-    if (value === '') {
-        callback(new Error('请输入密码'))
-    } else {
-        if (ruleForm.checkPass !== '') {
-        if (!ruleFormRef.value) return
-        ruleFormRef.value.validateField('checkPass', () => null)
+    const getInfo =() =>{
+        getUserInfo()
+        .then(resp =>{
+            oldpassword.value = resp.data.password;
+            updateForm.value = resp.data;
+            console.log(updateForm.value);
+        })
+        .catch(err =>{
+            console.log('获取旧密码失败');
+        })
+    }
+    onMounted(()=>{
+        getInfo();
+    })
+
+
+    // 旧密码输入规则
+    const validateOldpass = (rule, value,callback) => {
+        if(value === '')
+            callback(new Error('请输入旧密码'))
+        else if( value !== oldpassword.value){
+            callback(new Error('密码输入错误'));
         }
-        callback()
-    }
+        else{
+            callback();
+        }
     }
 
-    const validatePass2 = (rule, value, callback) => {
-    if (value === '') {
-        callback(new Error('请再次输入密码'))
-    } else if (value !== ruleForm.pass) {
-        callback(new Error("两次输入的密码不一致!"))
-    } else {
-        callback()
+    // 新密码输入规则
+    const validatePass = (rule, value, callback) => {
+        if (value === '') {
+            callback(new Error('请输入密码'))
+        } else {
+            if (ruleForm.value.checkPass !== '') {
+                if (!ruleFormRef.value) return
+                ruleFormRef.value.validateField('checkPass', () => null)
+            }
+            callback();
+        }
     }
+
+    // 二次新密码输入规则
+    const validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+            callback(new Error('请再次输入密码'))
+        } else if (value !== ruleForm.value.pass) {
+            callback(new Error("两次输入的密码不一致!"))
+        } else {
+            callback();
+        }
     }
 
     // 数据：用户两次输入的密码
-    const ruleFormRef = ref()
-    const ruleForm = reactive({
+    const ruleFormRef = ref() //对表单的引用
+    const ruleForm = ref({
+        oldpass:'',
         pass: '',
         checkPass: ''
-    })
-    // 向数据库提交的数据
-    const updateForm=ref({
-        pwd:'',
     })
 
     // 数据：密码输入规则
     const rules = reactive({
-    pass: [{ validator: validatePass, trigger: 'blur' }],
-    checkPass: [{ validator: validatePass2, trigger: 'blur' }]
+        oldpass:[{ validator: validateOldpass,trigger:'change' }],
+        pass: [{ validator: validatePass, trigger: 'blur' }],
+        checkPass: [{ validator: validatePass2, trigger: 'blur' }]
     })
 
+    // 提交表单
     const submitForm = (formEl) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            // 调用后端api修改信息
-            updateForm.value.pwd=ruleForm.pass;
-            updateUserInfo(updateForm)
-                .then(response=>{
-                    ElMessage({
-                        message: '修改成功！',
-                        type: 'success',
+        if (!formEl) return;
+        formEl.validate((valid) => {
+            if (valid) {
+                // 调用后端api修改信息
+                updateForm.value.password=ruleForm.value.pass;
+                updateUserInfo(updateForm.value)
+                    .then(response=>{
+                        ElMessage({
+                            message: '修改成功！',
+                            type: 'success',
+                        })
+                        if (!formEl) return
+                            formEl.resetFields();//清空
+                        getInfo();//再获取一次用户信息
                     })
-                })
-                .catch(err=>{
-                    ElMessage({
-                        message: '密码修改失败！',
-                        type: 'error',
+                    .catch(err=>{
+                        ElMessage({
+                            message: '密码修改失败，请重试！',
+                            type: 'error',
+                        })
                     })
-                })
-
-
-            console.log('提交!')
-        } else {
-            console.log('提交错误')
-            return false
-        }
-    })
+            } else {
+                ElMessage.error('请检查输入是否正确')
+                return false;
+            }
+        })
     }
 
+    // 表单重置
     const resetForm = (formEl) => {
-    if (!formEl) return
-        formEl.resetFields()
+        if (!formEl) return
+            formEl.resetFields()
+    }
+
+    // 注销账户
+    const handlelogout = (el) => {
+        //调用后端api注销账户
+
+        //退出到登录界面
+        router.push('/login/');
     }
 
 </script>

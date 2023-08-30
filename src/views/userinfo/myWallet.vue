@@ -135,9 +135,7 @@
     })
 
     // 获取用户钱包信息
-    getWallet({
-        token:"Bearer " + localStorage.getItem("jwtToken"),        
-    })
+    getWallet()
     .then(resp => {
         walletForm.balance=resp.data.balance;
         walletForm.status=resp.data.status;
@@ -146,8 +144,8 @@
         console.log('获取失败！');
         console.log(error);
         ElMessage({
-                    message: '获取钱包信息错误，请重试！',
-                    type: 'error',
+                    message: '获取钱包信息错误，请刷新重试！',
+                    type: 'info',
                 })
     });
 
@@ -158,7 +156,6 @@
         formRef.value.validate((valid) => {
             if(valid){
                 rechargeWallet({
-                    token:"Bearer " + localStorage.getItem("jwtToken"), 
                     amount:updateForm.amount,
                 })
                 .then(resp=>{
