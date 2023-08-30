@@ -1,37 +1,37 @@
 <template>
-    <!-- <div class="coupon-gallery" v-if="couponExit === false"  style="width:980px">
-      <h2>我的优惠券</h2>
-      <el-empty description="您还没有优惠券哦~"/>
-    </div> -->
+  <el-container class="coupon-container">
 
-  <div class="coupon-gallery" style="width:980px">
-      <h2>我的优惠券</h2>
-      <!-- 优惠券选择菜单 -->
+    <!-- 优惠券选择菜单 -->
+    <el-header class="header">
       <el-menu
-                :default-active="activeTag"
-                class="el-menu-demo"
-                mode="horizontal"
-                background-color="#545c64"
-                text-color="#fff"
-                active-text-color="#ffd04b"
-                @select="handleSelect"
-            >
-                <el-menu-item index="all">全部</el-menu-item>
-                <el-menu-item index="discount">折扣优惠券</el-menu-item>
-                <el-menu-item index="maxout">满减优惠券</el-menu-item>
-                <el-menu-item index="expired">已过期</el-menu-item>
+          :default-active="activeTag"
+          class="el-menu-demo"
+          mode="horizontal"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+          @select="handleSelect"
+      >
+          <el-menu-item index="all">全部</el-menu-item>
+          <el-menu-item index="discount">折扣优惠券</el-menu-item>
+          <el-menu-item index="maxout">满减优惠券</el-menu-item>
+          <el-menu-item index="expired">已过期</el-menu-item>
       </el-menu>
-
+    </el-header>
+    
+    <!-- 优惠券显示栏 -->
+    <el-main class="main">
+      <!-- 没有优惠券 -->
       <el-card v-if="couponExit === false">
         <el-empty description="您还没有优惠券哦~" />
       </el-card>
 
-      <!-- 优惠券显示栏 -->
+      <!-- 有优惠券 -->
       <el-card v-if="couponExit === true">
         <!-- 行 -->
-        <el-row v-for="(row, index) in couponRows" :key="index" class="couponrow" :gutter="60" style="margin:0 10px 0 0">
+        <el-row v-for="(row, index) in couponRows" :key="index"  :gutter="60" style="margin:0 10px 0 0">
           <!-- 列 -->
-          <el-col v-for="(coupon, i) in row" :key="i" :span="6" class="couponcol" style="padding:20px">
+          <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="padding:20px">
             <!-- 单张优惠券容器 -->
               <div class="c-container" :class="{'container-invalid': coupon.isValid === false}"
                   @mouseenter.native="isHover = true" @mouseleave.native="isHover = false"
@@ -95,22 +95,18 @@
               />
         </el-row>
       </el-card>
-  </div>
-
+    </el-main>
+  </el-container>
 </template>
 
 <script setup>
 import {computed, ref, watch, onMounted} from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import {useRoute} from "vue-router";
 import router from "@/router";
 import { Delete,Position } from '@element-plus/icons-vue';
 
 import { getCouponPage } from '@/api/coupon';
 import { deleteUserCoupon } from '@/api/coupon';
-
-
-  const route = useRoute()
 
   const couponExit = computed(()=>{
     return !(total.value === 0);
@@ -137,7 +133,7 @@ import { deleteUserCoupon } from '@/api/coupon';
   const currentPage=ref(1); //当前页数，默认为第1页
   const pageSize=4; //每页的图片数量，
   const rowSize = 4; //每行优惠券数量：4
-  let total = ref(4);//总数据
+  let total = ref(5);//总数据
 
   queryParams.value.pageSize = pageSize;  //总页数
   queryParams.value.pageNo = currentPage; //当前页数
@@ -274,19 +270,14 @@ import { deleteUserCoupon } from '@/api/coupon';
 
 
 <style lang="scss" scoped> 
-  h2{
-    text-align: center;
+
+  .coupon-container{        
+    padding:0 5% 5% 5%;
   }
 
-  .coupon-gallery {
-      // margin-left:10%;
-      position:relative;
-  }
-
-  .coupon-gallery .couponrow{
-      margin-left:10%;
-      margin-right:5%;
-      margin-top:30px;
+  .main,
+  .header{
+    padding:0;
   }
 
   // 居中容器
@@ -299,7 +290,7 @@ import { deleteUserCoupon } from '@/api/coupon';
 
   // 分页栏样式
   .pagination{
-      width:1000px;
+      // width:1000px;
       margin-top:20px;
       margin-bottom:20px;
       justify-content: center;

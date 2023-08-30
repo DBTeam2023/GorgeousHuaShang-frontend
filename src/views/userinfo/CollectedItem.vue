@@ -1,49 +1,49 @@
 <template>    
-    <div class="item-gallery" v-if="CollectedExit === false"  style="width:980px">
-        <h2>商品收藏</h2>
-        <el-empty description="您还没有收藏任何商品哦~"/>
-    </div>
+    <el-container class="collections-container">
+        <div class="item-gallery" v-if="CollectedExit === false">
+            <el-empty description="您还没有收藏任何商品哦~"/>
+        </div>
 
-    <div v-if="CollectedExit === true">
-        <div class="item-gallery">
-            <h2>商品收藏</h2>
-            <!-- 行 -->
-            <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="10">
-                <!-- 列 -->
-                <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
-                <Card style="margin:auto" :body-style="{ padding: '0' }"  :style="{ width: '210px', height: '300px'}" shadow="hover">
-                    <!-- 商品图片 -->
-                    <div class="item">
-                        <img :src="item.picture" class="image" />
-                    </div>
-                    <div style="padding:14px">
-                    <!-- 商品描述 -->
-                    <div class="description">{{ item.commodityDescription }}</div>
-                    <!-- 商品价格 -->
-                    <div class="price">￥{{ item.commodityPrice }}</div>
-                    <div class="bottom">
-                        <el-button type="primary" class="details-btn" @click="goDetails(item.commodityId)">查看详情</el-button>
-                        <el-button type="info" class="cancel-btn" @click="cancelCollected(item.commodityId)">取消收藏</el-button>
-                    </div>
-                    </div>
-                </Card>
-                </el-col>
+        <div v-if="CollectedExit === true">
+            <div class="item-gallery">
+                <!-- 行 -->
+                <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="40">
+                    <!-- 列 -->
+                    <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
+                    <Card style="margin:auto" :body-style="{ padding: '0' }"  :style="{ width: '210px', height: '300px'}" shadow="hover">
+                        <!-- 商品图片 -->
+                        <div class="item">
+                            <img :src="item.picture" class="image" />
+                        </div>
+                        <div style="padding:14px">
+                        <!-- 商品描述 -->
+                        <div class="description">{{ item.commodityDescription }}</div>
+                        <!-- 商品价格 -->
+                        <div class="price">￥{{ item.commodityPrice }}</div>
+                        <div class="bottom">
+                            <el-button type="primary" class="details-btn" @click="goDetails(item.commodityId)">查看详情</el-button>
+                            <el-button type="info" class="cancel-btn" @click="cancelCollected(item.commodityId)">取消收藏</el-button>
+                        </div>
+                        </div>
+                    </Card>
+                    </el-col>
+                </el-row>
+            </div>
+            <!-- 分页栏 -->
+            <el-row class="pagination">
+                <el-pagination
+                    v-model:currentPage="currentPage"
+                    v-model:pageSize="pageSize"
+                    :small="small"
+                    :disabled="disabled"
+                    :background="background"
+                    layout="prev, pager, next, jumper"
+                    :total="total"
+                    @current-change="handleCurrentChange"
+                    />
             </el-row>
         </div>
-        <!-- 分页栏 -->
-        <el-row class="pagination">
-            <el-pagination
-                v-model:currentPage="currentPage"
-                v-model:pageSize="pageSize"
-                :small="small"
-                :disabled="disabled"
-                :background="background"
-                layout="prev, pager, next, jumper"
-                :total="total"
-                @current-change="handleCurrentChange"
-                />
-        </el-row>
-    </div>
+    </el-container>
 
 
   </template>
@@ -158,24 +158,17 @@
 
   <style lang="scss" scoped>
 
-    h2{
-        text-align: center;
+    .collections-container{
+        padding:0 10% 0 10%;
     }
 
     .item-gallery {
-        // margin-left:10%;
         position:relative;
-        // width:100%;
     }
 
     .itemrow{
-        margin-top:30px;
+        margin-bottom:30px;
     }
-
-    .itmecol{
-        max-width:24%;
-    }
-
 
     .item{
         width:210px;
@@ -192,11 +185,6 @@
         margin-bottom: 0;
     }
 
-    // .item-gallery .info{
-    //     padding-top:0;
-    //     padding-left:14px;
-    //     padding-right:14px;
-    // }
     .description {
         margin-bottom: 20px;
         // padding-top:10px;
@@ -226,17 +214,9 @@
 
     // 分页块样式
     .pagination{
-        // margin-left:10%;
-        width:1000px;
         margin-top:20px;
-        margin-bottom:20px;
         justify-content: center;
         text-align:center;
-        // position: absolute;
-        // bottom: 0;
-        // left: 50%;
-        // transform: translateX(-50%);
-
     }
 
   </style>

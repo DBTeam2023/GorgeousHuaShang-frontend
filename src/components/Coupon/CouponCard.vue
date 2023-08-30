@@ -1,5 +1,4 @@
 <template>
-
     <div class="c-container" :class="{'container-invalid': coupon.isValid === false}">
         <!-- 1、优惠券类型 -->
         <div class="c-type center-container" :class="{'type-invalid': coupon.isValid === false}" >
@@ -87,15 +86,15 @@
     transition: opacity 0.3s ease;
   }
 
-  .c-container:hover .shadow{
-    opacity: 1;
-  }
+  // .c-container:hover .shadow{
+  //   opacity: 1;
+  // }
 
-  // 鼠标悬浮
-  .c-container:hover{
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px gray;
-  }
+  // // 鼠标悬浮
+  // .c-container:hover{
+  //   transform: scale(1.05);
+  //   box-shadow: 0 6px 12px gray;
+  // }
 
   // 顶部优惠券类型
   .c-container .c-type{

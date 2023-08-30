@@ -63,10 +63,15 @@
                         <el-row v-for="(row, index) in couponRows" :key="index" class="couponrow" :gutter="60" style="margin:0 10px 0 0">
                             <!-- 列 -->
                             <el-col v-for="(coupon, i) in row" :key="i" :span="6" class="couponcol" style="padding:20px">
-                                <CouponCard :coupon="coupon" :disableMouseEvents="disableMouseEvents">
-                                <!-- 添加单选按钮 -->
-
-                                </CouponCard>
+                                <el-row class="center-container" style="margin-bottom:10px">
+                                    <el-button type="primary" plain :icon="Check" circle 
+                                        :class="{ 'blue-button': coupon.couponId == selectedCouponID }" 
+                                     @click="selectCoupon(coupon.couponId)"/>
+                                </el-row>
+                                <el-row>
+                                    <CouponCard :coupon="coupon" :disableMouseEvents="disableMouseEvents" 
+                                        @click="selectCoupon(coupon.couponId)"/>
+                                </el-row>
                             </el-col>
                         </el-row>
                         <!-- 优惠金额 -->
@@ -107,17 +112,17 @@
 <script setup>
   import { ref, computed,onMounted } from 'vue';
   import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
-  import { SuccessFilled } from '@element-plus/icons-vue'
+  import { Check } from '@element-plus/icons-vue'
   import { useRoute, useRouter } from 'vue-router';
   import { getCouponPage, deleteUserCoupon } from '@/api/coupon'
   import { getWallet, deductWallet } from '@/api/mywallet'
   import router from '@/router';
   import CouponCard from '@/components/Coupon/CouponCard'
+  import { checkPermission } from '@/utils/auth';
 
     const route = useRoute(); // 来自：获取路由对象
 
-    // const orderID = ref(route.query.orderId);//订单编号（页面传参）
-    const orderID = ref('12fjds3234839');//订单编号（页面传参）
+    const orderID = ref(route.query.orderId);//订单编号（页面传参）
 
     const orderAmount = ref(324.3);//订单总金额
     const discountAmount = ref(8);//优惠金额
@@ -125,6 +130,7 @@
     const showCountdown = ref(false);//是否显示页面跳转倒计时对话框
     const countdown = ref(10);//倒计时的秒数
     const disableMouseEvents = ref(false);// 禁用优惠券鼠标事件
+    const selectedCouponID = ref('');//选中的优惠券id（默认值为后端所给的最优）
 
     const payMessage = ref('支付成功！');//支付状态信息
     const payType = ref('微信');//支付方式
@@ -193,6 +199,8 @@
 
     // 初始
     onMounted(() => {
+        //角色授权
+        checkPermission(["buyer"]);
         //1.根据orderId从后端获取商品价格orderAmount
 
         //2.根据orderId从后端拉取当前订单可用的优惠券列表
@@ -212,6 +220,11 @@
             router.push({ name: 'OrderDetail', params: { orderID: orderID } });
         }
     };
+
+    // 用户选择的优惠券id
+    const selectCoupon = (id) =>{
+        selectedCouponID.value = id;
+    }
 
     // 跳转到订单详情页面
     const jumpToOrder = (message) =>{
@@ -266,6 +279,7 @@
 
     // 取消支付 按钮 
     const cancelPayment = () => {
+        console.log(selectedCouponID.value);
         ElMessageBox.confirm(
             '是否取消支付当前订单?',
             {
@@ -340,6 +354,11 @@
   .delete-line{
     font-size:18px;
     text-decoration: line-through;
+  }
+
+  .blue-button{
+    background-color:#409eff;
+    color: white;
   }
   
   </style>

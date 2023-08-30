@@ -107,49 +107,50 @@ import router from "@/router"
 </script>
 
 <template>
-    <div class="shop-gallery" v-if="FollowedExit === false"  style="width:980px">
+  <el-container class="follow-container">
+    <div class="shop-gallery" v-if="FollowedExit === false" >
       <h2>店铺关注</h2>
       <el-empty description="您还没有关注任何店铺哦~"/>
     </div>
 
-  <div class="shop-gallery" v-if="FollowedExit === true">
-      <h2>店铺关注</h2>
-        <!-- 行 -->
-      <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="10">
-        <!-- 列 -->
-        <el-col v-for="(store, i) in row" :key="i" :span="6" class="shopcol">
-          <Card style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
-            <!-- 店铺图片 -->
-            <div class="shop">
-                <img :src="store.picture" class="image" />
-            </div>
-            <div style="padding: 14px">
-              <!-- 店铺名称 -->
-              <div class="name">{{ store.shopName }}</div>
-              <!-- 店铺描述 -->
-              <div class="description">{{ store.shopId }}</div>
-              <div class="bottom">
-                <el-button class="details-btn" type="primary" @click="goDetails(store.shopId)">查看详情</el-button>
-                <el-button class="cancel-btn" type="info" @click="cancelFollow(store.shopId)">取消关注</el-button>
+    <div class="shop-gallery" v-if="FollowedExit === true">
+          <!-- 行 -->
+        <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="40">
+          <!-- 列 -->
+          <el-col v-for="(store, i) in row" :key="i" :span="6" class="shopcol">
+            <Card style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
+              <!-- 店铺图片 -->
+              <div class="shop">
+                  <img :src="store.picture" class="image" />
               </div>
-            </div>
-          </Card>
-        </el-col>
-      </el-row>
-      <!-- 分页栏 -->
-      <el-row class="pagination">
-        <el-pagination
-            v-model:currentPage="currentPage"
-            v-model:pageSize="pageSize"
-            :small="small"
-            :disabled="disabled"
-            :background="background"
-            layout="prev, pager, next, jumper"
-            :total="total"
-            @current-change="handleCurrentChange"
-            />
-      </el-row>
-  </div>
+              <div style="padding: 14px">
+                <!-- 店铺名称 -->
+                <div class="name">{{ store.shopName }}</div>
+                <!-- 店铺描述 -->
+                <div class="description">{{ store.shopId }}</div>
+                <div class="bottom">
+                  <el-button class="details-btn" type="primary" @click="goDetails(store.shopId)">查看详情</el-button>
+                  <el-button class="cancel-btn" type="info" @click="cancelFollow(store.shopId)">取消关注</el-button>
+                </div>
+              </div>
+            </Card>
+          </el-col>
+        </el-row>
+        <!-- 分页栏 -->
+        <el-row class="pagination">
+          <el-pagination
+              v-model:currentPage="currentPage"
+              v-model:pageSize="pageSize"
+              :small="small"
+              :disabled="disabled"
+              :background="background"
+              layout="prev, pager, next, jumper"
+              :total="total"
+              @current-change="handleCurrentChange"
+              />
+        </el-row>
+    </div>
+  </el-container>
 
 </template>
   
@@ -157,15 +158,16 @@ import router from "@/router"
 
   <style lang="scss" scoped>
 
+    .follow-container {
+      padding:0 10% 0 10%;
+    }
+
     .shop-gallery {
-        // margin-left:10%;
         position:relative;
     }
 
     .shoprow{
-        margin-left:10%;
-        margin-right:5%;
-        margin-top:30px;
+        margin-bottom:30px;
     }
 
     .shop{
@@ -193,9 +195,6 @@ import router from "@/router"
         padding-top:10px;
         font-size: 14px;
         height: 40px; /* 设置固定高度 */
-        // overflow: hidden; /* 防止内容溢出 */
-        // text-overflow: ellipsis; /* 将溢出的文本替换为省略号 */
-        // white-space: nowrap; /* 防止内容换行 */
     }
 
 
@@ -214,9 +213,7 @@ import router from "@/router"
     }
 
     .pagination{
-        width:1000px;
         margin-top:20px;
-        margin-bottom:20px;
         justify-content: center;
         text-align:center;
     }
