@@ -1,8 +1,8 @@
-import{createRouter, createWebHashHistory} from 'vue-router';
-import HomePageView from '../views/homePage/HomePageView';
-import ClassificationView from "@/views/homePage/ClassificationView.vue";
+import { createRouter, createWebHashHistory } from 'vue-router';
 import LoginView from "@/views/login/LoginView.vue";
 import RegisterView from "@/views/login/RegisterView.vue";
+import HomePageView from "@/views/homePage/HomePageView.vue";
+import ClassificationView from "@/views/homePage/ClassificationView.vue";
 import ShopSelectView from "@/views/shop/ShopSelectView.vue";
 import ShopManageView from "@/views/shop/ShopManageView.vue";
 import ShopView from "@/views/shop/ShopView.vue";
@@ -10,10 +10,11 @@ import CartView from "@/views/cart/CartView.vue";
 import OrderDetailView from "@/views/order/OrderDetailView.vue";
 import OrderView from "@/views/order/OrderView.vue";
 import GoodsdetailView from "@/views/goods/GoodsdetailView.vue";
-import UserInfoView from "@/views/userinfo/UserInfoView.vue";
+import UserInfoView from "@/views/userinfo/UserInfoView.vue"
 import store from "@/store";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import NotFound from "@/views/NotFoundView.vue";
+import PayView from '@/views/pay/PayView.vue';
 
 /// requestAuth 代表是否需要登录才能访问界面
 
