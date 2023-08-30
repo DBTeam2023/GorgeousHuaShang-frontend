@@ -3,8 +3,8 @@
     <div class="shop-header">
       <div class="shop-icon-container">
         <img :src="shopIcon" alt="Shop Icon" class="shop-icon" />
-        <input type="file" ref="imageInput" style="display:none" @change="handleImageChange" accept="image/*">
-        <button class="upload-image-button" @click="uploadImage">上传图片</button>
+<!--        <input type="file" ref="imageInput" style="display:none" @change="handleImageChange" accept="image/*">-->
+<!--        <button class="upload-image-button" @click="uploadImage">上传图片</button>-->
       </div>
       <h1 class="shop-name">{{ shopName }}</h1>
       <div class="shop-rating">
@@ -29,11 +29,11 @@
     :before-close="handleClose"
   >
     <el-form :model="form" label-width="80px" ref="form">
-      <el-form-item label="店铺头像">
-        <el-input :v-model="infoForm.shopIcon" readonly :placeholder='picURL'></el-input>
-        <input type="file" ref="imageInput2" style="display:none" @change="handleIconChange" accept="image/*">
-        <button class="upload-image-button" @click.prevent="uploadIcon">请上传图片</button>
-      </el-form-item>
+<!--      <el-form-item label="店铺头像">-->
+<!--        <el-input :v-model="infoForm.shopIcon" readonly :placeholder='picURL'></el-input>-->
+<!--        <input type="file" ref="imageInput2" style="display:none" @change="handleIconChange" accept="image/*">-->
+<!--        <button class="upload-image-button" @click.prevent="uploadIcon">请上传图片</button>-->
+<!--      </el-form-item>-->
       <el-form-item label="店铺名称">
         <el-input v-model="infoForm.shopName"/>
       </el-form-item>

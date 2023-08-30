@@ -32,6 +32,8 @@ const onClick = () => {
 };
 
 let vari = ref(false);
+
+
   </script>
   <style scoped>
   .container {

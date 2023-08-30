@@ -1,25 +1,23 @@
 <template>
     <ElForm class="register-form" ref="registerRef" :model="registerParam" :rules="registerRules">
-        <div style="display: flex; justify-content: center;">
-            <div class="image-container" @click="openFileBrowser">
-  <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">
-  <div class="overlay" v-if="!imageUrl">
-    <el-icon :style="{ fontSize: '32px' }" class="upload-icon"><UploadFilled /></el-icon>
-  </div>
-  <img :src="imageUrl" alt="上传的图片" class="uploaded-image" v-if="imageUrl">
-</div>
-  </div>
+<!--        <div style="display: flex; justify-content: center;">-->
+<!--            <div class="image-container" @click="openFileBrowser">-->
+<!--              <input type="file" ref="fileInput" style="display: none" @change="handleFileChange">-->
+<!--              <div class="overlay" v-if="!imageUrl">-->
+<!--                <el-icon :style="{ fontSize: '32px' }" class="upload-icon"><UploadFilled /></el-icon>-->
+<!--              </div>-->
+<!--              <img :src="imageUrl" alt="上传的图片" class="uploaded-image" v-if="imageUrl">-->
+<!--            </div>-->
+<!--        </div>-->
         <ElFormItem prop="username">
-            <ElInput placeholder="请输入店铺名字" :prefix-icon="House" v-model="registerParam.username" size="large"></ElInput>
+            <ElInput placeholder="请输入店铺名字" :prefix-icon="House" v-model="registerParam.storeName" size="large"></ElInput>
         </ElFormItem>
-        <ElFormItem prop="password">
-            <ElInput placeholder="请输入店铺简介" :prefix-icon="ChatSquare" v-model="registerParam.password" size="large"></ElInput>
-        </ElFormItem>
-        <ElFormItem prop="email">
-            <ElInput placeholder="请输入店铺地址" :prefix-icon="Location" v-model="registerParam.email" size="large"></ElInput>
-        </ElFormItem>
+        <el-radio-group v-model="radio1" class="ml-4">
+          <el-radio label="1" size="large">管理员</el-radio>
+          <el-radio label="0" size="large">非管理员</el-radio>
+        </el-radio-group>
         <ElFormItem>
-            <ElButton type="primary" class="register-btn" size="large" @click="submit(registerRef)">新建</ElButton>
+            <ElButton type="primary" class="register-btn" size="large" @click="submit(registerParam)">新建</ElButton>
         </ElFormItem>
     </ElForm>
 </template>
@@ -28,59 +26,59 @@
 import { House,ChatSquare, Location, Message } from '@element-plus/icons-vue';
 import { reactive, ref,onMounted } from 'vue';
 import {UploadFilled} from '@element-plus/icons-vue'
-import { ElButton,ElIcon } from 'element-plus';
+import {ElButton, ElIcon, ElMessage} from 'element-plus';
+import {addStore} from "@/api/store";
+
+let radio1 = ref("1")
 
 const registerParam = reactive({
-  username: "",
-  password: "",
-  email: ""
+  storeName: "",
+  isManager: radio1
 });
-const canvasRef = ref(null);
-const canvasWidth = ref(200);
-const canvasHeight = ref(200);
-const registerRef = ref();
-const registerRules = reactive({
-  username: [{ required: true, message: "名字不能为空", trigger: 'blur' }],
-  password: [{
-    required: true,
-    message: "简介不能为空",
-    trigger: 'blur'
-  }],
-  email: [{ required: true, message: "地址不能为空", trigger: 'blur' }]
-});
-
+// setInterval(() => {
+//   console.log(registerParam)
+// }, 1000)
 const submit = (formEl) => {
-  if (!formEl) {
+  // console.log(formEl)
+  if (formEl.storeName === "") {
     return false;
   }
-  formEl.validate(async (validate) => {
-    if (validate) {
-      console.log("开始做注册的逻辑");
-    } else {
-      return false;
-    }
-  });
+  addStore({
+    storeName: registerParam.storeName,
+    isManager: radio1.value
+  })
+      .then(resp => {
+        ElMessage({
+          message: "新建成功！",
+        });
+      })
+      .catch(resp => {
+        ElMessage({
+          message: "新建失败！",
+          type: "warning",
+        });
+      })
 };
 
-const imageUrl = ref(null);
+// const imageUrl = ref(null);
 
-function openFileBrowser() {
-  const input = document.createElement('input');
-  input.type = 'file';
-
-  input.addEventListener('change', () => {
-    const file = input.files[0];
-    const reader = new FileReader();
-
-    reader.addEventListener('load', () => {
-      imageUrl.value = reader.result;
-    });
-
-    reader.readAsDataURL(file);
-  });
-
-  input.click();
-}
+// function openFileBrowser() {
+//   const input = document.createElement('input');
+//   input.type = 'file';
+//
+//   input.addEventListener('change', () => {
+//     const file = input.files[0];
+//     const reader = new FileReader();
+//
+//     reader.addEventListener('load', () => {
+//       imageUrl.value = reader.result;
+//     });
+//
+//     reader.readAsDataURL(file);
+//   });
+//
+//   input.click();
+// }
 </script>
 
 <style scoped>

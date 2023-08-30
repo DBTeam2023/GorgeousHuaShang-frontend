@@ -1,128 +1,110 @@
 <template>
-  <div class="product-management">
-    <el-row :gutter="20" class="product-list">
-      <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="product.id"  :gutter="20">
+  <div class="store-management">
+    <el-row :gutter="20" class="store-list">
+      <el-col :span="5.5" v-for="(store, index) in currentStores" :key="store.id"  :gutter="20">
         <Card class="card">
-        <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
-          <img class="product-image" :src="product.image" alt="Product Image" />
-          <h3 class="product-name">{{ product.name }}</h3>
-          <div class="button-group">
-            <p>店铺描述</p>
-          </div>
-        </div>
-      </Card>
+          <RouterLink :to="{path: '/shopmanage', query: {storeid: store.storeId }}" class="router-link-active">
+            <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
+              <img class="store-image" :src="store.image" alt="Product Image" />
+              <h3 class="store-name">{{ store.storeName }}</h3>
+              <div class="button-group">
+                <p>店铺ID: {{ store.storeId }}</p>
+              </div>
+            </div>
+          </RouterLink>
+        </Card>
       </el-col>
     </el-row>
-    <div class="container">
-    <el-pagination
-      :current-page="currentPage"
-      :page-size="pageSize"
-      :total="filteredProducts.length"
-      @current-change="handlePageChange"
-      :hide-on-single-page="value"
-      layout="prev, pager, next"
-    ></el-pagination>
-  </div>
+<!--    <div class="container">-->
+      <el-pagination
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :total="total"
+        @current-change="handlePageChange"
+        layout="prev, pager, next"
+      ></el-pagination>
+<!--    </div>-->
   </div>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import {computed, onMounted, reactive, ref, watch} from 'vue';
 import { ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination } from 'element-plus';
 import Card from "@/components/common/Card.vue";
-import { Search } from '@element-plus/icons-vue';
+import {getMySTore} from "@/api/store";
 
-const products = reactive([
-  {
-    id: '1',
-    name: '店铺A',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '2',
-    name: '店铺B',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '3',
-    name: '商品C',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '4',
-    name: '商品D',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '5',
-    name: '商品E',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '6',
-    name: '商品F',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '7',
-    name: '商品G',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '8',
-    name: '商品H',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '9',
-    name: '商品I',
-    image: 'https://picsum.photos/200/200',
-  },
-  {
-    id: '10',
-    name: '商品J',
-    image: 'https://picsum.photos/200/200',
-  },
-  // 更多商品...
-]);
+let stores = ref([]);
 
 const searchProductName = ref('');
-const isHovered = reactive(Array(products.length).fill(false));
+const isHovered = reactive(Array(stores.value.length).fill(false));
 const currentPage = ref(1);
 const pageSize = 2;
+let total = ref(1);
 
-const searchProducts = () => {
-  // 根据商品名称进行查询逻辑
-};
+watch(currentPage, (newVal) => {
+  getMySTore({
+    pageNo: newVal,
+    pageSize: pageSize
+  })
+      .then(resp => {
+        stores.value = []
+        for (let i = 0; i < resp.data.records.length; i ++) {
+          stores.value.push({
+            storeId: resp.data.records[i].storeId,
+            storeName: resp.data.records[i].storeName,
+            image: 'https://picsum.photos/200/200',
+          })
+        }
+        total.value = resp.data.total;
+      })
+      .catch(resp => {
+        console.log(resp)
+      })
+})
 
-const resetFilters = () => {
-  searchProductName.value = '';
-  currentPage.value = 1;
-};
-
-const filteredProducts = computed(() => {
+const filteredStores = computed(() => {
   const searchText = searchProductName.value.trim().toLowerCase();
   if (searchText === '') {
-    return products;
+    return stores.value;
   } else {
-    return products.filter(product => product.name.toLowerCase().includes(searchText));
+    return stores.value.filter(store => store.name.toLowerCase().includes(searchText));
   }
 });
 
-const currentProducts = computed(() => {
-  const startIndex = (currentPage.value - 1) * pageSize;
+const currentStores = computed(() => {
+  const startIndex = 0;
   const endIndex = startIndex + pageSize;
-  return filteredProducts.value.slice(startIndex, endIndex);
+  return filteredStores.value.slice(startIndex, endIndex);
 });
 
 const handlePageChange = (newPage) => {
   currentPage.value = newPage;
 };
 
+onMounted(() => {
+  getMySTore({
+    pageNo: currentPage.value,
+    pageSize: pageSize
+  })
+      .then(resp => {
+        stores.value = []
+        for (let i = 0; i < resp.data.records.length; i ++) {
+          stores.value.push({
+            storeId: resp.data.records[i].storeId,
+            storeName: resp.data.records[i].storeName,
+            image: 'https://picsum.photos/200/200',
+          })
+        }
+        total.value = resp.data.total;
+      })
+      .catch(resp => {
+        console.log(resp)
+      })
+})
 </script>
 
 <style scoped>
-.product-management.sign-up-model{
+.store-management.sign-up-model{
     opacity: 0;
     transition: 1s ease-in-out;
     z-index: 0;
@@ -133,7 +115,7 @@ const handlePageChange = (newPage) => {
   margin-top: 20px
 }
 
-.product-management {
+.store-management {
   grid-column: 1;
     grid-row: 1;
     opacity: 1;
@@ -154,11 +136,11 @@ const handlePageChange = (newPage) => {
   margin-bottom: 20px;
 }
 
-.product-list {
+.store-list {
   margin-bottom: 20px;
 }
 
-.product-card {
+.store-card {
   width: 100%;
   height: 100%;
   display: flex;
@@ -166,23 +148,23 @@ const handlePageChange = (newPage) => {
   justify-content: center;
 }
 
-.product-image {
+.store-image {
   border-radius: 20px;
 }
 
-.product-info {
+.store-info {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.product-name {
+.store-name {
   font-size: 18px;
   margin-bottom: 10px;
 }
 
-.product-actions {
+.store-actions {
   display: flex;
   justify-content: space-between;
 }
