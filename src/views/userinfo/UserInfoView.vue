@@ -7,6 +7,7 @@
     import myWallet from '@/views/userinfo/myWallet.vue';
     import myCoupon from '@/views/userinfo/Coupon.vue';
     import store from '@/store';
+    import router from '@/router';
 
     import { watchEffect } from 'vue';
     import { useRoute } from 'vue-router';
@@ -52,21 +53,23 @@
     const selectedMenu = ref(route.params.selected || 'basicInfo' );
     // 监听路由参数的变化
     watchEffect(() => {
-    	selectedMenu.value = route.params.selected || 'basicInfo';
+        router.replace({ params: { selected: selectedMenu.value } });//修改路由参数
     });
 
     // 菜单项选择响应函数
-    const MenuSelect=(menuItem)=>{
-        selectedMenu.value=menuItem;
-        console.log(selectedMenu);
+    const MenuSelect=(value)=>{
+        selectedMenu.value=value;
     }
+
+    //用户角色：buyer/seller
+    const role = store.state.user.role;//"seller"或"buyer"
 
 </script>
 
 
-<template>
+<template >
     <el-row>
-        <el-col span="4">
+        <el-col span="4" style="flex-grow:1">
             <!-- 侧边菜单栏 -->
             <div class="aside" >
                 <!-- <div class="container"> -->
@@ -88,48 +91,47 @@
                                 class="el-menu-vertical-demo"
                                 text-color="#fff"
                                 :default-active="selectedMenu"
-                                @selected="handleMenuSelect"
+                                @select="MenuSelect"
                                 @open="handleOpen"
                                 @close="handleClose"
                             >
-                                <el-menu-item index="basciInfo" class="menu-item" @click="MenuSelect('basicInfo')">
+                                <el-menu-item index="basicInfo" class="menu-item">
                                     <span>
                                         <el-icon><User /></el-icon>
                                         <span style="margin-left:10px">个人信息</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="collectedItem" class="menu-item" @click="MenuSelect('collectedItem')">
+                                <el-menu-item v-if="role === 'buyer'" index="collectedItem" class="menu-item">
                                     <span>
                                         <el-icon><Goods /></el-icon>
                                         <span style="margin-left:10px">我的收藏</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="followedShop" class="menu-item" @click="MenuSelect('followedShop')">
+                                <el-menu-item v-if="role === 'buyer'" index="followedShop" class="menu-item">
                                     <span>
                                         <el-icon><CollectionTag /></el-icon>
                                         <span style="margin-left:10px">关注店铺</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="myOrder" class="menu-item" @click="MenuSelect('myOrder')">
+                                <el-menu-item v-if="role === 'buyer'" index="myOrder" class="menu-item">
                                     <span>
                                         <el-icon><Tickets /></el-icon>
                                         <span style="margin-left:10px">我的订单</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('myCoupon')">
+                                <el-menu-item v-if="role === 'buyer'" index="myCoupon" class="menu-item">
                                     <span>
                                         <el-icon><Position /></el-icon>
                                         <span style="margin-left:10px">我的优惠券</span>
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="myWallet" class="menu-item" @click="MenuSelect('myWallet')">
+                                <el-menu-item index="myWallet" class="menu-item" >
                                     <span>
                                         <el-icon><Wallet /></el-icon>
                                         <span style="margin-left:10px">我的钱包</span>
-                                        
                                     </span>
                                 </el-menu-item>
-                                <el-menu-item index="accountSetting" class="menu-item" @click="MenuSelect('accountSetting')">
+                                <el-menu-item index="accountSetting" class="menu-item" >
                                     <span>
                                         <el-icon><setting /></el-icon>
                                         <span style="margin-left:10px">账号设置</span>                                        
@@ -142,7 +144,7 @@
             </div>
         </el-col>
         
-        <el-col span="20" >
+        <el-col span="20" style="flex-grow:1">
             <!-- 个人信息页 -->
             <div v-if="selectedMenu === 'basicInfo'">
                 <BasicInfo />
