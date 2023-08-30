@@ -4,8 +4,11 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card class="card">
-          <div class="image-container" @click="openImagePicker">
-            <img class="product-image" :src="selectedImage ? selectedImage : placeholderImage" alt="Product Image" />
+          <div class="image-container" >
+<!--            <img class="product-image" :src="selectedImage ? selectedImage : placeholderImage" alt="Product Image" />-->
+
+            这里放图片
+
           </div>
           <el-input v-model="productName" placeholder="请输入商品名称"></el-input>
         </el-card>
@@ -14,30 +17,25 @@
       <el-col :span="12">
         <el-card class="card">
           <h3 class="subtitle">商品信息</h3>
-          <el-form :model="form" label-width="80px" class="form">
+          <el-form label-width="80px" class="form">
             <el-form-item label="单件价格">
-              <el-input v-model.number="form.price" type="number"></el-input>
+              <el-input v-model.number="price" type="number"></el-input>
             </el-form-item>
             <el-form-item label="初始库存">
-              <el-input v-model.number="form.stock" type="number"></el-input>
+              <el-input v-model.number="stock" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品详情">
-              <el-input type="textarea" v-model="form.description"></el-input>
+              <el-input type="textarea" v-model="description"></el-input>
             </el-form-item>
           </el-form>
         </el-card>
       </el-col>
     </el-row>
 
-    <el-row :gutter="20">
-      <el-col :span="24">
-        <el-card class="card">
-          <div class="image-list">
-            <ImageGallery></ImageGallery>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <div class="m-4">
+      <p>设置商品种类</p>
+      <el-cascader v-model="value" :options="options" @change="handleChange" />
+    </div>
 
     <div class="button-container">
       <el-button type="primary" class="submit-button" @click="submitForm">确定</el-button>
@@ -47,81 +45,85 @@
   <div></div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
-import ImageGallery from './PicShow.vue';
 
-export default {
-  name: 'AddProduct',
-  components: {
-    ImageGallery,
-  },
-  data() {
-    return {
-      selectedImage: '',
-      placeholderImage: 'https://via.placeholder.com/200', // Placeholder image URL
-      productName: '',
-      form: {
-        price: null,
-        stock: null,
-        description: '',
-      },
-      fileList: [], // List of uploaded files
+const handleChange = (value) => {
+  console.log(value)
+}
+
+let productName= ref("");
+let price = ref()
+let stock = ref()
+let description = ref("")
+
+function submitForm() {
+
+
+      console.log(productName.value);
     };
-  },
-  methods: {
-    openImagePicker() {
-        // 打开文件选择对话框（示例: 使用<input type="file">元素）
-        // 更新所选图片
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-
-        fileInput.addEventListener('change', (event) => {
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              this.selectedImage = e.target.result;
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-
-        fileInput.click();
-    },
-    beforeUpload(file) {
-      // Before uploading the file
-      // You can perform validation here if needed
-    },
-    handleUploadSuccess(response, file) {
-        // 处理成功的文件上传
-        // 在此处更新fileList
-        this.fileList.push({
-          url: response.url,
-          name: file.name,
-          // 其他属性...
-        });
-      // 其他方法...
-    },
-    handleUploadError(error, file) {
-      // Handle file upload error
-    },
-    submitForm() {
-      // Perform form submission logic
-      // You can access the form data and uploaded files here
-      console.log(this.productName);
-      console.log(this.form);
-      console.log(this.fileList);
-    },
-    resetForm() {
+function resetForm() {
     // 将表单字段重置为初始值
     this.formData.field1 = '';
     this.formData.field2 = '';
     // ...
+  };
+
+// value: ,
+// label: ,
+// children: [
+//
+// ],
+
+
+const options = [
+  {
+    value: "配饰",
+    label: "配饰",
+    children: [
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "头饰",
+            label: "头饰",
+          },
+          {
+            value: "耳饰",
+            label: "耳饰",
+          },
+          {
+            value: "腰饰",
+            label: "腰饰",
+          },
+          {
+            value: "项链",
+            label: "项链",
+          },
+          {
+            value: "手饰",
+            label: "手饰",
+          }
+        ],
+      }
+    ],
   },
+  {
+    value: "男装",
+    label: "男装",
+    children: [
+
+    ],
   },
-};
+  {
+    value: "女装",
+    label: "女装",
+    children: [
+
+    ],
+  },
+]
 </script>
 
 <style scoped>

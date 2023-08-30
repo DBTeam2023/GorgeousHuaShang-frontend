@@ -8,10 +8,10 @@
           <el-input v-model="searchProductName" placeholder="商品名称"></el-input>
         </div>
       </el-col>
-      <el-col :span="6">
-        <el-button type="primary" @click="searchProducts">查询</el-button>
-        <el-button @click="resetFilters">重置</el-button>
-      </el-col>
+<!--      <el-col :span="6">-->
+<!--        <el-button type="primary" @click="searchProducts">查询</el-button>-->
+<!--        <el-button @click="resetFilters">重置</el-button>-->
+<!--      </el-col>-->
     </el-row>
     <el-row :gutter="20" class="product-list">
       <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="product.id"  :gutter="20">
@@ -43,7 +43,7 @@ import { ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination } from 'element-p
 import Card from "@/components/common/Card.vue";
 import { Search } from '@element-plus/icons-vue';
 
-const products = reactive([
+const products = ref([
   {
     id: '1',
     name: '商品A',
@@ -98,30 +98,24 @@ const products = reactive([
 ]);
 
 const searchProductName = ref('');
-const isHovered = reactive(Array(products.length).fill(false));
+const isHovered = reactive(Array(products.value.length).fill(false));
 const currentPage = ref(1);
 const pageSize = 8;
 
-const searchProducts = () => {
-  // 根据商品名称进行查询逻辑
-};
+let total;
 
-const resetFilters = () => {
-  searchProductName.value = '';
-  currentPage.value = 1;
-};
 
 const filteredProducts = computed(() => {
   const searchText = searchProductName.value.trim().toLowerCase();
   if (searchText === '') {
-    return products;
+    return products.value;
   } else {
-    return products.filter(product => product.name.toLowerCase().includes(searchText));
+    return products.value.filter(product => product.name.toLowerCase().includes(searchText));
   }
 });
 
 const currentProducts = computed(() => {
-  const startIndex = (currentPage.value - 1) * pageSize;
+  const startIndex = 0;
   const endIndex = startIndex + pageSize;
   return filteredProducts.value.slice(startIndex, endIndex);
 });

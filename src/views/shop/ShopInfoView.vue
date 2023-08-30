@@ -55,11 +55,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox } from 'element-plus';
+import {getStoreInfo} from "@/api/store";
+import {useRoute} from "vue-router";
+
+const route = useRoute();
+
+const shopName = ref('');
 
 const shopIcon = ref('https://picsum.photos/200/200');
-const shopName = ref('我是斯黛拉姐姐的狗');
 const shopRating = ref(4);
 const shopDescription = ref('这是一家很不错的店铺。');
 const shopAddress = ref('北京市朝阳区');
@@ -71,6 +76,18 @@ const infoForm = ref({
   shopAddress: '',
 });
 let picURL = ref("")
+
+onMounted(() => {
+  getStoreInfo({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        shopName.value = resp.data.storeName
+      })
+      .catch(resp => {
+        console.log(resp)
+      })
+})
 
 const handleClose = (done) => {
   ElMessageBox.confirm('确定要关闭对话框吗？')
@@ -105,32 +122,7 @@ const resetForm = () => {
   infoForm.value.shopDescription = '';
   infoForm.value.shopAddress = '';
   picURL = '';
-};
-
-const uploadIcon = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (event) => {
-    const file = event.target.files[0];
-    picURL = file.name;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      infoForm.value.shopIcon = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
-};
-
-const handleIconChange = (event) => {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    form.value.shopIcon = e.target.result;
-  };
-  reader.readAsDataURL(file);
-};
+}
 
 </script>
 
