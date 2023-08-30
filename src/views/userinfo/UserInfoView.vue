@@ -45,7 +45,7 @@
     <div class="common-layout">
         <el-container>
             <!-- 侧边导航栏 -->
-            <el-aside width="15%" style="background-color: #545c64;">
+            <el-aside width="15%" class="aside">
                 <userInfoMenu :selectedMenu="selectedMenu" @MenuSelect="handleSelect"/>
             </el-aside>
             <!-- 主要内容 -->
@@ -99,6 +99,11 @@
 
 <!-- 样式表 -->
 <style lang="scss" scoped>
+
+    .aside{
+        min-height:80vh;
+        background-color: #545c64;
+    }
 
     // 左侧菜单栏样式
     .header {
