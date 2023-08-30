@@ -29,3 +29,14 @@ export function getStoreInfo(data) {
         data: data
     })
 }
+
+export function createNewCommodity(data) {
+    return request({
+        url: "http://47.115.231.142:1030/Product/createCommodity/",
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/form-data',
+        },
+        data: data
+    })
+}

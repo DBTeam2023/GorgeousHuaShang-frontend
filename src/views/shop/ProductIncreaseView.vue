@@ -31,14 +31,16 @@
         </el-card>
       </el-col>
     </el-row>
-
+    <el-form-item label="商品属性">
+      <el-input type="textarea" v-model="property" placeholder="请按要求输入商品属性" rows="5"></el-input>
+    </el-form-item>
     <div class="m-4">
       <p>设置商品种类</p>
-      <el-cascader v-model="value" :options="options" @change="handleChange" />
+      <el-cascader v-model="classification" :options="options" @change="handleChange" />
     </div>
 
     <div class="button-container">
-      <el-button type="primary" class="submit-button" @click="submitForm">确定</el-button>
+      <el-button type="primary" class="submit-button" @click="addNewCommodity">确定</el-button>
       <el-button class="reset-button" @click="resetForm">重置</el-button>
     </div>
   </div>
@@ -46,34 +48,76 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
+import {useRoute} from "vue-router";
+import {createNewCommodity} from "@/api/store";
+import {ElMessage} from "element-plus";
+
+const route = useRoute();
 
 const handleChange = (value) => {
   console.log(value)
 }
 
+let classification = ref("")
+watch(classification, (newVal) => {
+  const values = Object.values(classification.value);
+  const combinedString = values.join(',');
+  classificationType.value = combinedString;
+})
+
 let productName= ref("");
 let price = ref()
 let stock = ref()
 let description = ref("")
+let classificationType = ref("")
+let property = ref(JSON.stringify({
+  "尺寸": [
+    "大",
+    "中",
+    "小",
+  ],
+  "颜色": [
+    "红色",
+    "绿色",
+  ],
+}))
 
 function submitForm() {
-
-
       console.log(productName.value);
-    };
-function resetForm() {
-    // 将表单字段重置为初始值
-    this.formData.field1 = '';
-    this.formData.field2 = '';
-    // ...
-  };
+}
 
-// value: ,
-// label: ,
-// children: [
-//
-// ],
+function resetForm() {
+
+};
+
+
+function addNewCommodity() {
+  const formData = new FormData();
+  formData.append('StoreId', route.query.storeid);
+  formData.append('ProductName', productName.value);
+  formData.append('Description', description.value);
+  formData.append('Price', price.value);
+  formData.append('Property', property.value);
+  formData.append('ClassficationType', classificationType.value);
+  formData.append('IsDeleted', 0);
+  // todo: 图片
+  console.log(formData)
+  createNewCommodity(formData)
+      .then(resp => {
+        ElMessage({
+          message: '创建成功!',
+          type: 'success',
+        })
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '创建失败!',
+          type: 'warning',
+        })
+      })
+
+}
 
 
 const options = [
@@ -113,14 +157,642 @@ const options = [
     value: "男装",
     label: "男装",
     children: [
+      {
+        value: "上衣",
+        label: "上衣",
+        children: [
+          {
+            value: "麻布大褂",
+            label: "麻布大褂",
+          },
+          {
+            value: "鱼皮衣",
+            label: "鱼皮衣",
+          },
+          {
+            value: "羊皮大衣",
+            label: "羊皮大衣",
+          },
+          {
+            value: "土布衣",
+            label: "土布衣",
+          },
+          {
+            value: "中山装",
+            label: "中山装",
+          },
+          {
+            value: "马褂",
+            label: "马褂",
+          },
+          {
+            value: "长袍",
+            label: "长袍",
+          },
+        ]
+      },
+      {
+        value: "下衣",
+        label: "下衣",
+        children: [
+          {
+            value: "腰裙",
+            label: "腰裙",
+          },
+          {
+            value: "膝裤",
+            label: "膝裤",
+          },
+          {
+            value: "裤裙",
+            label: "裤裙",
+          },
+          {
+            value: "长裤",
+            label: "长裤",
+          },
+        ]
+      },
+      {
+        value: "鞋",
+        label: "鞋",
+        children: [
+          {
+            value: "长筒靴",
+            label: "长筒靴",
+          },
+          {
+            value: "牛皮靴",
+            label: "牛皮靴",
+          },
+          {
+            value: "布鞋",
+            label: "布鞋",
+          },
+          {
+            value: "草鞋",
+            label: "草鞋",
+          },
+        ]
+      },
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "汉族",
+            label: "汉族",
+          },
+          {
+            value: "蒙古族",
+            label: "蒙古族",
+          },
+          {
+            value: "回族",
+            label: "回族",
+          },
+          {
+            value: "藏族",
+            label: "藏族",
+          },
+          {
+            value: "维吾尔族",
+            label: "维吾尔族",
+          },
+          {
+            value: "苗族",
+            label: "苗族",
+          },
+          {
+            value: "彝族",
+            label: "彝族",
+          },
+          {
+            value: "壮族",
+            label: "壮族",
+          },
+          {
+            value: "布依族",
+            label: "布依族",
+          },
+          {
+            value: "朝鲜族",
+            label: "朝鲜族",
+          },
+          {
+            value: "满族",
+            label: "满族",
+          },
+          {
+            value: "侗族",
+            label: "侗族",
+          },
+          {
+            value: "瑶族",
+            label: "瑶族",
+          },
+          {
+            value: "白族",
+            label: "白族",
+          },
+          {
+            value: "土家族",
+            label: "土家族",
+          },
+          {
+            value: "哈尼族",
+            label: "哈尼族",
+          },
+          {
+            value: "哈萨克族",
+            label: "哈萨克族",
+          },
+          {
+            value: "傣族",
+            label: "傣族",
+          },
+          {
+            value: "黎族",
+            label: "黎族",
+          },
+          {
+            value: "僳僳族",
+            label: "僳僳族",
+          },
+          {
+            value: "佤族",
+            label: "佤族",
+          },
+          {
+            value: "畲族",
+            label: "畲族",
+          },
+          {
+            value: "高山族",
+            label: "高山族",
+          },
+          {
+            value: "拉祜族",
+            label: "拉祜族",
+          },
+          {
+            value: "水族",
+            label: "水族",
+          },
+          {
+            value: "东乡族",
+            label: "东乡族",
+          },
+          {
+            value: "纳西族",
+            label: "纳西族",
+          },
+          {
+            value: "景颇族",
+            label: "景颇族",
+          },
+          {
+            value: "柯尔克孜族",
+            label: "柯尔克孜族",
+          },
+          {
+            value: "土族",
+            label: "土族",
+          },
+          {
+            value: "达斡尔族",
+            label: "达斡尔族",
+          },
+          {
+            value: "仫佬族",
+            label: "仫佬族",
+          },
+          {
+            value: "羌族",
+            label: "羌族",
+          },
+          {
+            value: "布朗族",
+            label: "布朗族",
+          },
+          {
+            value: "撒拉族",
+            label: "撒拉族",
+          },
+          {
+            value: "毛南族",
+            label: "毛南族",
+          },
+          {
+            value: "仡佬族",
+            label: "仡佬族",
+          },
+          {
+            value: "锡伯族",
+            label: "锡伯族",
+          },
+          {
+            value: "阿昌族",
+            label: "阿昌族",
+          },
+          {
+            value: "普米族",
+            label: "普米族",
+          },
+          {
+            value: "塔吉克族",
+            label: "塔吉克族",
+          },
+          {
+            value: "怒族",
+            label: "怒族",
+          },
+          {
+            value: "乌孜别克族",
+            label: "乌孜别克族",
+          },
+          {
+            value: "俄罗斯族",
+            label: "俄罗斯族",
+          },
+          {
+            value: "鄂温克族",
+            label: "鄂温克族",
+          },
+          {
+            value: "崩龙族",
+            label: "崩龙族",
+          },
+          {
+            value: "保安族",
+            label: "保安族",
+          },
+          {
+            value: "裕固族",
+            label: "裕固族",
+          },
+          {
+            value: "京族",
+            label: "京族",
+          },
 
+          {
+            value: "塔塔尔族",
+            label: "塔塔尔族",
+          },
+
+          {
+            value: "独龙族",
+            label: "独龙族",
+          },
+
+          {
+            value: "鄂伦春族",
+            label: "鄂伦春族",
+          },
+
+          {
+            value: "赫哲族",
+            label: "赫哲族",
+          },
+
+          {
+            value: "门巴族",
+            label: "门巴族",
+          },
+
+          {
+            value: "珞巴族",
+            label: "珞巴族",
+          },
+
+          {
+            value: "基诺族",
+            label: "基诺族",
+          },
+        ]
+      }
     ],
   },
   {
     value: "女装",
     label: "女装",
     children: [
+      {
+        value: "上衣",
+        label: "上衣",
+        children: [
+          {
+            value: "坎肩",
+            label: "坎肩",
+          },
+          {
+            value: "鱼皮衣",
+            label: "鱼皮衣",
+          },
+          {
+            value: "羊皮大衣",
+            label: "羊皮大衣",
+          },
+          {
+            value: "土布衣",
+            label: "土布衣",
+          },
+          {
+            value: "长袍",
+            label: "长袍",
+          },
+        ]
+      },
+      {
+        value: "下衣",
+        label: "下衣",
+        children: [
+          {
+            value: "凤尾裙",
+            label: "凤尾裙",
+          },
+          {
+            value: "裤裙",
+            label: "裤裙",
+          },
+          {
+            value: "筒裙",
+            label: "筒裙",
+          },
+          {
+            value: "长裤",
+            label: "长裤",
+          },
+        ]
+      },
+      {
+        value: "鞋",
+        label: "鞋",
+        children: [
+          {
+            value: "长筒靴",
+            label: "长筒靴",
+          },
+          {
+            value: "牛皮靴",
+            label: "牛皮靴",
+          },
+          {
+            value: "布鞋",
+            label: "布鞋",
+          },
+          {
+            value: "草鞋",
+            label: "草鞋",
+          },
+          {
+            value: "绣花鞋",
+            label: "绣花鞋",
+          },
+          {
+            value: "锦鞋",
+            label: "锦鞋",
+          },
+        ]
+      },
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "汉族",
+            label: "汉族",
+          },
+          {
+            value: "蒙古族",
+            label: "蒙古族",
+          },
+          {
+            value: "回族",
+            label: "回族",
+          },
+          {
+            value: "藏族",
+            label: "藏族",
+          },
+          {
+            value: "维吾尔族",
+            label: "维吾尔族",
+          },
+          {
+            value: "苗族",
+            label: "苗族",
+          },
+          {
+            value: "彝族",
+            label: "彝族",
+          },
+          {
+            value: "壮族",
+            label: "壮族",
+          },
+          {
+            value: "布依族",
+            label: "布依族",
+          },
+          {
+            value: "朝鲜族",
+            label: "朝鲜族",
+          },
+          {
+            value: "满族",
+            label: "满族",
+          },
+          {
+            value: "侗族",
+            label: "侗族",
+          },
+          {
+            value: "瑶族",
+            label: "瑶族",
+          },
+          {
+            value: "白族",
+            label: "白族",
+          },
+          {
+            value: "土家族",
+            label: "土家族",
+          },
+          {
+            value: "哈尼族",
+            label: "哈尼族",
+          },
+          {
+            value: "哈萨克族",
+            label: "哈萨克族",
+          },
+          {
+            value: "傣族",
+            label: "傣族",
+          },
+          {
+            value: "黎族",
+            label: "黎族",
+          },
+          {
+            value: "僳僳族",
+            label: "僳僳族",
+          },
+          {
+            value: "佤族",
+            label: "佤族",
+          },
+          {
+            value: "畲族",
+            label: "畲族",
+          },
+          {
+            value: "高山族",
+            label: "高山族",
+          },
+          {
+            value: "拉祜族",
+            label: "拉祜族",
+          },
+          {
+            value: "水族",
+            label: "水族",
+          },
+          {
+            value: "东乡族",
+            label: "东乡族",
+          },
+          {
+            value: "纳西族",
+            label: "纳西族",
+          },
+          {
+            value: "景颇族",
+            label: "景颇族",
+          },
+          {
+            value: "柯尔克孜族",
+            label: "柯尔克孜族",
+          },
+          {
+            value: "土族",
+            label: "土族",
+          },
+          {
+            value: "达斡尔族",
+            label: "达斡尔族",
+          },
+          {
+            value: "仫佬族",
+            label: "仫佬族",
+          },
+          {
+            value: "羌族",
+            label: "羌族",
+          },
+          {
+            value: "布朗族",
+            label: "布朗族",
+          },
+          {
+            value: "撒拉族",
+            label: "撒拉族",
+          },
+          {
+            value: "毛南族",
+            label: "毛南族",
+          },
+          {
+            value: "仡佬族",
+            label: "仡佬族",
+          },
+          {
+            value: "锡伯族",
+            label: "锡伯族",
+          },
+          {
+            value: "阿昌族",
+            label: "阿昌族",
+          },
+          {
+            value: "普米族",
+            label: "普米族",
+          },
+          {
+            value: "塔吉克族",
+            label: "塔吉克族",
+          },
+          {
+            value: "怒族",
+            label: "怒族",
+          },
+          {
+            value: "乌孜别克族",
+            label: "乌孜别克族",
+          },
+          {
+            value: "俄罗斯族",
+            label: "俄罗斯族",
+          },
+          {
+            value: "鄂温克族",
+            label: "鄂温克族",
+          },
+          {
+            value: "崩龙族",
+            label: "崩龙族",
+          },
+          {
+            value: "保安族",
+            label: "保安族",
+          },
+          {
+            value: "裕固族",
+            label: "裕固族",
+          },
+          {
+            value: "京族",
+            label: "京族",
+          },
 
+          {
+            value: "塔塔尔族",
+            label: "塔塔尔族",
+          },
+
+          {
+            value: "独龙族",
+            label: "独龙族",
+          },
+
+          {
+            value: "鄂伦春族",
+            label: "鄂伦春族",
+          },
+
+          {
+            value: "赫哲族",
+            label: "赫哲族",
+          },
+
+          {
+            value: "门巴族",
+            label: "门巴族",
+          },
+
+          {
+            value: "珞巴族",
+            label: "珞巴族",
+          },
+
+          {
+            value: "基诺族",
+            label: "基诺族",
+          },
+        ]
+      }
     ],
   },
 ]
