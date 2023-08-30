@@ -114,7 +114,7 @@ Tools,
 Avatar,
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import Chat from '@/views/shop_subs/Chat2SellerView.vue'
+// import Chat from '@/views/shop_subs/Chat2SellerView.vue'
 import OrderManage from '@/views/shop_subs/OrderManageView.vue'
 import ProductIncrease from '@/views/shop_subs/ProductIncreaseView.vue';
 import ALLItems from '@/views/shop_subs/ALLItemsView.vue';
