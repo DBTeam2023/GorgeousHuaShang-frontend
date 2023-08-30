@@ -1,3 +1,4 @@
+@@ -0,0 +1,149 @@
 <template>
     <div :class="{ container: true, 'sign-up-model': vari }">
         <div class="inner-left-container">
@@ -24,6 +25,7 @@
   <script setup>
 import { ref } from 'vue';
 import login from './loginFrom.vue';
+import register from './registerForm.vue';
 
 const onClick = () => {
   vari.value = !vari.value;
