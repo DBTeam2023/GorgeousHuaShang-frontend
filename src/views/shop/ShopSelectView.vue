@@ -5,14 +5,14 @@
                 <h1 style="color: black;">选择店铺</h1>
                 <ElButton type="primary" @click="onClick" size="large">去注册</ElButton>
             </div>
-            <img src="../assets/shop/login-bg.svg" class="image">
+            <img src="../../assets/shop/login-bg.svg" class="image">
         </div>
         <div class="inner-right-container">
             <div class="register-content">
                 <h1 style="color: black;">新建店铺</h1>
                 <ElButton type="primary" @click="onClick" size="large">去选择</ElButton>
             </div>
-            <img src="../assets/shop/register-bg.svg" class="image">
+            <img src="../../assets/shop/register-bg.svg" class="image">
         </div>
         <div class="inner-sign-up-container">
             <login :class="{ 'sign-up-model': vari }"></login>
@@ -23,8 +23,7 @@
 
   <script setup>
 import { ref } from 'vue';
-import login from './shop_subs/loginFrom.vue';
-import register from './shop_subs/registerForm.vue';
+import login from './loginFrom.vue';
 
 const onClick = () => {
   vari.value = !vari.value;
