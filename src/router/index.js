@@ -1,5 +1,6 @@
 import{createRouter, createWebHashHistory} from 'vue-router';
 import HomePageView from '../views/homePage/HomePageView';
+import ClassificationView from "@/views/homePage/ClassificationView.vue";
 import LoginView from "@/views/login/LoginView.vue";
 import RegisterView from "@/views/login/RegisterView.vue";
 import ShopSelectView from "@/views/shop/ShopSelectView.vue";
@@ -17,7 +18,16 @@ import NotFound from "@/views/NotFoundView.vue";
 /// requestAuth 代表是否需要登录才能访问界面
 
 const routes =
-    [
+  [
+    {
+      path: '/',
+      name: 'home',
+      redirect: "/homepage/",
+      component: HomePageView,
+      meta: {
+        requestAuth: false,
+      }
+    },
         {
           path : '/homepage/',
           name : "Homepage",
@@ -25,7 +35,15 @@ const routes =
           meta: {
               requestAuth: false,
           }
-        },
+    },
+    {
+      path: '/classify',
+      name: "Classify",
+      component: ClassificationView,
+      meta: {
+        requestAuth: false,
+      }
+    },
         {
           path : '/login/',
           name : 'Login',
@@ -107,11 +125,12 @@ const routes =
           }
         },
         {
-          path: '/userinfo/',
+          path: '/userinfo/:selected?', //设置动态参数，可有可无
           name: 'UserInfo',
           component: UserInfoView,
+          props: true,
           meta: {
-              requestAuth: true,
+            requestAuth: true,
           }
         },
         {
@@ -121,10 +140,18 @@ const routes =
             meta: {
                 requestAuth: false,
             }
-        },
+    },
+    {
+      path: '/pay/',
+      name: 'Pay',
+      component: PayView,
+      meta: {
+        requestAuth: true,
+      }
+    },
     ]
 
-    const router = createRouter({history : createWebHashHistory(), routes})
+    const router = createRouter({ history: createWebHashHistory(), routes })
 
     router.beforeEach(async (to, from, next) => {
       console.log("当前页面url: " + to.path);
@@ -135,30 +162,38 @@ const routes =
 
       if (token) {
         try {
-            // 如果有token且没过期能获取到user信息，则设置为当前状态为登录
-            isLogin = await store.dispatch("getUserInfoForRouter");
-            console.log("当前页面拥有的信息如下：");
-            console.log(store.state.user);
-            // isLogin = false;
-        } catch (error) {
+          // 如果有token且没过期能获取到user信息，则设置为当前状态为登录
+          isLogin = await store.dispatch("getUserInfoForRouter");
+          console.log("当前页面拥有的信息如下：");
+          console.log(store.state.user);
+          // isLogin = false;
+          if (isLogin === false) {
             ElMessage({
-                message: "获取登录信息失败，请先进行登陆操作!",
-                type: "warning",
+              message: "请先进行登陆操作!",
+              type: "warning",
             });
             router.push({ name: "Login" });
+          }
+        } catch (error) {
+          if (to.path !== "/login/" && to.path !== "/register/") {
+            ElMessage({
+              message: "获取登录信息失败，请先进行登陆操作!",
+              type: "warning",
+            });
+          }
         }
       } else {
-          flag = 2;
+        flag = 2;
       }
 
       if (to.meta.requestAuth && !isLogin) {
-          if (flag === 1) {
-              next();
-          } else {
-              next({ name: "Login" });
-          }
-      } else {
+        if (flag === 1) {
           next();
+        } else {
+          next({ name: "Login" });
+        }
+      } else {
+        next();
       }
 
     })
