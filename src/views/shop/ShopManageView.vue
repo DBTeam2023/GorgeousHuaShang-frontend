@@ -72,6 +72,10 @@
                 <el-icon><MoreFilled /></el-icon>
                 订单管理
             </el-menu-item>
+            <el-menu-item index="5" @click="selectMenu('storeSellers')">
+              <el-icon><MoreFilled /></el-icon>
+                卖家管理
+            </el-menu-item>
           </el-menu>
         </el-col>
     <el-col :span="20">
@@ -90,6 +94,9 @@
       </template>
       <template v-else-if="selectedMenu === 'ShopAnalysis'">
         <ShopAnalysis></ShopAnalysis>
+      </template>
+      <template v-else-if="selectedMenu === 'storeSellers'">
+        <StoreSellers></StoreSellers>
       </template>
     </div>
     </el-col>
@@ -119,17 +126,9 @@ import {
   import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
   import ProductManagement from '@/views/shop/ProductManagementView.vue';
   import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
+  import StoreSellers from '@/views/shop/StoreSellersView.vue';
   import { ElIcon } from 'element-plus';
 
-
-
-//   const handleOpen = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
-
-//   const handleClose = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
 const selectedMenu = ref('ShopInfo');
 
   // 商店名字

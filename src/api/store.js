@@ -89,3 +89,27 @@ export function removeCollectStore(data) {
         data: data
     })
 }
+
+export function getSellers(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/getSeller/",
+        method: "POST",
+        data: data
+    })
+}
+
+export function inviteSellers(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/invite/",
+        method: "POST",
+        data: data
+    })
+}
+
+export function setScore(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/setScore/",
+        method: "POST",
+        data: data
+    })
+}
