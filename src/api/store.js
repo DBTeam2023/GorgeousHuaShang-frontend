@@ -113,3 +113,11 @@ export function setScore(data) {
         data: data
     })
 }
+
+export function deleteSeller(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/delete/",
+        method: "POST",
+        data: data
+    })
+}

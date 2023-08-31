@@ -32,6 +32,11 @@
       <el-table-column prop="nickName" label="卖家昵称" width="180"></el-table-column>
       <el-table-column prop="username" label="卖家账号" width="180"></el-table-column>
       <el-table-column prop="phoneNumber" label="手机号" width="180"></el-table-column>
+      <el-table-column prop="delete" label="删除卖家" width="90">
+        <template v-slot="scope">
+          <el-button type="danger" @click="deleteSellerInPage(scope.$index)" round>删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pagination-wrapper">
       <el-pagination
@@ -59,7 +64,7 @@ import {
   ElMessage,
   ElFormItem, ElDialog, ElForm, ElMessageBox
 } from 'element-plus';
-import {getSellers, inviteSellers} from "@/api/store";
+import {deleteSeller, getSellers, inviteSellers} from "@/api/store";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
@@ -82,6 +87,35 @@ onMounted(() => {
 watch(currentPage, () => {
   getSellersInPage();
 })
+
+function deleteSellerInPage(index) {
+  if (sellers.value[index].username === localStorage.getItem("username")) {
+    ElMessage({
+      message: '您不能删除自己！',
+      type: 'warning',
+    })
+    return;
+  }
+
+  deleteSeller({
+    userName: sellers.value[index].username,
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        ElMessage({
+          message: '删除成功',
+          type: 'success',
+        })
+
+        getSellersInPage();
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '删除失败',
+          type: 'warning',
+        })
+      })
+}
 
 function getSellersInPage() {
   getSellers({
