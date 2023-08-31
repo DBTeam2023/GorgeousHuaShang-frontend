@@ -4,10 +4,29 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card class="card">
-          <div class="image-container" >
-<!--            <img class="product-image" :src="selectedImage ? selectedImage : placeholderImage" alt="Product Image" />-->
+          <!-- 图片选择框 -->
+          <div class="image-container">
+            <el-upload ref="uploadRef" :class="uploadClass" action="' '" :headers="token" list-type="picture-card"
+              :auto-upload="false" :on-remove="handleRemove" :on-preview="handlePreview" :on-change="handleImageChange"
+              :show-file-list="isSelectedShow">
+              <el-icon>
+                <Plus />
+              </el-icon>
+              <template #tip v-if="uploadClass === 'showUpload'">
+                <div class="el-upload__tip">
+                  请上传不超过500KB的png文件
+                </div>
+              </template>
 
-            这里放图片
+            </el-upload>
+            <!-- 插槽可见 -->
+            <el-dialog v-model="dialogVisible" height="705px">
+              <div class="picture-container">
+                <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture" />
+              </div>
+            </el-dialog>
+
+
 
           </div>
           <el-input v-model="productName" placeholder="请输入商品名称"></el-input>
@@ -22,7 +41,7 @@
               <el-input v-model.number="price" type="number"></el-input>
             </el-form-item>
             <el-form-item label="商品详情">
-              <el-input type="textarea" v-model="description"></el-input>
+              <el-input type="textarea" v-model="description" rows="6"></el-input>
             </el-form-item>
           </el-form>
         </el-card>
@@ -36,20 +55,77 @@
       <el-cascader v-model="classification" :options="options" @change="handleChange" />
     </div>
 
+    <!-- 进度条显示上传进度 -->
+    <div class="upload-container">
+      <el-progress v-if="showProgress" :percentage="50" :indeterminate="true"><span></span></el-progress>
+    </div>
+
     <div class="button-container">
       <el-button type="primary" class="submit-button" @click="addNewCommodity">确定</el-button>
-      <el-button class="reset-button" @click="resetForm">重置</el-button>
     </div>
   </div>
-  <div></div>
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
-import {useRoute} from "vue-router";
-import {createNewCommodity} from "@/api/store";
-import {ElMessage} from "element-plus";
+import { ref, watch, computed, reactive } from 'vue';
+import { useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
+import { Plus } from '@element-plus/icons-vue'
+import { createNewCommodity } from "@/api/store";
 
+// 商品图片上传逻辑：
+const dialogImageUrl = ref('')  //上传图片的url
+const dialogVisible = ref(false) //缩略图是否可见
+const uploadRef = ref(null) //对el-upload的引用
+const fileList = reactive([]) //选择的图片列表
+const isSelectedShow = ref(true) //是否显示上传的图片列表
+const showProgress = ref(false) //是否显示进度条
+
+//el-upload类，根据fileList的大小选择是否显示上传框
+const uploadClass = computed(() => {
+  return fileList.length >= 1 ? 'hideUpload' : 'showUpload';
+})
+
+// 选择图片后操作：
+const handleImageChange = (File, FileList) => {
+  console.log('Change');
+
+  // const isJPG = File.raw.type === 'image/jpeg';  //文件类型jpg
+  const isPNG = File.raw.type === 'image/png';  //文件类型png
+
+  const isLt500K = File.raw.size / 1024 / 1024 < 0.5;// 文件大小转换为MB单位,判断是否小于5MB
+
+  // 文件格式错误
+  if (!isPNG) {
+    ElMessage.error('上传图片只能是PNG格式!');
+    uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
+    isSelectedShow.value = false;  //不显示上传的文件列表
+    return false;
+  }
+  // 文件过大
+  else if (!isLt500K) {
+    ElMessage.error('上传图片大小不能超过500KB!');
+    uploadRef.value.clearFiles();  //调用el-upload的clearFiles()函数清空已经选择的文件列表
+    isSelectedShow.value = false;  //不显示上传的文件列表
+    return false;
+  }
+  else {
+    fileList.push(File);     //将新选择的文件File加入fileList中
+    isSelectedShow.value = true;   //显示上传的文件列表
+    return true;
+  }
+}
+
+// 图片预览
+const handlePreview = (uploadFile) => {
+  console.log('Preview');
+  dialogImageUrl.value = uploadFile.url;//图片链接
+  dialogVisible.value = true;//el-dialog插槽可见
+}
+
+
+
+// 创建商品逻辑：
 const route = useRoute();
 
 const handleChange = (value) => {
@@ -63,7 +139,7 @@ watch(classification, (newVal) => {
   classificationType.value = combinedString;
 })
 
-let productName= ref("");
+let productName = ref("");
 let price = ref()
 let description = ref("")
 let classificationType = ref("")
@@ -88,25 +164,32 @@ function addNewCommodity() {
   formData.append('Property', property.value);
   formData.append('ClassficationType', classificationType.value);
   formData.append('IsDeleted', false);
-  // todo: 图片
 
-
+  // 商品图片上传：
+  console.log('商品图片上传');
+  showProgress.value = true; //显示进度条
+  fileList.forEach(file => {
+    formData.append('image', file.raw);//将文件添加到formData
+  })
+  //发送请求到自定义————创建商品API
   createNewCommodity(formData)
-      .then(resp => {
-        ElMessage({
-          message: '创建成功!',
-          type: 'success',
-        })
+    .then(resp => {
+      ElMessage({
+        message: '创建成功!',
+        type: 'success',
       })
-      .catch(resp => {
-        ElMessage({
-          message: '创建失败!',
-          type: 'warning',
-        })
+      showProgress.value = false; //取消进度条显示
+      fileList.splice(0, 1);//删除fileList的第一个元素
+      uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
+    })
+    .catch(resp => {
+      ElMessage({
+        message: '创建失败!',
+        type: 'warning',
       })
+    })
 
 }
-
 
 const options = [
   {
@@ -811,9 +894,9 @@ const options = [
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 200px;
-  border: 1px dashed #ccc;
-  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  margin-bottom: 10%;
 }
 
 .product-image {
@@ -852,16 +935,32 @@ const options = [
 .el-col {
   padding: 10px;
 }
+
 .reset-button {
   margin-left: 10px;
   margin-top: 20px;
 }
+
 .button-container {
   display: flex;
-  justify-content: center; /* 水平居中对齐 */
+  justify-content: center;
+  /* 水平居中对齐 */
 }
 
 .submit-button {
-  margin-right: 10px; /* 设置按钮间距 */
+  margin-right: 10px;
+  /* 设置按钮间距 */
+}
+
+.upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.el-progress--line {
+  margin-top: 20px;
+  margin-left: 5%;
+  width: 50%;
 }
 </style>
