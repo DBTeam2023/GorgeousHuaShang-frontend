@@ -1,105 +1,171 @@
 <template>
-<div class="product-detail">
-  <div class="left-section">
-    <div class="search">
-      <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
+  <el-descriptions
+      style="margin-top: 15px"
+      class="margin-top"
+      title="商家信息"
+      :column="3"
+      border
+  >
+    <template #extra>
+      <el-button type="primary" @click="turnToStore">商家主页</el-button>
+    </template>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon>
+            <user />
+          </el-icon>
+          商店名称
+        </div>
+      </template>
+      {{storeInfo.storeName}}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon >
+            <iphone />
+          </el-icon>
+          联系方式
+        </div>
+      </template>
+      0350-3173509
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon>
+            <location />
+          </el-icon>
+          店铺地址
+        </div>
+      </template>
+      {{ storeInfo.address }}
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon>
+            <tickets />
+          </el-icon>
+          店铺评分
+        </div>
+      </template>
+      <el-tag size="small">{{storeInfo.score}}</el-tag>
+    </el-descriptions-item>
+    <el-descriptions-item>
+      <template #label>
+        <div class="cell-item">
+          <el-icon>
+            <office-building />
+          </el-icon>
+          店铺描述
+        </div>
+      </template>
+      {{storeInfo.description}}
+    </el-descriptions-item>
+  </el-descriptions>
+
+
+
+
+  <div class="product-detail">
+    <div class="left-section">
+      <div class="search">
+        <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
+      </div>
+     <div class="thumbnail-images">
+      <div v-for="item in product.images" :key="item.index">
+       <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
+      </div>
+     </div>
     </div>
-   <div class="thumbnail-images">
-    <div v-for="item in product.images" :key="item.index">
-     <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
+
+    <!-- 右侧 -->
+    <div class="right-section">
+      <div v-if="showGoodsDescriptionVar">
+        <h2>{{ route.query.productName }}</h2>
+        <p>{{ selectedcommodity.value.description }}</p>
+      </div>
+      <div v-else>
+        <h2>商品未加载</h2>
+        <p>商品描述未加载</p>
+      </div>
+
+
+      <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
+        <h3>{{ idx1 }}</h3>
+        <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties.value[idx1]" class="my-selection-item">
+          <el-radio :label="properity">{{ properity }}</el-radio>
+        </el-radio-group>
+      </div>
+
+      <div class="my-selection">
+        <h3>数量</h3>
+        <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
+      </div>
+
+
+      <!-- 商品价格 -->
+      <div v-if="showGoodsDescriptionVar">
+        <div class="price">￥{{ selectedcommodity.value.price * selectedcommodity.value.selectedQuantity}}</div>
+      </div>
+      <div v-else>
+        <div class="price">￥ *** </div>
+      </div>
+
+     <div class="buttons">
+      <el-button type="primary" @click="openCartForm">加入购物车</el-button>
+      <el-button type="success" @click="openOrderForm">立即购买</el-button>
+     </div>
+
+      <el-dialog
+          v-model="dialogVisibleCart"
+          title="加入购物车"
+          width="40%"
+      >
+        <span>
+          <div>商品名称：{{ route.query.productName }}</div>
+          <div>商品描述：{{ selectedcommodity.value.description }}</div>
+          <div>商品单价：{{ selectedcommodity.value.price }}</div>
+          <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
+          <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
+          <div>款式：{{ selectedcommodity.value.property }}</div>
+        </span>
+        <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="cancelAddCart">取消</el-button>
+          <el-button type="primary" @click="confirmAddCart">确认加入</el-button>
+        </span>
+        </template>
+      </el-dialog>
+
+      <el-dialog
+          v-model="dialogVisibleOrder"
+          title="购买"
+          width="40%"
+      >
+        <span>
+          <div>商品名称：{{ route.query.productName }}</div>
+          <div>商品描述：{{ selectedcommodity.value.description }}</div>
+          <div>商品单价：{{ selectedcommodity.value.price }}</div>
+          <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
+          <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
+          <div>款式：{{ selectedcommodity.value.property }}</div>
+        </span>
+        <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="cancelAddOrder">取消</el-button>
+          <el-button type="primary" @click="confirmAddOrder">确认支付</el-button>
+        </span>
+        </template>
+      </el-dialog>
+
     </div>
-   </div>
   </div>
 
-  <!-- 右侧 -->
-  <div class="right-section">
-    <div v-if="showGoodsDescriptionVar">
-      <h2>{{ route.query.productName }}</h2>
-      <p>{{ selectedcommodity.value.description }}</p>
-    </div>
-    <div v-else>
-      <h2>商品未加载</h2>
-      <p>商品描述未加载</p>
-    </div>
-
-
-    <div v-for="(properities, idx1) in mergedProperties" :key="idx1" class="my-selection">
-      <h3>{{ idx1 }}</h3>
-      <el-radio-group v-for="(properity, idx2) in properities" :key="idx2" v-model="selectProperties.value[idx1]" class="my-selection-item">
-        <el-radio :label="properity">{{ properity }}</el-radio>
-      </el-radio-group>
-    </div>
-
-    <div class="my-selection">
-      <h3>数量</h3>
-      <el-input-number v-model="selectedQuantity" :min="1"></el-input-number>
-    </div>
-
-
-    <!-- 商品价格 -->
-    <div v-if="showGoodsDescriptionVar">
-      <div class="price">￥{{ selectedcommodity.value.price * selectedcommodity.value.selectedQuantity}}</div>
-    </div>
-    <div v-else>
-      <div class="price">￥ *** </div>
-    </div>
-
-   <div class="buttons">
-    <el-button type="primary" @click="dialogVisibleCart = true">加入购物车</el-button>
-    <el-button type="success" @click="dialogVisibleOrder = true">立即购买</el-button>
-   </div>
-
-    <el-dialog
-        v-model="dialogVisibleCart"
-        title="加入购物车"
-        width="40%"
-    >
-      <span>
-        <div>商品名称：{{ route.query.productName }}</div>
-        <div>商品描述：{{ selectedcommodity.value.description }}</div>
-        <div>商品单价：{{ selectedcommodity.value.price }}</div>
-        <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
-        <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
-        <div>款式：{{ selectedcommodity.value.property }}</div>
-      </span>
-      <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="cancelAddCart">取消</el-button>
-        <el-button type="primary" @click="confirmAddCart">确认加入</el-button>
-      </span>
-      </template>
-    </el-dialog>
-
-    <el-dialog
-        v-model="dialogVisibleOrder"
-        title="购买"
-        width="40%"
-    >
-      <span>
-        <div>商品名称：{{ route.query.productName }}</div>
-        <div>商品描述：{{ selectedcommodity.value.description }}</div>
-        <div>商品单价：{{ selectedcommodity.value.price }}</div>
-        <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
-        <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
-        <div>款式：{{ selectedcommodity.value.property }}</div>
-      </span>
-      <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="cancelAddOrder">取消</el-button>
-        <el-button type="primary" @click="confirmAddOrder">确认支付</el-button>
-      </span>
-      </template>
-    </el-dialog>
-
-  </div>
- </div>
   <comment-view/>
 </template>
-
-
-
-
-
 
 
 
@@ -115,6 +181,7 @@ import {getGoodsDetail} from "@/api/goods";
 import {ElMessage} from "element-plus";
 import { base64ToUrl } from '@/utils/photo'
 import { ElMessageBox } from 'element-plus';
+import {getStoreInfo} from "@/api/store";
 
 
 
@@ -161,8 +228,10 @@ let selectedcommodity = reactive({});// 选中属性对应的那个产品
 
 // todo: 加入购物车，加入订单
 /*
+selectedcommodity:
 {
   commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
+  pickId: "",
   description: "小哥哥小姐姐都可以穿的汉服哟！",
   price: 300,
   totalPrice: 600,
@@ -176,6 +245,8 @@ let selectedcommodity = reactive({});// 选中属性对应的那个产品
 }
   */
 
+
+
 watch(selectProperties, (newVal) => {
   selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
   selectedcommodity.value = {
@@ -184,7 +255,6 @@ watch(selectProperties, (newVal) => {
     selectedQuantity: selectedQuantity.value,
     totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
   }
-  console.log(selectedcommodity.value)
 });
 
 watch(selectedQuantity, (newVal) => {
@@ -194,7 +264,6 @@ watch(selectedQuantity, (newVal) => {
     selectedQuantity: selectedQuantity.value,
     totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
   }
-  console.log(selectedcommodity.value)
 });
 
 function selectImage(image) {
@@ -203,6 +272,23 @@ function selectImage(image) {
 
 const dialogVisibleCart = ref(false);
 const dialogVisibleOrder = ref(false)
+
+function openCartForm() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage.error('卖家无法加入购物车！');
+    return;
+  }
+  dialogVisibleCart.value = true
+}
+
+function openOrderForm() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage.error('卖家无法购买！');
+    return;
+  }
+  dialogVisibleCart.value = true
+}
+
 function cancelAddCart() {
   dialogVisibleCart.value = false
 }
@@ -228,16 +314,6 @@ function confirmAddOrder() {
   dialogVisibleOrder.value = false
 }
 
-const handleClose = (done) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-      .then(() => {
-        done();
-      })
-      .catch(() => {
-        // catch error
-      });
-};
-
 getGoodsDetail(commodityIdToBackend.value)
     .then(resp => {
       if (resp.code === 200)
@@ -260,7 +336,9 @@ getGoodsDetail(commodityIdToBackend.value)
       });
     })
 
-
+// setInterval(() => {
+//   console.log(selectedcommodity.value)
+// }, 2000)
 
 // ***************  处理接收的数据  ***************
 function mergeSimilarProperties(array) {
@@ -326,6 +404,42 @@ function findIndicesWithProperties(array, properties) {
   return indices[0];
 }
 
+const storeInfo = reactive({
+  storeId: "",
+  storeName: "",
+  score: "",
+  description: "",
+  address: "",
+})
+
+function getStoreInfoInGoods() {
+  getStoreInfo({
+    storeId: route.query.storeId
+  })
+      .then(resp => {
+        storeInfo.storeName = resp.data.storeName;
+        storeInfo.score = resp.data.score;
+        storeInfo.address = resp.data.address;
+        storeInfo.storeId = resp.data.storeId;
+        storeInfo.description = resp.data.description;
+      })
+      .catch(resp => {
+        ElMessage.error('商店信息获取异常');
+      })
+}
+
+function turnToStore() {
+  router.push({
+    path: "/shop",
+    query: {
+      storeid: route.query.storeId
+    }
+  })
+}
+
+onMounted(() => {
+  getStoreInfoInGoods()
+})
 
 </script>
 

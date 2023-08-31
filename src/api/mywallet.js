@@ -6,7 +6,7 @@ export function getWallet(data) {
         url:"/api/Payment/Wallet/get/",
         method: "POST",
         headers: {
-            token: "Bearer " + localStorage.getItem("jwtToken")
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
         },
         data:data,
     })
@@ -18,7 +18,7 @@ export function rechargeWallet(data){
         url:"/api/Payment/Wallet/recharge/",
         method:"PUT",
         headers: {
-            token: "Bearer " + localStorage.getItem("jwtToken")
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
         },
         data:data,
     })
@@ -30,7 +30,7 @@ export function deductWallet(data){
         url:"/api/Payment/Wallet/deduct/",
         method:"PUT",
         headers:{
-            token: "Bearer " + localStorage.getItem("jwtToken")
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
         },
         data:data,
     })

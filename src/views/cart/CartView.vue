@@ -200,7 +200,7 @@ function delCart(item) {
 </script>
 
 
-<style>
+<style scoped>
 /* 样式规则 */
 .container {
     background-color: #E6E8EB;

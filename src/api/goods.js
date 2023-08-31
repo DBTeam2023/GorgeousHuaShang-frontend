@@ -16,3 +16,29 @@ export function getGoodsInPage(data) {
         data: data,
     });
 }
+
+export function getSingleCommodity(data) {
+    return request({
+        url: "http://47.115.231.142:1030/Product/getCommodity/",
+        method: "POST",
+        data: data,
+    });
+}
+
+
+export function deleteSingleCommodity(data) {
+    return request({
+        url: "http://47.115.231.142:1030/Product/deleteCommodity/",
+        method: "POST",
+        data: data,
+    });
+}
+
+export function updateCommodity(data) {
+    return request({
+        url: "http://47.115.231.142:1030/Product/updateCommodity/",
+        method: "POST",
+        data: data,
+    });
+}
+

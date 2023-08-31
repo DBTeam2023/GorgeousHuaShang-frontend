@@ -1,90 +1,792 @@
 <template>
   <div class="add-product">
     <h1 class="title">新增商品</h1>
-    <el-form :model="form" label-width="80px">
-      <el-form-item label="商品名">
-        <el-input v-model="form.productName"></el-input>
-      </el-form-item>
-      <el-form-item label="店铺描述">
-        <el-input v-model="form.shopDescription"></el-input>
-      </el-form-item>
-      <el-form-item label="单件价格">
-        <el-input v-model.number="form.price" type="number"></el-input>
-      </el-form-item>
-      <el-form-item label="初始库存量">
-        <el-input v-model.number="form.stock" type="number"></el-input>
-      </el-form-item>
-      <el-form-item label="上传展示图片">
-        <el-upload
-          action="/upload"
-          :before-upload="beforeUpload"
-          :on-success="handleUploadSuccess"
-          :on-error="handleUploadError"
-          :file-list="fileList"
-          list-type="picture-card"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm">确定</el-button>
-        <el-button @click="resetForm">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-card class="card">
+          <div class="image-container" >
+<!--            <img class="product-image" :src="selectedImage ? selectedImage : placeholderImage" alt="Product Image" />-->
+
+            这里放图片
+
+          </div>
+          <el-input v-model="productName" placeholder="请输入商品名称"></el-input>
+        </el-card>
+      </el-col>
+
+      <el-col :span="12">
+        <el-card class="card">
+          <h3 class="subtitle">商品信息</h3>
+          <el-form label-width="80px" class="form">
+            <el-form-item label="单件价格">
+              <el-input v-model.number="price" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="商品详情">
+              <el-input type="textarea" v-model="description"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-form-item label="商品属性">
+      <el-input type="textarea" v-model="property" placeholder="请按要求输入商品属性" rows="5"></el-input>
+    </el-form-item>
+    <div class="m-4">
+      <p>设置商品种类</p>
+      <el-cascader v-model="classification" :options="options" @change="handleChange" />
+    </div>
+
+    <div class="button-container">
+      <el-button type="primary" class="submit-button" @click="addNewCommodity">确定</el-button>
+      <el-button class="reset-button" @click="resetForm">重置</el-button>
+    </div>
   </div>
+  <div></div>
 </template>
 
-<script>
-import { reactive } from 'vue';
-import { ElButton, ElForm, ElFormItem, ElInput, ElUpload } from 'element-plus';
+<script setup>
+import {ref, watch} from 'vue';
+import {useRoute} from "vue-router";
+import {createNewCommodity} from "@/api/store";
+import {ElMessage} from "element-plus";
 
-export default {
-  components: {
-    ElButton,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElUpload,
+const route = useRoute();
+
+const handleChange = (value) => {
+  console.log(value)
+}
+
+let classification = ref("")
+watch(classification, (newVal) => {
+  const values = Object.values(classification.value);
+  const combinedString = values.join(',');
+  classificationType.value = combinedString;
+})
+
+let productName= ref("");
+let price = ref()
+let description = ref("")
+let classificationType = ref("")
+let property = ref(JSON.stringify({
+  "尺寸": [
+    "大",
+    "中",
+    "小",
+  ],
+  "颜色": [
+    "红色",
+    "绿色",
+  ],
+}))
+
+function addNewCommodity() {
+  let formData = new FormData();
+  formData.append('StoreId', route.query.storeid);
+  formData.append('ProductName', productName.value);
+  formData.append('Description', description.value);
+  formData.append('Price', price.value);
+  formData.append('Property', property.value);
+  formData.append('ClassficationType', classificationType.value);
+  formData.append('IsDeleted', false);
+  // todo: 图片
+
+
+  createNewCommodity(formData)
+      .then(resp => {
+        ElMessage({
+          message: '创建成功!',
+          type: 'success',
+        })
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '创建失败!',
+          type: 'warning',
+        })
+      })
+
+}
+
+
+const options = [
+  {
+    value: "配饰",
+    label: "配饰",
+    children: [
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "头饰",
+            label: "头饰",
+          },
+          {
+            value: "耳饰",
+            label: "耳饰",
+          },
+          {
+            value: "腰饰",
+            label: "腰饰",
+          },
+          {
+            value: "项链",
+            label: "项链",
+          },
+          {
+            value: "手饰",
+            label: "手饰",
+          }
+        ],
+      }
+    ],
   },
-  setup() {
-    const form = reactive({
-      productName: '',
-      shopDescription: '',
-      price: null,
-      stock: null,
-    });
-    // const fileList = ref([]);
+  {
+    value: "男装",
+    label: "男装",
+    children: [
+      {
+        value: "上衣",
+        label: "上衣",
+        children: [
+          {
+            value: "麻布大褂",
+            label: "麻布大褂",
+          },
+          {
+            value: "鱼皮衣",
+            label: "鱼皮衣",
+          },
+          {
+            value: "羊皮大衣",
+            label: "羊皮大衣",
+          },
+          {
+            value: "土布衣",
+            label: "土布衣",
+          },
+          {
+            value: "中山装",
+            label: "中山装",
+          },
+          {
+            value: "马褂",
+            label: "马褂",
+          },
+          {
+            value: "长袍",
+            label: "长袍",
+          },
+        ]
+      },
+      {
+        value: "下衣",
+        label: "下衣",
+        children: [
+          {
+            value: "腰裙",
+            label: "腰裙",
+          },
+          {
+            value: "膝裤",
+            label: "膝裤",
+          },
+          {
+            value: "裤裙",
+            label: "裤裙",
+          },
+          {
+            value: "长裤",
+            label: "长裤",
+          },
+        ]
+      },
+      {
+        value: "鞋",
+        label: "鞋",
+        children: [
+          {
+            value: "长筒靴",
+            label: "长筒靴",
+          },
+          {
+            value: "牛皮靴",
+            label: "牛皮靴",
+          },
+          {
+            value: "布鞋",
+            label: "布鞋",
+          },
+          {
+            value: "草鞋",
+            label: "草鞋",
+          },
+        ]
+      },
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "汉族",
+            label: "汉族",
+          },
+          {
+            value: "蒙古族",
+            label: "蒙古族",
+          },
+          {
+            value: "回族",
+            label: "回族",
+          },
+          {
+            value: "藏族",
+            label: "藏族",
+          },
+          {
+            value: "维吾尔族",
+            label: "维吾尔族",
+          },
+          {
+            value: "苗族",
+            label: "苗族",
+          },
+          {
+            value: "彝族",
+            label: "彝族",
+          },
+          {
+            value: "壮族",
+            label: "壮族",
+          },
+          {
+            value: "布依族",
+            label: "布依族",
+          },
+          {
+            value: "朝鲜族",
+            label: "朝鲜族",
+          },
+          {
+            value: "满族",
+            label: "满族",
+          },
+          {
+            value: "侗族",
+            label: "侗族",
+          },
+          {
+            value: "瑶族",
+            label: "瑶族",
+          },
+          {
+            value: "白族",
+            label: "白族",
+          },
+          {
+            value: "土家族",
+            label: "土家族",
+          },
+          {
+            value: "哈尼族",
+            label: "哈尼族",
+          },
+          {
+            value: "哈萨克族",
+            label: "哈萨克族",
+          },
+          {
+            value: "傣族",
+            label: "傣族",
+          },
+          {
+            value: "黎族",
+            label: "黎族",
+          },
+          {
+            value: "僳僳族",
+            label: "僳僳族",
+          },
+          {
+            value: "佤族",
+            label: "佤族",
+          },
+          {
+            value: "畲族",
+            label: "畲族",
+          },
+          {
+            value: "高山族",
+            label: "高山族",
+          },
+          {
+            value: "拉祜族",
+            label: "拉祜族",
+          },
+          {
+            value: "水族",
+            label: "水族",
+          },
+          {
+            value: "东乡族",
+            label: "东乡族",
+          },
+          {
+            value: "纳西族",
+            label: "纳西族",
+          },
+          {
+            value: "景颇族",
+            label: "景颇族",
+          },
+          {
+            value: "柯尔克孜族",
+            label: "柯尔克孜族",
+          },
+          {
+            value: "土族",
+            label: "土族",
+          },
+          {
+            value: "达斡尔族",
+            label: "达斡尔族",
+          },
+          {
+            value: "仫佬族",
+            label: "仫佬族",
+          },
+          {
+            value: "羌族",
+            label: "羌族",
+          },
+          {
+            value: "布朗族",
+            label: "布朗族",
+          },
+          {
+            value: "撒拉族",
+            label: "撒拉族",
+          },
+          {
+            value: "毛南族",
+            label: "毛南族",
+          },
+          {
+            value: "仡佬族",
+            label: "仡佬族",
+          },
+          {
+            value: "锡伯族",
+            label: "锡伯族",
+          },
+          {
+            value: "阿昌族",
+            label: "阿昌族",
+          },
+          {
+            value: "普米族",
+            label: "普米族",
+          },
+          {
+            value: "塔吉克族",
+            label: "塔吉克族",
+          },
+          {
+            value: "怒族",
+            label: "怒族",
+          },
+          {
+            value: "乌孜别克族",
+            label: "乌孜别克族",
+          },
+          {
+            value: "俄罗斯族",
+            label: "俄罗斯族",
+          },
+          {
+            value: "鄂温克族",
+            label: "鄂温克族",
+          },
+          {
+            value: "崩龙族",
+            label: "崩龙族",
+          },
+          {
+            value: "保安族",
+            label: "保安族",
+          },
+          {
+            value: "裕固族",
+            label: "裕固族",
+          },
+          {
+            value: "京族",
+            label: "京族",
+          },
 
-    // const beforeUpload = (file) => {
-    //   // 在这里可以添加图片上传前的校验逻辑
-    // };
+          {
+            value: "塔塔尔族",
+            label: "塔塔尔族",
+          },
 
-    // const handleUploadSuccess = (response, file, fileList) => {
-    //   // 图片上传成功后的处理逻辑
-    // };
+          {
+            value: "独龙族",
+            label: "独龙族",
+          },
 
-    // const handleUploadError = (error, file, fileList) => {
-    //   // 图片上传失败后的处理逻辑
-    // };
+          {
+            value: "鄂伦春族",
+            label: "鄂伦春族",
+          },
 
-    const submitForm = () => {
-      // 提交表单的处理逻辑
-    };
+          {
+            value: "赫哲族",
+            label: "赫哲族",
+          },
 
-    const resetForm = () => {
-      // 重置表单的处理逻辑
-    };
+          {
+            value: "门巴族",
+            label: "门巴族",
+          },
 
-    return {
-      form,
-      submitForm,
-      resetForm,
-    };
+          {
+            value: "珞巴族",
+            label: "珞巴族",
+          },
+
+          {
+            value: "基诺族",
+            label: "基诺族",
+          },
+        ]
+      }
+    ],
   },
-};
+  {
+    value: "女装",
+    label: "女装",
+    children: [
+      {
+        value: "上衣",
+        label: "上衣",
+        children: [
+          {
+            value: "坎肩",
+            label: "坎肩",
+          },
+          {
+            value: "鱼皮衣",
+            label: "鱼皮衣",
+          },
+          {
+            value: "羊皮大衣",
+            label: "羊皮大衣",
+          },
+          {
+            value: "土布衣",
+            label: "土布衣",
+          },
+          {
+            value: "长袍",
+            label: "长袍",
+          },
+        ]
+      },
+      {
+        value: "下衣",
+        label: "下衣",
+        children: [
+          {
+            value: "凤尾裙",
+            label: "凤尾裙",
+          },
+          {
+            value: "裤裙",
+            label: "裤裙",
+          },
+          {
+            value: "筒裙",
+            label: "筒裙",
+          },
+          {
+            value: "长裤",
+            label: "长裤",
+          },
+        ]
+      },
+      {
+        value: "鞋",
+        label: "鞋",
+        children: [
+          {
+            value: "长筒靴",
+            label: "长筒靴",
+          },
+          {
+            value: "牛皮靴",
+            label: "牛皮靴",
+          },
+          {
+            value: "布鞋",
+            label: "布鞋",
+          },
+          {
+            value: "草鞋",
+            label: "草鞋",
+          },
+          {
+            value: "绣花鞋",
+            label: "绣花鞋",
+          },
+          {
+            value: "锦鞋",
+            label: "锦鞋",
+          },
+        ]
+      },
+      {
+        value: "民族",
+        label: "民族",
+        children: [
+          {
+            value: "汉族",
+            label: "汉族",
+          },
+          {
+            value: "蒙古族",
+            label: "蒙古族",
+          },
+          {
+            value: "回族",
+            label: "回族",
+          },
+          {
+            value: "藏族",
+            label: "藏族",
+          },
+          {
+            value: "维吾尔族",
+            label: "维吾尔族",
+          },
+          {
+            value: "苗族",
+            label: "苗族",
+          },
+          {
+            value: "彝族",
+            label: "彝族",
+          },
+          {
+            value: "壮族",
+            label: "壮族",
+          },
+          {
+            value: "布依族",
+            label: "布依族",
+          },
+          {
+            value: "朝鲜族",
+            label: "朝鲜族",
+          },
+          {
+            value: "满族",
+            label: "满族",
+          },
+          {
+            value: "侗族",
+            label: "侗族",
+          },
+          {
+            value: "瑶族",
+            label: "瑶族",
+          },
+          {
+            value: "白族",
+            label: "白族",
+          },
+          {
+            value: "土家族",
+            label: "土家族",
+          },
+          {
+            value: "哈尼族",
+            label: "哈尼族",
+          },
+          {
+            value: "哈萨克族",
+            label: "哈萨克族",
+          },
+          {
+            value: "傣族",
+            label: "傣族",
+          },
+          {
+            value: "黎族",
+            label: "黎族",
+          },
+          {
+            value: "僳僳族",
+            label: "僳僳族",
+          },
+          {
+            value: "佤族",
+            label: "佤族",
+          },
+          {
+            value: "畲族",
+            label: "畲族",
+          },
+          {
+            value: "高山族",
+            label: "高山族",
+          },
+          {
+            value: "拉祜族",
+            label: "拉祜族",
+          },
+          {
+            value: "水族",
+            label: "水族",
+          },
+          {
+            value: "东乡族",
+            label: "东乡族",
+          },
+          {
+            value: "纳西族",
+            label: "纳西族",
+          },
+          {
+            value: "景颇族",
+            label: "景颇族",
+          },
+          {
+            value: "柯尔克孜族",
+            label: "柯尔克孜族",
+          },
+          {
+            value: "土族",
+            label: "土族",
+          },
+          {
+            value: "达斡尔族",
+            label: "达斡尔族",
+          },
+          {
+            value: "仫佬族",
+            label: "仫佬族",
+          },
+          {
+            value: "羌族",
+            label: "羌族",
+          },
+          {
+            value: "布朗族",
+            label: "布朗族",
+          },
+          {
+            value: "撒拉族",
+            label: "撒拉族",
+          },
+          {
+            value: "毛南族",
+            label: "毛南族",
+          },
+          {
+            value: "仡佬族",
+            label: "仡佬族",
+          },
+          {
+            value: "锡伯族",
+            label: "锡伯族",
+          },
+          {
+            value: "阿昌族",
+            label: "阿昌族",
+          },
+          {
+            value: "普米族",
+            label: "普米族",
+          },
+          {
+            value: "塔吉克族",
+            label: "塔吉克族",
+          },
+          {
+            value: "怒族",
+            label: "怒族",
+          },
+          {
+            value: "乌孜别克族",
+            label: "乌孜别克族",
+          },
+          {
+            value: "俄罗斯族",
+            label: "俄罗斯族",
+          },
+          {
+            value: "鄂温克族",
+            label: "鄂温克族",
+          },
+          {
+            value: "崩龙族",
+            label: "崩龙族",
+          },
+          {
+            value: "保安族",
+            label: "保安族",
+          },
+          {
+            value: "裕固族",
+            label: "裕固族",
+          },
+          {
+            value: "京族",
+            label: "京族",
+          },
+
+          {
+            value: "塔塔尔族",
+            label: "塔塔尔族",
+          },
+
+          {
+            value: "独龙族",
+            label: "独龙族",
+          },
+
+          {
+            value: "鄂伦春族",
+            label: "鄂伦春族",
+          },
+
+          {
+            value: "赫哲族",
+            label: "赫哲族",
+          },
+
+          {
+            value: "门巴族",
+            label: "门巴族",
+          },
+
+          {
+            value: "珞巴族",
+            label: "珞巴族",
+          },
+
+          {
+            value: "基诺族",
+            label: "基诺族",
+          },
+        ]
+      }
+    ],
+  },
+]
 </script>
 
-<style>
+<style scoped>
 .add-product {
   padding: 20px;
 }
@@ -92,5 +794,74 @@ export default {
 .title {
   font-size: 24px;
   margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.card {
+  padding: 20px;
+  margin-bottom: 20px;
+  height: 270px;
+}
+
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  border: 1px dashed #ccc;
+  cursor: pointer;
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.upload {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #999;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.upload-text {
+  margin-top: 10px;
+}
+
+.submit-button {
+  margin-top: 20px;
+}
+
+.el-row {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.el-col {
+  padding: 10px;
+}
+.reset-button {
+  margin-left: 10px;
+  margin-top: 20px;
+}
+.button-container {
+  display: flex;
+  justify-content: center; /* 水平居中对齐 */
+}
+
+.submit-button {
+  margin-right: 10px; /* 设置按钮间距 */
 }
 </style>

@@ -52,4 +52,3 @@ onMounted(() => {
     showNavBar.value = true;
 });
 </script>
-
