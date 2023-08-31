@@ -1,8 +1,8 @@
 
 <template>
-    <div class="all-container">
-        <h2>个人信息</h2>
-        <el-menu
+    <el-container class="all-container" >
+        <el-header class="header">
+            <el-menu
                 :default-active="selectedMenu"
                 class="el-menu-demo"
                 mode="horizontal"
@@ -13,60 +13,61 @@
             >
                 <el-menu-item index="1">基本信息</el-menu-item>
                 <el-menu-item index="2">头像信息</el-menu-item>
-        </el-menu>
+            </el-menu>
+        </el-header>
 
-        <!-- 显示基本信息卡片 -->
-        <div class="card-container" v-if="selectedMenu==='1'">
-            <el-card class="card">
-                <div class="form-container">
-                    <el-form :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="200px">
-                        <el-form-item label="昵称" prop="name">
-                            <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
-                                maxlength="25" show-word-limit/>
-                        </el-form-item>
-                        <el-form-item label="年龄" prop="age">
-                            <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate"/>
-                        </el-form-item>
-                        <el-form-item label="身高（cm）" prop="height">
-                            <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate"/>
-                        </el-form-item>
-                        <el-form-item label="体重（kg）" prop="weight">
-                            <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate"/>
-                        </el-form-item>
-                        <el-form-item label="性别" >
-                            <el-radio-group v-model="InfoForm.gender" :disabled="isUpdate">
-                                <el-radio label="男" />
-                                <el-radio label="女" />
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="详细地址">
-                            <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
-                                maxlength="100" show-word-limit/>
-                        </el-form-item>
-                        <!-- <el-form-item label="收货人姓名">
-                            <el-input class="input" v-model="InfoForm.name" :disabled="isUpdate"
-                                maxlenghth="100" show-word-limit/>
-                        </el-form-item> -->
-                        <el-form-item label="手机号码" prop="tel">
-                            <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate"/>
-                        </el-form-item>
-                        <!-- 编辑个人信息 -->
-                        <el-form-item>
-                            <div class="info-operation">
-                                <el-button type="primary" @click="onEdit" :disabled="isEdit">编辑</el-button>
-                                <el-button type="success" @click="onSubmit" :disabled="isUpdate">保存</el-button>
-                                <el-button @click="onCancel" :disabled="isUpdate">取消</el-button>
-                            </div>
-                        </el-form-item>
-                    </el-form>
-                </div>
-            </el-card>
-        </div>
-        <!-- 显示头像信息卡片 -->
-        <div v-else-if="selectedMenu ==='2'">
-            <ImgUpload />
-        </div>
-    </div>
+        <el-main class="main" >
+            <!-- 显示基本信息卡片 -->
+                <el-card class="card" v-if="selectedMenu==='1'">
+                        <el-form class="form" :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="25%">
+                            <el-form-item label="昵称" prop="name">
+                                <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
+                                    maxlength="25" show-word-limit/>
+                            </el-form-item>
+                            <el-form-item v-if="role === 'buyer'" label="年龄" prop="age" >
+                                <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate" placeholder="请输入年龄"/>
+                            </el-form-item>
+                            <el-form-item v-if="role === 'buyer'" label="身高（cm）" prop="height">
+                                <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate" placeholder="请输入身高"/>
+                            </el-form-item>
+                            <el-form-item v-if="role === 'buyer'" label="体重（kg）" prop="weight">
+                                <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate" placeholder="请输入体重"/>
+                            </el-form-item>
+                            <el-form-item v-if="role === 'buyer'" label="性别" >
+                                <el-radio-group v-model="InfoForm.gender" :disabled="isUpdate">
+                                    <el-radio label="男" />
+                                    <el-radio label="女" />
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="详细地址">
+                                <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
+                                    maxlength="100" show-word-limit/>
+                            </el-form-item>
+                            <el-form-item label="手机号码" prop="tel" >
+                                <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate" placeholder="请输入11位合法手机号码"/>
+                            </el-form-item>
+                            <!-- 编辑个人信息 -->
+                            <el-form-item>
+                                <el-row class="button-row">
+                                    <el-col :span="8">
+                                        <el-button type="primary" @click="onEdit" :disabled="isEdit">编辑</el-button>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-button type="success" @click="onSubmit" :disabled="isUpdate">保存</el-button>                                        
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-button @click="onCancel" :disabled="isUpdate">取消</el-button>                                    
+                                    </el-col>
+                                </el-row>
+                            </el-form-item>
+                        </el-form>
+                </el-card>
+            <!-- 显示头像信息卡片 -->
+            <div v-if="selectedMenu ==='2'">
+                <ImgUpload />
+            </div>
+        </el-main>
+    </el-container>
 </template>
 
 <script setup>
@@ -76,7 +77,9 @@
 
     import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import { getUserInfo, updateUserInfo } from '@/api/userinfo';
-    import { getAvatar} from '@/utils/avatar';
+    import store from '@/store';
+
+    const role = store.state.user.role;
 
     //用户输入的个人信息表
     const InfoForm=reactive({
@@ -90,24 +93,8 @@
         isVip:'',
     })
 
-    // update请求参数
-    const updateForm=ref({
-        "userId": '',
-        "loginTime":'',
-        "password": '',
-        "nickName": '',
-        "type": '',
-        "buyerInfo": {
-            "userId": '',
-            "address": '',
-            "age": '',
-            "gender": '',
-            "height": '',
-            "weight": '',
-            "isVip": '',
-        },
-        "sellerInfo":'',
-    })
+    //updata请求参数
+    const updateForm = ref();
 
     // 昵称验证条件
     const validateName = (rule, value, callback) => {
@@ -118,11 +105,15 @@
         else{
             callback();
         }
+
     }
 
     // 电话验证条件
     const validateTel = (rule, value, callback) => {
         const phoneNum = InfoForm.phonenumber;
+        // if (phoneNum === null){  //手机号码可为空
+        //     callback();
+        // }
         //正则验证是否为130/150/180开头的11位数字（手机号码不一定存在）
         // 后期可以引入电话号码验证 https://github.com/google/libphonenumber
         const reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
@@ -130,18 +121,19 @@
             callback();
         }
         else{
-            console.log(4)
             callback(new Error('请输入合法11位手机号码'));
         }
     }
 
-
     // 年龄验证条件
     const validateAge = (rule, value, callback) => {
         value=InfoForm.age;
-        if (!value) {
-            // return callback(new Error('请输入年龄'));
-            return callback();
+        if(value === null){
+            callback();
+        }
+        else if (!value) {
+            return callback(new Error('请输入年龄'));
+            // return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -152,14 +144,17 @@
                 callback()
             }
         }
+
     };
 
     // 身高验证条件
     const validateHeight=(rule,value,callback)=>{
         value=InfoForm.height;
-        if (!value) {
-            // return callback(new Error('请输入身高'));
+        if(value === null)
             return callback();
+        else if (!value) {
+            return callback(new Error('请输入身高'));
+            // return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -175,9 +170,11 @@
     // 体重验证条件
     const validateWeight=(rule,value,callback)=>{
         value=InfoForm.weight;
-        if (!value) {
-            // return callback(new Error('请输入体重'));
+        if (value === null)
             return callback();
+        else if (!value) {
+            return callback(new Error('请输入体重'));
+            // return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -212,26 +209,30 @@
     // 创建表单引用
     const formRef = ref(null); 
 
-
     // 获取用户信息
     getUserInfo()
     .then(resp => {
         updateForm.value=resp.data;
-        InfoForm.age=resp.data.age;
+        // 买家卖家共有数据
         InfoForm.name = resp.data.nickName;
-        InfoForm.age = resp.data.buyerInfo.age;
-        InfoForm.height = resp.data.buyerInfo.height;
-        InfoForm.weight = resp.data.buyerInfo.weight;
-        if(resp.data.buyerInfo.gender===true)
-            InfoForm.gender = '男';
-        else if(resp.data.buyerInfo.gender===false)
-            InfoForm.gender = '女';
-        InfoForm.address = resp.data.buyerInfo.address;
-        InfoForm.isVip = resp.data.buyerInfo.isVip;
+        InfoForm.phonenumber = resp.data.phoneNumber;
+        if(role === 'buyer'){
+            InfoForm.age=resp.data.buyerInfo.age;
+            InfoForm.height = resp.data.buyerInfo.height;
+            InfoForm.weight = resp.data.buyerInfo.weight;
+            if(resp.data.buyerInfo.gender===true)
+                InfoForm.gender = '男';
+            else if(resp.data.buyerInfo.gender===false)
+                InfoForm.gender = '女';
+            InfoForm.address = resp.data.buyerInfo.address;
+            InfoForm.isVip = resp.data.buyerInfo.isVip;
+        }
+        else if(role === 'seller'){
+            InfoForm.address = resp.data.sellerInfo.address;
+        }
     })
     .catch(resp => {
-        console.log(resp);
-        console.log("获取用户信息错误");
+        ElMessage.message('获取用户信息失败');
     });
 
     // 钩子函数：
@@ -274,17 +275,22 @@
                 // 初始化 originForm 的值为 updateForm 的深拷贝
                 Object.assign(originForm, JSON.parse(JSON.stringify(updateForm)));
 
-
                 updateForm.value.nickName = InfoForm.name;
-                updateForm.value.buyerInfo.age = InfoForm.age;
-                updateForm.value.buyerInfo.height = InfoForm.height;
-                updateForm.value.buyerInfo.weight = InfoForm.weight;
-                if(InfoForm.gender === '男')
-                    updateForm.value.buyerInfo.gender = true;
-                else if(InfoForm.gender === '女')
-                    updateForm.value.buyerInfo.gender=false;
-                updateForm.value.buyerInfo.address = InfoForm.address;
-                updateForm.value.buyerInfo.isVip = InfoForm.isVip;
+                updateForm.value.phoneNumber = InfoForm.phonenumber;
+                if(role === "buyer"){
+                    updateForm.value.buyerInfo.age = InfoForm.age;
+                    updateForm.value.buyerInfo.height = InfoForm.height;
+                    updateForm.value.buyerInfo.weight = InfoForm.weight;
+                    if(InfoForm.gender === '男')
+                        updateForm.value.buyerInfo.gender = true;
+                    else if(InfoForm.gender === '女')
+                        updateForm.value.buyerInfo.gender=false;
+                    updateForm.value.buyerInfo.address = InfoForm.address;
+                    updateForm.value.buyerInfo.isVip = InfoForm.isVip;
+                }
+                else if(role === "seller"){
+                    updateForm.value.sellerInfo.address = InfoForm.address;
+                }
 
                 // 提交表单
                 updateUserInfo(updateForm.value)
@@ -304,18 +310,23 @@
                         // 将 updateForm 的值恢复为 originForm 的深拷贝
                         Object.assign(updateForm, JSON.parse(JSON.stringify(originForm)));
 
-                        InfoForm.age = updateForm.value.buyerInfo.age;
-                        InfoForm.height =  updateForm.value.buyerInfo.height;
-                        InfoForm.weight =  updateForm.value.buyerInfo.weight;
-                        if(updateForm.value.buyerInfo.gender === true)
-                            InfoForm.gender = '男';
-                        else if(updateForm.value.buyerInfo.gender === false)
-                            InfoForm.gender= '女';      
-                        InfoForm.address =  updateForm.value.buyerInfo.address;
-                        InfoForm.isVip =  updateForm.value.buyerInfo.isVip;
-                        console.log(err);
+                        InfoForm.phonenumber = updateForm.value.phoneNumber;
+                        InfoForm.name = updateForm.value.nickName;
+                        if(role === 'buyer'){
+                            InfoForm.age = updateForm.value.buyerInfo.age;
+                            InfoForm.height =  updateForm.value.buyerInfo.height;
+                            InfoForm.weight =  updateForm.value.buyerInfo.weight;
+                            if(updateForm.value.buyerInfo.gender === true)
+                                InfoForm.gender = '男';
+                            else if(updateForm.value.buyerInfo.gender === false)
+                                InfoForm.gender= '女';      
+                            InfoForm.address =  updateForm.value.buyerInfo.address;
+                            InfoForm.isVip =  updateForm.value.buyerInfo.isVip;
+                        }
+                        else {
+                            InfoForm.address = updateForm.value.sellerInfo.address;
+                        }
                     });
-                // getUserInfo();//获取更新后的数据（注释掉就不会出错了）
                 // 禁用按钮
                 isButtonDisabled.value='false';
                 }else {
@@ -325,9 +336,7 @@
                             type: 'error',
                         })
                 }
-
         });
-
     }
 
     // 信息菜单栏被选中的菜单项
@@ -343,26 +352,35 @@
         isButtonDisabled.value='false';
         // 恢复原始数据
         InfoForm.name = updateForm.value.nickName;
-        InfoForm.age = updateForm.value.buyerInfo.age;
-        InfoForm.height =  updateForm.value.buyerInfo.height;
-        InfoForm.weight =  updateForm.value.buyerInfo.weight;
-        if(updateForm.value.buyerInfo.gender === true)
-            InfoForm.gender = '男';
-        else if(updateForm.value.gender === false)
-            InfoForm.gender = '女';
-        InfoForm.address =  updateForm.value.buyerInfo.address;
-        InfoForm.isVip =  updateForm.value.buyerInfo.isVip;
+        InfoForm.phonenumber = updateForm.value.phoneNumber;
+        if(role === 'buyer'){
+            InfoForm.age = updateForm.value.buyerInfo.age;
+            InfoForm.height =  updateForm.value.buyerInfo.height;
+            InfoForm.weight =  updateForm.value.buyerInfo.weight;
+            if(updateForm.value.buyerInfo.gender === true)
+                InfoForm.gender = '男';
+            else if(updateForm.value.gender === false)
+                InfoForm.gender = '女';
+            InfoForm.address =  updateForm.value.buyerInfo.address;
+            InfoForm.isVip =  updateForm.value.buyerInfo.isVip;
+        }
+        else{
+            InfoForm.address = updateForm.value.sellerInfo.address;
+        }
     }
-
-
 </script>
 
 
 <style lang="scss" scoped>
 
     .all-container{
-        margin-left:15%;
-        width:900px;
+        //上 右 下 左
+        padding:0 10% 5% 10%;
+    }
+
+    .main,
+    .header{
+        padding:0;
     }
   
     .card-container{
@@ -372,42 +390,14 @@
         width:100%;
     }
 
-
-
-    h2{
-        text-align: center;
-    }
-    .card{
-        // margin-top:3em;
-        // margin-left:10em;
-        width:100%;
-    }
     .input{
-        width:500px;
+        width:75%;
     }
 
-    .form-container{
-        margin-top:5%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 80%;
+    .button-row{
+        width:75%;
     }
 
-    .info-operation{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width:50%;
-        margin-left:20%;
-    }
-
-    // .alert{
-    //     margin-left:200px;
-    //     margin-top:-10px;
-    //     margin-bottom:10px;
-    //     width:500px;
-    // }
 
 </style>
 

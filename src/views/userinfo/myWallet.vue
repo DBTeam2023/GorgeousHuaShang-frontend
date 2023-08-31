@@ -1,63 +1,49 @@
 <template>
-    <!-- 未开通钱包功能 -->
-    <div class="row" v-if="walletExit === false">
-        <h2>我的钱包</h2>
-        <el-card>
-            <el-empty description="您还没有开通钱包功能哦~">
-                <el-button type="primary" @click="handleAdd">开通钱包</el-button>
-            </el-empty>
-        </el-card>
-    </div>
-    
-
     <!-- 可用余额 -->
-    <el-row class="row" v-if="walletExit === true">
-        <h2 style="width:100%;">我的钱包</h2>
-        <el-col :span="24" style="justify-content: center; align-items: center;">
-            <el-card>
-                <el-row class="wallet">
-                    <!-- 左栏 -->
-                    <el-col :span="12" style="justify-content: center; align-items: center">
-                        <h3 >可用余额</h3>
-                        <h2 class="balance" :style="{ color: statusColor }">{{walletForm.balance}}</h2>
-                    </el-col>
+    <el-main class="wallet-container">
+        <el-card>
+            <el-row class="wallet">
+                <!-- 左栏 -->
+                <el-col :span="12" style="justify-content: center; align-items: center">
+                    <h3 >可用余额</h3>
+                    <h2 class="balance" :style="{ color: statusColor }">{{walletForm.balance}}</h2>
+                </el-col>
 
-                    <!-- 右栏 -->
-                    <el-col :span="12"  style="display: flex; flex-direction: column; justify-content: center; align-items: center">
-                        <!-- 钱包状态 -->
-                        <h4>钱包状态：
-                            <template v-if="walletForm.status === true">
-                                活跃
+                <!-- 右栏 -->
+                <el-col :span="12"  style="display: flex; flex-direction: column; justify-content: center; align-items: center">
+                    <!-- 钱包状态 -->
+                    <h4>钱包状态：
+                        <template v-if="walletForm.status === true">
+                            活跃
+                        </template>
+                        <template v-else-if="walletForm.status === false">
+                            冻结
+                        </template>
+                    </h4> 
+                    <!-- 全部余额 -->
+                    <h4>全部余额：{{walletForm.balance}}</h4>
+                    <!-- 钱包充值对话框dialog -->
+                    <div>
+                        <el-button type="primary" :disabled="isButtonDisabled" @click="dialogRechargeVisible=true">余额充值</el-button>
+                        <el-dialog v-model="dialogRechargeVisible" title="充值">
+                            <el-form :model="updateForm" :rules="RechargeRules" ref="formRef">
+                                <el-form-item label="请输入充值金额" :label-width="formLabelWidth" prop="amount">
+                                    <el-input v-model.number="updateForm.amount" autocomplete="off" />
+                                </el-form-item>
+                            </el-form>
+                            <template #footer>
+                                <span class="dialog-footer">
+                                    <el-button @click="dialogRechargeVisible = false">取消</el-button>
+                                    <el-button type="primary" @click="handleRecharge">确定</el-button>
+                                </span>
                             </template>
-                            <template v-else-if="walletForm.status === false">
-                                冻结
-                            </template>
-                        </h4> 
-                        <!-- 全部余额 -->
-                        <h4>全部余额：{{walletForm.balance}}</h4>
-                        <!-- 钱包充值对话框dialog -->
-                        <div>
-                            <el-button type="primary" :disabled="isButtonDisabled" @click="dialogRechargeVisible=true">余额充值</el-button>
-                            <el-dialog v-model="dialogRechargeVisible" title="充值">
-                                <el-form :model="updateForm" :rules="RechargeRules" ref="formRef">
-                                    <el-form-item label="请输入充值金额" :label-width="formLabelWidth" prop="amount">
-                                        <el-input v-model.number="updateForm.amount" autocomplete="off" />
-                                    </el-form-item>
-                                </el-form>
-                                <template #footer>
-                                    <span class="dialog-footer">
-                                        <el-button @click="dialogRechargeVisible = false">取消</el-button>
-                                        <el-button type="primary" @click="handleRecharge">确定</el-button>
-                                    </span>
-                                </template>
-                            </el-dialog>
-                        </div>
+                        </el-dialog>
+                    </div>
 
-                    </el-col>
-                </el-row>
-            </el-card>
-        </el-col>
-    </el-row>
+                </el-col>
+            </el-row>
+        </el-card>
+    </el-main>
 
 </template>
 
@@ -70,7 +56,6 @@
 
     import { getWallet, rechargeWallet} from '@/api/mywallet'
 
-    const walletExit=ref(true);//是否开通钱包功能标志
 
     // 钱包：从后端获取的数据
     const walletForm=reactive({
@@ -135,9 +120,7 @@
     })
 
     // 获取用户钱包信息
-    getWallet({
-        token:"Bearer " + localStorage.getItem("jwtToken"),        
-    })
+    getWallet()
     .then(resp => {
         walletForm.balance=resp.data.balance;
         walletForm.status=resp.data.status;
@@ -146,8 +129,8 @@
         console.log('获取失败！');
         console.log(error);
         ElMessage({
-                    message: '获取钱包信息错误，请重试！',
-                    type: 'error',
+                    message: '获取钱包信息错误，请刷新重试！',
+                    type: 'info',
                 })
     });
 
@@ -158,7 +141,6 @@
         formRef.value.validate((valid) => {
             if(valid){
                 rechargeWallet({
-                    token:"Bearer " + localStorage.getItem("jwtToken"), 
                     amount:updateForm.amount,
                 })
                 .then(resp=>{
@@ -199,6 +181,10 @@
 
     h2,h3,h4{
         text-align: center;
+    }
+
+    .wallet-container{
+        padding:0 10% 5% 10%;
     }
 
     .row{

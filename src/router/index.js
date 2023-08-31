@@ -14,6 +14,7 @@ import UserInfoView from "@/views/userinfo/UserInfoView.vue"
 import store from "@/store";
 import { ElMessage } from "element-plus";
 import NotFound from "@/views/NotFoundView.vue";
+import PayView from '@/views/pay/PayView.vue';
 
 /// requestAuth 代表是否需要登录才能访问界面
 
@@ -139,6 +140,14 @@ const routes =
       component: NotFound,
       meta: {
         requestAuth: false,
+      }
+    },
+    {
+      path: '/pay/',
+      name: 'Pay',
+      component: PayView,
+      meta: {
+        requestAuth: true,
       }
     },
   ]
