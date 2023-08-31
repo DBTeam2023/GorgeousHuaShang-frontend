@@ -21,9 +21,6 @@
             <el-form-item label="单件价格">
               <el-input v-model.number="price" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="初始库存">
-              <el-input v-model.number="stock" type="number"></el-input>
-            </el-form-item>
             <el-form-item label="商品详情">
               <el-input type="textarea" v-model="description"></el-input>
             </el-form-item>
@@ -68,7 +65,6 @@ watch(classification, (newVal) => {
 
 let productName= ref("");
 let price = ref()
-let stock = ref()
 let description = ref("")
 let classificationType = ref("")
 let property = ref(JSON.stringify({
@@ -82,15 +78,6 @@ let property = ref(JSON.stringify({
     "绿色",
   ],
 }))
-
-function submitForm() {
-      console.log(productName.value);
-}
-
-function resetForm() {
-
-};
-
 
 function addNewCommodity() {
   let formData = new FormData();
