@@ -26,7 +26,7 @@
               <h class="login-font">注册</h>
             </div>
             <div class="vertical-flex-box">
-              <form style="margin-top: 10%">
+              <form style="margin-top: 5%">
                 <input type="text" class="email" placeholder="用户名" v-model="RegisterForm.username" />
                 <input type="password" class="pwd" placeholder="密码" v-model="RegisterForm.password" />
                 <input type="password" class="pwd" placeholder="确认密码" v-model="passwordConfirm" />
@@ -42,7 +42,7 @@
               </div>
 
               <!--登录按钮-->
-              <div class="btn effect01" target="_blank" style="margin-top: 5%" @click="register">
+              <div class="btn effect01" target="_blank" style="margin-top: 2%" @click="register">
                 <span style="margin-left: 40%; font-size: 1.3em">注册</span>
               </div>
             </div>
@@ -253,7 +253,7 @@ input {
       color: rgba(0, 0, 0, 0.67);
       position: relative;
       -webkit-transform: translateY(-20px);
-      transform: translateY(-20px);
+      transform: translateY(-10px);
     }
   }
 }

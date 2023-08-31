@@ -26,7 +26,7 @@
               <h class="login-font">登录</h>
             </div>
             <div class="vertical-flex-box">
-              <form style="margin-top: 10%">
+              <form style="margin-top: 5%">
                 <input type="text" class="email" placeholder="用户名" v-model="loginForm.username" />
                 <input type="password" class="pwd" placeholder="密码" v-model="loginForm.password" />
               </form>
@@ -280,7 +280,7 @@ input {
       color: rgba(0, 0, 0, 0.67);
       position: relative;
       -webkit-transform: translateY(-20px);
-      transform: translateY(-20px);
+      transform: translateY(-10px);
     }
   }
 }
