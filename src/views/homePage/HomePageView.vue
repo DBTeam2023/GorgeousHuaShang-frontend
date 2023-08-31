@@ -143,7 +143,9 @@ function turnToProduct(index, i) {
   router.push({path: '/goodsdetail',
     query: {
     productName: itemList.value[index * rowSize + i].productName,
-    goodsId: itemList.value[index * rowSize + i].productId},
+    goodsId: itemList.value[index * rowSize + i].productId,
+    storeId: itemList.value[index * rowSize + i].storeId,
+    },
   });
 }
 //可以使用v-model指令将搜索框中的文本内容与search数据属性进行双向绑定，以便在组件中可以实时获取和更新搜索框中的内容
