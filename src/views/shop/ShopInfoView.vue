@@ -2,23 +2,27 @@
   <div class="shop-container">
     <div class="shop-header">
       <div class="shop-icon-container">
-        <img :src="shopIcon" alt="Shop Icon" class="shop-icon" />
+        <img :src="infoForm.shopIcon" alt="Shop Icon" class="shop-icon" />
 <!--        <input type="file" ref="imageInput" style="display:none" @change="handleImageChange" accept="image/*">-->
 <!--        <button class="upload-image-button" @click="uploadImage">上传图片</button>-->
       </div>
-      <h1 class="shop-name">{{ shopName }}</h1>
+      <h1 class="shop-name">{{ infoForm.shopName }}</h1>
       <div class="shop-rating">
-        <el-rate v-model="shopRating" disabled></el-rate>
+        <el-rate v-model="infoForm.score" disabled></el-rate>
       </div>
     </div>
     <div class="shop-content">
       <h3 class="section-title">店铺简介</h3>
-      <p class="section-text">{{ shopDescription }}</p>
+      <p class="section-text">{{ infoForm.description }}</p>
       <h3 class="section-title">店铺地址</h3>
-      <p class="section-text">{{ shopAddress }}</p>
+      <p class="section-text">{{ infoForm.address }}</p>
     </div>
     <div class="shop-actions">
       <el-button type="primary" @click="dialogVisible = true">修改信息</el-button>
+    </div>
+    <div class="shop-actions">
+      <el-button type="primary" @click="dialogVisibleForManager = true"
+      style="margin-top: 30px;">邀请管理员</el-button>
     </div>
   </div>
 
@@ -28,20 +32,20 @@
     width="30%"
     :before-close="handleClose"
   >
-    <el-form :model="form" label-width="80px" ref="form">
+    <el-form :model="infoForm" label-width="80px" ref="form">
 <!--      <el-form-item label="店铺头像">-->
 <!--        <el-input :v-model="infoForm.shopIcon" readonly :placeholder='picURL'></el-input>-->
 <!--        <input type="file" ref="imageInput2" style="display:none" @change="handleIconChange" accept="image/*">-->
 <!--        <button class="upload-image-button" @click.prevent="uploadIcon">请上传图片</button>-->
 <!--      </el-form-item>-->
-      <el-form-item label="店铺名称">
-        <el-input v-model="infoForm.shopName"/>
+      <el-form-item label="店铺评分">
+        <el-input v-model="infoForm.score"/>
       </el-form-item>
       <el-form-item label="店铺简介">
-        <el-input v-model="infoForm.shopDescription"></el-input>
+        <el-input v-model="infoForm.description"></el-input>
       </el-form-item>
       <el-form-item label="店铺地址">
-        <el-input v-model="infoForm.shopAddress"></el-input>
+        <el-input v-model="infoForm.address"></el-input>
       </el-form-item>
     </el-form>
 
@@ -52,42 +56,100 @@
       </span>
     </template>
   </el-dialog>
+
+
+
+  <el-dialog
+      v-model="dialogVisibleForManager"
+      title="邀请管理员"
+      width="30%"
+      :before-close="handleClose"
+  >
+    <el-form label-width="80px" ref="form">
+      <el-form-item label="卖家账号">
+        <el-input v-model="account"></el-input>
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisibleForManager = false">取消</el-button>
+        <el-button type="primary" @click="saveChangesForManager">保存</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue';
-import { ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox } from 'element-plus';
-import {getStoreInfo} from "@/api/store";
+import {onMounted, reactive, ref} from 'vue';
+import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage} from 'element-plus';
+import {addStoreAddress, addStoreDescription, getStoreInfo} from "@/api/store";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
 
-const shopName = ref('');
-
-const shopIcon = ref('https://picsum.photos/200/200');
-const shopRating = ref(4);
-const shopDescription = ref('这是一家很不错的店铺。');
-const shopAddress = ref('北京市朝阳区');
 const dialogVisible = ref(false);
-const infoForm = ref({
-  shopIcon: '',
+const dialogVisibleForManager = ref(false)
+
+const infoForm = reactive({
+  shopIcon: 'https://picsum.photos/200/200',
   shopName: '',
-  shopDescription: '',
-  shopAddress: '',
+  description: '',
+  address: '',
+  score: 4,
+  storeId: "",
 });
-let picURL = ref("")
+
+const account = ref();
 
 onMounted(() => {
   getStoreInfo({
     storeId: route.query.storeid
   })
       .then(resp => {
-        shopName.value = resp.data.storeName
+        infoForm.shopName = resp.data.storeName;
+        infoForm.score = resp.data.score;
+        infoForm.address = resp.data.address;
+        infoForm.storeId = resp.data.storeId;
+        infoForm.description = resp.data.description;
       })
       .catch(resp => {
-        console.log(resp)
+        ElMessage.error('商店信息获取异常');
       })
 })
+
+function saveChangesForManager() {
+//   todo: 邀请别人
+
+  dialogVisibleForManager.value = false;
+}
+
+async function saveChanges() {
+  try {
+    const addDescription = addStoreDescription({
+        storeId: infoForm.storeId,
+        des: infoForm.description,
+    });
+    const addAddress = addStoreAddress({
+      storeId: infoForm.storeId,
+      address: infoForm.address,
+    });
+
+    const [descriptionResult, addressResult] = await Promise.all([addDescription, addAddress]);
+
+    ElMessage({
+      message: '修改成功',
+      type: 'success',
+    })
+
+    dialogVisible.value = false;
+  } catch (error) {
+    ElMessage({
+      message: '修改失败',
+      type: 'warning',
+    })
+  }
+}
 
 const handleClose = (done) => {
   ElMessageBox.confirm('确定要关闭对话框吗？')
@@ -98,31 +160,6 @@ const handleClose = (done) => {
       // 处理错误
     });
 };
-
-const saveChanges = () => {
-  if (infoForm.value.shopIcon) {
-    shopIcon.value = infoForm.value.shopIcon;
-  }
-  if (infoForm.value.shopName) {
-    shopName.value = infoForm.value.shopName;
-  }
-  if (infoForm.value.shopDescription) {
-    shopDescription.value = infoForm.value.shopDescription;
-  }
-  if (infoForm.value.shopAddress) {
-    shopAddress.value = infoForm.value.shopAddress;
-  }
-  dialogVisible.value = false;
-  resetForm();
-};
-
-const resetForm = () => {
-  infoForm.value.shopIcon = '';
-  infoForm.value.shopName = '';
-  infoForm.value.shopDescription = '';
-  infoForm.value.shopAddress = '';
-  picURL = '';
-}
 
 </script>
 

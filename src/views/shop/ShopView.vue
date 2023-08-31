@@ -4,27 +4,27 @@
     <div class="shop-header">
       <div style=" display: flex;align-items: center;justify-content: space-between;">
         <el-icon style="font-size: 25px;"><house /></el-icon>
-        <div class="shop-name">{{ shopName }}</div>
+        <div class="shop-name">{{ storeInfo.shopName }}</div>
       </div>
       <div class="shop-stats">
         <div class="shop-stat">
           <el-icon style="font-size: 25px;"><User /></el-icon>
           <div class="shop-stat-info">
-            <div class="shop-stat-value">{{ favoriteUserCount }}</div>
+            <div class="shop-stat-value">{{ storeInfo.favoriteUserCount }}</div>
             <div class="shop-stat-label">收藏用户</div>
           </div>
         </div>
         <div class="shop-stat">
           <el-icon style="font-size: 25px;"><Star /></el-icon>
           <div class="shop-stat-info">
-            <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>
+            <div class="shop-stat-value">{{ storeInfo.score }}</div>
             <div class="shop-stat-label">店铺星级</div>
           </div>
         </div>
         <div class="shop-stat">
           <el-icon style="font-size: 25px;"><Location/></el-icon>
           <div class="shop-stat-info">
-            <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>
+            <div class="shop-stat-value">{{ storeInfo.address }}</div>
             <div class="shop-stat-label">店铺地址</div>
           </div>
         </div>
@@ -43,15 +43,12 @@
               <el-avatar :size="100" src='https://picsum.photos/id/1018/200/200' />
           </el-row>
           <!--用户姓名-->
-          <el-row class="name-row">{{ shopName }}</el-row>
+          <el-row class="name-row">{{ storeInfo.shopName }}</el-row>
       </el-header>
         <el-menu default-active="1"  active-text-color="#ffd04b"
                   background-color="#545c64"
                   class="el-menu-vertical-demo"
                   text-color="#fff"
-                  @selected="handleMenuSelect"
-                  @open="handleOpen"
-                  @close="handleClose"
                   style="height: 60%;border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;"
                   >
           <el-menu-item index="1" @click="selectMenu('ShopInfo')">
@@ -96,58 +93,58 @@
 <script setup>
 import {
 House,
-  Star,
-  Grid,
+Star,
+Grid,
 User,
-Document,
-DocumentAdd,
-  Collection,
 Comment,
-Menu as IconMenu,
 Location,
-Setting,
-InfoFilled,
-Histogram,
-MoreFilled,
 Menu,
-Tools,
 Avatar,
 } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 // import Chat from '@/views/shop_subs/Chat2SellerView.vue'
 // import OrderManage from '@/views/shop_subs/OrderManageView.vue'
 import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
 import ALLItems from '@/views/shop/ALLItemsView.vue';
 import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
-import { ElIcon } from 'element-plus';
+import {ElIcon, ElMessage} from 'element-plus';
+import {getStoreInfo} from "@/api/store";
+import {useRoute} from "vue-router";
 
+const route = useRoute();
 
+const storeInfo = reactive({
+  storeId: "",
+  shopName: "",
+  favoriteUserCount: 17,
+  score: 3,
+  address: "山西",
+})
 
-//   const handleOpen = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
+const getStoreInfoById = () => {
+  getStoreInfo({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        storeInfo.shopName = resp.data.storeName;
+        storeInfo.score = resp.data.score;
+        storeInfo.address = resp.data.address;
+        storeInfo.storeId = resp.data.storeId;
+      })
+      .catch(resp => {
+        ElMessage.error('商店信息获取异常');
+      })
+}
 
-//   const handleClose = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
 const selectedMenu = ref('ShopInfo');
-
-// 商店名字
-const shopName = ref('A Test Shop')
-
-// 收藏用户数
-const favoriteUserCount = ref(123)
-
-// 店铺星级
-const toBeShippedOrderCount = ref(4)
-
-// 店铺地址
-const toBeReceivedOrderCount = ref('缪缪的心里')
-
 
 function selectMenu(menu) {
     selectedMenu.value = menu;
 }
+
+onMounted(() => {
+  getStoreInfoById();
+})
 
 </script>
 

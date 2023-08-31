@@ -12,6 +12,17 @@
               </div>
             </div>
           </RouterLink>
+          <el-popconfirm
+              confirm-button-text="Yes"
+              cancel-button-text="No"
+              icon-color="#626AEF"
+              title="确定注销店铺吗？"
+              @confirm="deleteShop(index)"
+          >
+            <template #reference>
+              <el-button type="danger" size="small">注销</el-button>
+            </template>
+          </el-popconfirm>
         </Card>
       </el-col>
     </el-row>
@@ -29,9 +40,9 @@
 
 <script setup>
 import {computed, onMounted, reactive, ref, watch} from 'vue';
-import { ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination } from 'element-plus';
+import {ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination, ElMessage} from 'element-plus';
 import Card from "@/components/common/Card.vue";
-import {getMySTore} from "@/api/store";
+import {deleteStore, getMySTore} from "@/api/store";
 
 let stores = ref([]);
 
@@ -101,6 +112,25 @@ onMounted(() => {
         console.log(resp)
       })
 })
+
+function deleteShop(index) {
+  deleteStore({
+    storeId: stores.value.storeId
+  })
+      .then(resp => {
+        ElMessage({
+          message: '注销成功',
+          type: 'success',
+        })
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '注销失败',
+          type: 'warning',
+        })
+      })
+}
+
 </script>
 
 <style scoped>
