@@ -115,8 +115,8 @@
       </div>
 
      <div class="buttons">
-      <el-button type="primary" @click="dialogVisibleCart = true">加入购物车</el-button>
-      <el-button type="success" @click="dialogVisibleOrder = true">立即购买</el-button>
+      <el-button type="primary" @click="openCartForm">加入购物车</el-button>
+      <el-button type="success" @click="openOrderForm">立即购买</el-button>
      </div>
 
       <el-dialog
@@ -166,11 +166,6 @@
 
   <comment-view/>
 </template>
-
-
-
-
-
 
 
 
@@ -233,8 +228,10 @@ let selectedcommodity = reactive({});// 选中属性对应的那个产品
 
 // todo: 加入购物车，加入订单
 /*
+selectedcommodity:
 {
   commodityId: "a618c78d-3329-4126-a7fe-4120b050e54c",
+  pickId: "",
   description: "小哥哥小姐姐都可以穿的汉服哟！",
   price: 300,
   totalPrice: 600,
@@ -248,6 +245,8 @@ let selectedcommodity = reactive({});// 选中属性对应的那个产品
 }
   */
 
+
+
 watch(selectProperties, (newVal) => {
   selectIndex.value = findIndicesWithProperties(response.commodityInfo, newVal.value)
   selectedcommodity.value = {
@@ -256,7 +255,6 @@ watch(selectProperties, (newVal) => {
     selectedQuantity: selectedQuantity.value,
     totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
   }
-  console.log(selectedcommodity.value)
 });
 
 watch(selectedQuantity, (newVal) => {
@@ -266,7 +264,6 @@ watch(selectedQuantity, (newVal) => {
     selectedQuantity: selectedQuantity.value,
     totalPrice: selectedQuantity.value * response.commodityInfo[selectIndex.value].price
   }
-  console.log(selectedcommodity.value)
 });
 
 function selectImage(image) {
@@ -275,6 +272,23 @@ function selectImage(image) {
 
 const dialogVisibleCart = ref(false);
 const dialogVisibleOrder = ref(false)
+
+function openCartForm() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage.error('卖家无法加入购物车！');
+    return;
+  }
+  dialogVisibleCart.value = true
+}
+
+function openOrderForm() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage.error('卖家无法购买！');
+    return;
+  }
+  dialogVisibleCart.value = true
+}
+
 function cancelAddCart() {
   dialogVisibleCart.value = false
 }
@@ -300,16 +314,6 @@ function confirmAddOrder() {
   dialogVisibleOrder.value = false
 }
 
-const handleClose = (done) => {
-  ElMessageBox.confirm('Are you sure to close this dialog?')
-      .then(() => {
-        done();
-      })
-      .catch(() => {
-        // catch error
-      });
-};
-
 getGoodsDetail(commodityIdToBackend.value)
     .then(resp => {
       if (resp.code === 200)
@@ -332,7 +336,9 @@ getGoodsDetail(commodityIdToBackend.value)
       });
     })
 
-
+// setInterval(() => {
+//   console.log(selectedcommodity.value)
+// }, 2000)
 
 // ***************  处理接收的数据  ***************
 function mergeSimilarProperties(array) {
