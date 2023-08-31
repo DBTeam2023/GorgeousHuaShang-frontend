@@ -93,16 +93,17 @@ function resetForm() {
 
 
 function addNewCommodity() {
-  const formData = new FormData();
+  let formData = new FormData();
   formData.append('StoreId', route.query.storeid);
   formData.append('ProductName', productName.value);
   formData.append('Description', description.value);
   formData.append('Price', price.value);
   formData.append('Property', property.value);
   formData.append('ClassficationType', classificationType.value);
-  formData.append('IsDeleted', 0);
+  formData.append('IsDeleted', false);
   // todo: 图片
-  console.log(formData)
+
+
   createNewCommodity(formData)
       .then(resp => {
         ElMessage({
