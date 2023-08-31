@@ -211,4 +211,9 @@ function deleteShop(index) {
   justify-content: center;
   margin-left: -30px;
 }
+
+/* 禁用 router-link 的下划线 */
+.router-link-active {
+  text-decoration: none;
+}
 </style>
