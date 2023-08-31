@@ -27,9 +27,9 @@
                 <div v-if="!showDetails">
                 <el-main class="allOrder"> <div>
                     <!-- 显示全部订单 -->
-                    <OrderList v-if="activeIndex === '1'" :orderData="orderSections.all" title="全部订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :checkDetails="checkDetails"/>
+                    <OrderList v-if="activeIndex === '1'" :orderData="orderSections.all" title="全部订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :checkDetails="checkDetails" :payOrder="payOrder"/>
                     <!-- 显示待付款内容 -->
-                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
+                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :payOrder="payOrder"/>
                     <!-- 显示待发货内容 -->
                     <OrderList v-else-if="activeIndex === '3'" :orderData="orderSections.toSend" title="待发货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
                     <!-- 显示待收货内容 -->

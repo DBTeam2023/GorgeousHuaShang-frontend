@@ -55,6 +55,7 @@
   </template>
   
   <script>
+  import Vue from 'vue';
   export default {
     props: {
       orderData: Array, // 订单数据
@@ -62,6 +63,7 @@
       deleteOrder: Function,
       confirmOrder: Function,
       checkDetails: Function,
+      payOrder: Function,
     },
     methods: {
       isDeleteDisabled(row) {
@@ -82,6 +84,16 @@
         if (this.checkDetails) {
             this.checkDetails(row); 
         }
+      },
+      payOrder(row) {
+        // 构建带有查询参数的支付页面路径
+        const payPagePath = {
+          path: '/pay', // 支付页面路径
+          query: { orderId: row.orderID } // 查询参数
+        };
+
+        // 使用 Vue Router 导航到支付页面
+        this.$router.push(payPagePath);
       },
     },
   };
