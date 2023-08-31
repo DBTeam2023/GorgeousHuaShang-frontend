@@ -64,7 +64,7 @@ const handleSelect = (key, keyPath) => {
   } else if (key === '1') {
     router.push('/cart/');
   } else if (key === '2') {
-    router.push('/shopmanage/')
+    router.push('/shopselect/')
   } else if (key === '3') {
     // todo: 可能需要加路由参数
     router.push('/order/')

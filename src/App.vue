@@ -31,4 +31,3 @@
 import NavBar from "@/components/common/NavBar.vue";
 import MyFooter from "@/components/common/MyFooter.vue";
 </script>
-

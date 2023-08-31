@@ -29,13 +29,13 @@ const routes =
         requestAuth: false,
       }
     },
-    {
-      path: '/homepage/',
-      name: "Homepage",
-      component: HomePageView,
-      meta: {
-        requestAuth: false,
-      }
+        {
+          path : '/homepage/',
+          name : "Homepage",
+          component : HomePageView,
+          meta: {
+              requestAuth: false,
+          }
     },
     {
       path: '/classify',
@@ -45,45 +45,45 @@ const routes =
         requestAuth: false,
       }
     },
-    {
-      path: '/login/',
-      name: 'Login',
-      component: LoginView,
-      meta: {
-        requestAuth: false,
-      }
-    },
-    {
-      path: '/register/',
-      name: 'Register',
-      component: RegisterView,
-      meta: {
-        requestAuth: false,
-      }
-    },
-    {
-      path: '/shopselect/',
-      name: 'ShopSelect',
-      component: ShopSelectView,
-      meta: {
-        requestAuth: true,
-      }
-    },
-    {
-      path: '/shopmanage/',
-      name: 'ShopManage',
-      component: ShopManageView,
-      meta: {
-        requestAuth: true,
-      }
-    },
-    {
-      path: '/shop/',
-      name: 'Shop',
-      component: ShopView,
-      meta: {
-        requestAuth: true,
-      }
+        {
+          path : '/login/',
+          name : 'Login',
+          component : LoginView,
+          meta: {
+              requestAuth: false,
+          }
+        },
+        {
+          path : '/register/',
+          name : 'Register',
+          component : RegisterView,
+          meta: {
+              requestAuth: false,
+          }
+        },
+        {
+          path : '/shopselect/',
+          name : 'ShopSelect',
+          component : ShopSelectView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/shopmanage/',
+          name : 'ShopManage',
+          component : ShopManageView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/shop/',
+          name : 'Shop',
+            component : ShopView,
+          meta: {
+              requestAuth: true,
+          }
     },
     {
       path: '/cart/',

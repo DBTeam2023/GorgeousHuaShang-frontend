@@ -38,8 +38,8 @@ import router from "@/router"
     })
     .then(resp => {
       storeList.value = resp.data.records;
-      total = resp.data.total;       
-      if(total === 0){
+      total.value = resp.data.total;
+      if(total.value === 0){
           FollowedExit.value = false;
       }       
       else{

@@ -1,242 +1,166 @@
 <template>
-    <div class="shop-page">
-      <div class="search-sort-row">
-        <div class="search-bar">
-          <input v-model="searchText" class="search-input" placeholder="请输入关键字进行搜索" />
-          <button class="search-btn" @click="search">
-            <i class="el-icon-search"></i>
-          </button>
-        </div>
-        <el-select v-model="sortBy" placeholder="请选择排序方式" class="sort-select">
-          <el-option label="价格升序" value="priceAsc"></el-option>
-          <el-option label="价格降序" value="priceDesc"></el-option>
-          <el-option label="发布日期升序" value="dateAsc"></el-option>
-          <el-option label="发布日期降序" value="dateDesc"></el-option>
-          <el-option label="销量升序" value="salesAsc"></el-option>
-          <el-option label="销量降序" value="salesDesc"></el-option>
-          <el-option label="收藏数升序" value="favoritesAsc"></el-option>
-          <el-option label="收藏数降序" value="favoritesDesc"></el-option>
-        </el-select>
-      </div>
-
-      <div class="card-list">
-        <div v-for="item in filteredList" :key="item.id" class="card">
-          <div class="card-image">
-            <img :src="item.imageUrl" alt="Product Image" />
+  <div class="product-management">
+    <h1 class="title">全部宝贝</h1>
+    <el-row :gutter="20" class="product-list">
+      <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
+        <Card class="card">
+          <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
+            <img class="product-image" :src="product.imageurl" alt="Product Image" />
+            <h3 class="product-name">{{ product.productName }}</h3>
+            <div class="button-group">
+              <p style="color: orange;">￥{{ product.price }}</p>
+            </div>
           </div>
-          <div class="card-content">
-            <div class="card-title">{{ item.name }}</div>
-            <div class="card-price">价格：{{ item.price }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
+        </Card>
+      </el-col>
+    </el-row>
+    <el-pagination background
+                   :current-page="currentPage"
+                   :page-size="pageSize"
+                   :total="total"
+                   @current-change="handlePageChange"></el-pagination>
+  </div>
+</template>
 
-  <script setup>
-  import { ref, computed } from 'vue';
+<script setup>
+import {computed, onMounted, reactive, ref, watch} from 'vue';
+import {ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination, ElMessage} from 'element-plus';
+import Card from "@/components/common/Card.vue";
+import { Search,Filter } from '@element-plus/icons-vue';
+import {getGoodsInPage} from "@/api/goods";
+import {useRoute} from "vue-router";
+import {base64ToUrl} from "@/utils/photo";
+import {getStoreInfo} from "@/api/store";
 
-  const searchText = ref('');
-  const sortBy = ref('');
+const route = useRoute()
 
-  const productList = ref([
-    {
-      id: 1,
-      name: '商品1',
-      description: '这是商品1的描述',
-      price: 50,
-      imageUrl: 'https://picsum.photos/id/1018/400/200',
-      date: '2022-01-01',
-      sales: 100,
-      favorites: 50
-    },
-    {
-      id: 2,
-      name: '商品2',
-      description: '这是商品2的描述',
-      price: 100,
-      imageUrl: 'https://picsum.photos/id/1018/400/200',
-      date: '2022-02-01',
-      sales: 200,
-      favorites: 80
-        },
-        {
-    id: 3,
-    name: '商品3',
-    description: '这是商品3的描述',
-    price: 80,
-    imageUrl: 'https://picsum.photos/id/1018/400/200',
-    date: '2022-03-01',
-    sales: 150,
-    favorites: 60
-  },
-  {
-    id: 4,
-    name: '商品4',
-    description: '这是商品4的描述',
-    price: 120,
-    imageUrl: 'https://picsum.photos/id/1018/400/200',
-    date: '2022-04-01',
-    sales: 80,
-    favorites: 30
-  },
-  {
-    id: 5,
-    name: '商品5',
-    description: '这是商品5的描述',
-    price: 90,
-    imageUrl: 'https://picsum.photos/id/1018/400/200',
-    date: '2022-05-01',
-    sales: 120,
-    favorites: 70
-        },
-        {
-    id: 6,
-    name: '商品6',
-    description: '这是商品6的描述',
-    price: 70,
-    imageUrl: 'https://picsum.photos/id/1018/400/200',
-    date: '2022-06-01',
-    sales: 90,
-    favorites: 40
-  },
-  {
-    id: 7,
-    name: '商品7',
-    description: '这是商品7的描述',
-    price: 110,
-    imageUrl: 'https://picsum.photos/id/1018/400/200',
-    date: '2022-07-01',
-    sales: 180,
-    favorites: 90
-  }
+const products = ref([]);
 
-    // 添加更多商品...
-  ]);
+const isHovered = reactive(Array(products.value.length).fill(false));
+const currentPage = ref(1);
+const pageSize = 8;
+let total = ref();
 
-  const filteredList = computed(() => {
-    let list = productList.value;
+const currentProducts = computed(() => {
+  const startIndex = 0;
+  const endIndex = startIndex + pageSize;
+  return products.value.slice(startIndex, endIndex);
+});
 
-    // 根据搜索关键字进行模糊搜索
-    if (searchText.value) {
-      list = list.filter(item =>
-        item.name.toLowerCase().includes(searchText.value.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchText.value.toLowerCase())
-      );
-    }
+const handlePageChange = (newPage) => {
+  currentPage.value = newPage;
+};
 
-    // 根据排序方式进行排序
-    switch (sortBy.value) {
-      case 'priceAsc':
-        list.sort((a, b) => a.price - b.price);
-        break;
-      case 'priceDesc':
-        list.sort((a, b) => b.price - a.price);
-        break;
-      case 'dateAsc':
-        list.sort((a, b) => new Date(a.date) - new Date(b.date));
-        break;
-      case 'dateDesc':
-        list.sort((a, b) => new Date(b.date) - new Date(a.date));
-        break;
-      case 'salesAsc':
-        list.sort((a, b) => a.sales - b.sales);
-        break;
-      case 'salesDesc':
-        list.sort((a, b) => b.sales - a.sales);
-        break;
-      case 'favoritesAsc':
-        list.sort((a, b) => a.favorites - b.favorites);
-        break;
-      case 'favoritesDesc':
-        list.sort((a, b) => b.favorites - a.favorites);
-        break;
-    }
+onMounted(() => {
+  getCommodities();
+})
 
-    return list;
-  });
-  </script>
+watch(currentPage, () => {
+  getCommodities();
+})
 
-  <style scoped>
-  .shop-page {
-    padding: 20px;
-  }
-
-  .search-sort-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 300px;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 8px 30px 8px 10px;
-    border: none;
-    border-radius: 20px;
-    outline: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .search-btn {
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .sort-select {
-    width: 200px;
-  }
-
-  .card-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 350px));
-  gap: 20px; /* 添加卡片之间的间隔 */
-  margin-top: 20px;
+const getCommodities = () => {
+  getGoodsInPage({
+    pageSize: pageSize,
+    pageIndex: currentPage.value,
+    commodityId: null,
+    storeId: route.query.storeid,
+    pricemin: null,
+    pricemax: null,
+    type: null,
+    name: null,
+    description: ""
+  })
+      .then(resp => {
+        products.value = []
+        for (let i = 0; i < resp.data.records.length; i ++) {
+          products.value.push({
+            productId: resp.data.records[i].productId,
+            productName: resp.data.records[i].productName,
+            description: resp.data.records[i].description,
+            price: resp.data.records[i].price,
+            imageurl: base64ToUrl(resp.data.records[i].image.fileContents, resp.data.records[i].image.contentType),
+          })
+        }
+        total.value = resp.data.total;
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '删除失败',
+          type: 'warning',
+        })
+      })
 }
 
+</script>
 
-  .card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    width: 300px; /* 添加固定宽度限制 */
-    height: 200px; /* 添加固定高度限制 */
-    transition: box-shadow 0.3s ease-in-out;
-  }
+<style scoped>
 
-  .card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+.card{
+  width: 240px;
+  height: 325px;
+  margin-top: 20px
+}
 
-  .card-image img {
-    width: 100%;
-    height: 100%; /* 添加图片高度以保持固定比例 */
-    object-fit: cover; /* 图片等比例缩放填充容器 */
-  }
+.product-management {
+  padding: 20px;
+}
 
-  .card-content {
-    margin-top: 10px;
-  }
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-  .card-title {
-    font-size: 16px;
-    font-weight: bold;
-  }
+.filters {
+  margin-bottom: 20px;
+  display: flex;
+}
 
-  .card-price {
-    margin-top: 5px;
-    color: #888;
-  }
-  </style>
+.product-list {
+  margin-bottom: 20px;
+}
+
+.product-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.product-image {
+  border-radius: 20px;
+  width: 100%;
+}
+
+.product-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-name {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.product-actions {
+  display: flex;
+  justify-content: space-between;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+}
+
+.search-box .el-input {
+  margin-left: 10px; /* 修改 icon 和 input 之间的间距 */
+}
+
+.sort-box {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+</style>
