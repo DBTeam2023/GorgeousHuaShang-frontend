@@ -68,6 +68,10 @@
               联系客服
           </el-menu-item>
         </el-menu>
+
+<!--      todo shoucang  -->
+        <el-button v-if="!collect" type="info" plain style="width: 100%; margin-top: 20px" @click="collectBtn">收藏</el-button>
+        <el-button v-if="collect" type="info" plain style="width: 100%; margin-top: 20px" @click="removeCollectBtn">取消收藏</el-button>
       </el-col>
   <el-col :span="20">
     <template v-if="selectedMenu === 'ShopInfo'">
@@ -108,10 +112,81 @@ import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
 import ALLItems from '@/views/shop/ALLItemsView.vue';
 import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
 import {ElIcon, ElMessage} from 'element-plus';
-import {getStoreInfo} from "@/api/store";
+import {collectStore, getStoreInfo, removeCollectStore} from "@/api/store";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
+
+let collect = ref(false);
+
+// 由于没办法获得当前用户是否收藏过，所以调用api手动测试
+
+onMounted(() => {
+  // 由于没办法获得当前用户是否收藏过，所以调用api手动测试
+  collectStore({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        collect.value = false;
+      })
+      .catch(resp => {
+        collect.value = true;
+      })
+})
+
+function collectBtn() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage({
+      message: '您是卖家，不能收藏！',
+      type: 'warning',
+    })
+    return;
+  }
+
+  collectStore({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        ElMessage({
+          message: '成功收藏',
+          type: 'success',
+        })
+        collect.value = true;
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '收藏失败',
+          type: 'warning',
+        })
+      })
+}
+
+function removeCollectBtn() {
+  if (localStorage.getItem("role") === "seller") {
+    ElMessage({
+      message: '您是卖家，不能收藏！',
+      type: 'warning',
+    })
+    return;
+  }
+
+  removeCollectStore({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        ElMessage({
+          message: '成功取消收藏',
+          type: 'success',
+        })
+        collect.value = false;
+      })
+      .catch(resp => {
+        ElMessage({
+          message: '取消收藏失败',
+          type: 'warning',
+        })
+      })
+}
 
 const storeInfo = reactive({
   storeId: "",

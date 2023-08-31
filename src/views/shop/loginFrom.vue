@@ -115,13 +115,14 @@ onMounted(() => {
 
 function deleteShop(index) {
   deleteStore({
-    storeId: stores.value.storeId
+    storeId: stores.value[index].storeId
   })
       .then(resp => {
         ElMessage({
           message: '注销成功',
           type: 'success',
         })
+        stores.value.splice(index, 1)
       })
       .catch(resp => {
         ElMessage({

@@ -67,3 +67,25 @@ export function deleteStore(data) {
         data: data
     })
 }
+
+export function collectStore(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/addCollection/",
+        method: "POST",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data: data
+    })
+}
+
+export function removeCollectStore(data) {
+    return request({
+        url: "http://47.115.231.142:1028/Store/removeCollection/",
+        method: "POST",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data: data
+    })
+}
