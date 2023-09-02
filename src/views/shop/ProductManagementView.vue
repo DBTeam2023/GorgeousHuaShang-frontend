@@ -277,9 +277,9 @@ watch(classification, (newVal) => {
 })
 
 
-setInterval(() => {
-  console.log(modifyForm)
-}, 1000)
+// setInterval(() => {
+//   console.log(modifyForm)
+// }, 1000)
 
 const modifyForm = reactive({
   productName: '',

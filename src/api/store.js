@@ -2,7 +2,7 @@ import request from '@/utils/request';
 
 export function getMySTore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/getMyStore/",
+        url: "/api/Store/getMyStore/",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")
@@ -13,7 +13,7 @@ export function getMySTore(data) {
 
 export function addStore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/add/",
+        url: "/api/Store/add/",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")
@@ -24,7 +24,7 @@ export function addStore(data) {
 
 export function getStoreInfo(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/getInfo/",
+        url: "/api/Store/getInfo/",
         method: "POST",
         data: data
     })
@@ -32,7 +32,7 @@ export function getStoreInfo(data) {
 
 export function createNewCommodity(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/createCommodity/",
+        url: "/api/Product/createCommodity/",
         method: "POST",
         headers: {
             'Content-Type': 'application/form-data',
@@ -43,7 +43,7 @@ export function createNewCommodity(data) {
 
 export function addStoreDescription(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/setDes/",
+        url: "/api/Store/setDes/",
         method: "POST",
         data: data
     })
@@ -51,7 +51,7 @@ export function addStoreDescription(data) {
 
 export function addStoreAddress(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/setAddress/",
+        url: "/api/Store/setAddress/",
         method: "POST",
         data: data
     })
@@ -59,7 +59,7 @@ export function addStoreAddress(data) {
 
 export function deleteStore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/remove/",
+        url: "/api/Store/remove/",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")
@@ -70,7 +70,7 @@ export function deleteStore(data) {
 
 export function collectStore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/addCollection/",
+        url: "/api/Store/addCollection/",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")
@@ -81,7 +81,7 @@ export function collectStore(data) {
 
 export function removeCollectStore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/removeCollection/",
+        url: "/api/Store/removeCollection/",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")
@@ -92,7 +92,7 @@ export function removeCollectStore(data) {
 
 export function getSellers(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/getSeller/",
+        url: "/api/Store/getSeller/",
         method: "POST",
         data: data
     })
@@ -100,7 +100,7 @@ export function getSellers(data) {
 
 export function inviteSellers(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/invite/",
+        url: "/api/Store/invite/",
         method: "POST",
         data: data
     })
@@ -108,7 +108,7 @@ export function inviteSellers(data) {
 
 export function setScore(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/setScore/",
+        url: "/api/Store/setScore/",
         method: "POST",
         data: data
     })
@@ -116,7 +116,7 @@ export function setScore(data) {
 
 export function deleteSeller(data) {
     return request({
-        url: "http://47.115.231.142:1028/Store/delete/",
+        url: "/api/Store/delete/",
         method: "POST",
         data: data
     })
