@@ -148,7 +148,6 @@ function turnToProduct(index, i) {
     },
   });
 }
-//可以使用v-model指令将搜索框中的文本内容与search数据属性进行双向绑定，以便在组件中可以实时获取和更新搜索框中的内容
 </script>
 
 

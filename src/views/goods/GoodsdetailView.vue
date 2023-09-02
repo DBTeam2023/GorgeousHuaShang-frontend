@@ -75,7 +75,7 @@
         <img :src="selectedImage" alt="1" class="main-image" width="350px" height="350px"/>
       </div>
      <div class="thumbnail-images">
-      <div v-for="item in product.images" :key="item.index">
+      <div v-for="item in productImg.images" :key="item.index" >
        <img :src="item.imgsrc" :class="{ active: selectedImage === item.imgsrc }" alt="" @click="selectImage(item.imgsrc)">
       </div>
      </div>
@@ -85,7 +85,7 @@
     <div class="right-section">
       <div v-if="showGoodsDescriptionVar">
         <h2>{{ route.query.productName }}</h2>
-        <p>{{ selectedcommodity.value.description }}</p>
+        <p>{{ selectedcommodity.description }}</p>
       </div>
       <div v-else>
         <h2>商品未加载</h2>
@@ -108,7 +108,7 @@
 
       <!-- 商品价格 -->
       <div v-if="showGoodsDescriptionVar">
-        <div class="price">￥{{ selectedcommodity.value.price * selectedcommodity.value.selectedQuantity}}</div>
+        <div class="price">￥{{ selectedcommodity.price * selectedcommodity.selectedQuantity}}</div>
       </div>
       <div v-else>
         <div class="price">￥ *** </div>
@@ -126,11 +126,11 @@
       >
         <span>
           <div>商品名称：{{ route.query.productName }}</div>
-          <div>商品描述：{{ selectedcommodity.value.description }}</div>
-          <div>商品单价：{{ selectedcommodity.value.price }}</div>
-          <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
-          <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
-          <div>款式：{{ selectedcommodity.value.property }}</div>
+          <div>商品描述：{{ selectedcommodity.description }}</div>
+          <div>商品单价：{{ selectedcommodity.price }}</div>
+          <div>购买数量：{{ selectedcommodity.selectedQuantity }}</div>
+          <div>商品总价：{{ selectedcommodity.totalPrice }}</div>
+          <div>款式：{{ selectedcommodity.property }}</div>
         </span>
         <template #footer>
         <span class="dialog-footer">
@@ -147,11 +147,11 @@
       >
         <span>
           <div>商品名称：{{ route.query.productName }}</div>
-          <div>商品描述：{{ selectedcommodity.value.description }}</div>
-          <div>商品单价：{{ selectedcommodity.value.price }}</div>
-          <div>购买数量：{{ selectedcommodity.value.selectedQuantity }}</div>
-          <div>商品总价：{{ selectedcommodity.value.totalPrice }}</div>
-          <div>款式：{{ selectedcommodity.value.property }}</div>
+          <div>商品描述：{{ selectedcommodity.description }}</div>
+          <div>商品单价：{{ selectedcommodity.price }}</div>
+          <div>购买数量：{{ selectedcommodity.selectedQuantity }}</div>
+          <div>商品总价：{{ selectedcommodity.totalPrice }}</div>
+          <div>款式：{{ selectedcommodity.property }}</div>
         </span>
         <template #footer>
         <span class="dialog-footer">
@@ -182,39 +182,23 @@ import {ElMessage} from "element-plus";
 import { base64ToUrl } from '@/utils/photo'
 import { ElMessageBox } from 'element-plus';
 import {getStoreInfo} from "@/api/store";
-
+import {findIndicesWithProperties, mergeSimilarProperties, handleSelectProperties} from '@/utils/storeShow'
 
 
 const route = useRoute()
 const _ = require('lodash');
 
-const product = {
-  productName: '商品名称',
-  description: '商品信息',
+const productImg = ref({
   images: [
-    {
-      index: 1,
-      info: "YF",
-      imgsrc: mjpic
-    },
-    {
-      index: 2,
-      // info: "MJ",
-      imgsrc: yfpic
-    },
-    {
-      index: 3,
-      // info: "LG",
-      imgsrc: lgpic
-    }
+    // {
+    //   index: 1,
+    //   imgsrc: mjpic
+    // },
   ]
-};
+});
 
 const selectedImage = ref('');
 let selectedQuantity = ref(1);
-
-// 默认选中第一张图片
-selectedImage.value = product.images[0].imgsrc;
 
 let commodityIdToBackend = ref({
   commodityId: route.query.goodsId,
@@ -224,7 +208,27 @@ let response; // 接收后端的数据resp
 let mergedProperties = ref([]); // 产品的所有属性
 let selectProperties = reactive({}); // 顾客选中的属性
 let selectIndex = ref(0);       // 选中产品对应的index
-let selectedcommodity = reactive({});// 选中属性对应的那个产品
+let selectedcommodity = ref({});// 选中属性对应的那个产品
+
+// setInterval(resp => {
+//   console.log(mergedProperties.value)
+//   // 尺寸
+//   //     :
+//   //     (3) ['大', '小', '中']
+//   // 松紧
+//   //     :
+//   //     (2) ['oversize', 'overfit']
+//   // 款式
+//   //     :
+//   //     (2) ['欧美', '日韩']
+//
+//   console.log(selectProperties.value)
+//   // {款式: '欧美', 松紧: 'oversize', 尺寸: '大'}
+//   console.log(selectIndex.value)
+//   // 0
+//   console.log(selectedcommodity.value)
+//   // {pickId: '0c826a3c-a7dc-4163-b915-eaba4092eade', price: 10086, description: '欧美款更加时尚！', stock: 0, image: {…}, …}
+// },2000)
 
 // todo: 加入购物车，加入订单
 /*
@@ -326,6 +330,17 @@ getGoodsDetail(commodityIdToBackend.value)
           ...response.commodityInfo[selectIndex.value],
           commodityId: route.query.goodsId,
         }
+
+        for (let i = 0; i < response.commodityInfo.length; i ++) {
+          productImg.value.images.push({
+            index: i + 1,
+            imgsrc: base64ToUrl(response.commodityInfo[i].image.fileContents, response.commodityInfo[i].image.contentType),
+          })
+        }
+
+        // 默认选中第一张图片
+        selectedImage.value = productImg.value.images[0].imgsrc;
+
         showGoodsDescriptionVar = true;
       }
     })
@@ -341,34 +356,6 @@ getGoodsDetail(commodityIdToBackend.value)
 // }, 2000)
 
 // ***************  处理接收的数据  ***************
-function mergeSimilarProperties(array) {
-  const mergedProperties = {};
-
-  array.forEach(item => {
-    const property = item.property;
-
-    for (const key in property) {
-      if (property.hasOwnProperty(key)) {
-        const value = property[key];
-
-        if (!mergedProperties[key]) {
-          mergedProperties[key] = [value];
-        } else if (!mergedProperties[key].includes(value)) {
-          mergedProperties[key].push(value);
-        }
-      }
-    }
-  });
-
-  return mergedProperties;
-}
-
-const handleSelectProperties = (inputObject) => {
-  for (const key in inputObject) {
-    inputObject[key] = inputObject[key][0];
-  }
-  return inputObject;
-}
 
 let showGoodsDescriptionVar = ref(false)
 // const showGoodsDescription = () => {
@@ -380,29 +367,6 @@ let showGoodsDescriptionVar = ref(false)
 //   }
 // }
 
-function findIndicesWithProperties(array, properties) {
-  const indices = [];
-
-  for (let index = 0; index < array.length; index++) {
-    const item = array[index];
-    let match = true;
-
-    for (const key in properties) {
-      if (properties.hasOwnProperty(key)) {
-        if (item.property[key] !== properties[key]) {
-          match = false;
-          break;
-        }
-      }
-    }
-
-    if (match) {
-      indices.push(index);
-    }
-  }
-
-  return indices[0];
-}
 
 const storeInfo = reactive({
   storeId: "",
@@ -591,6 +555,8 @@ ul li {
 .thumbnail-images {
   display: flex;
   margin-top: 10px;
+  flex-wrap: wrap;
+  width: 500px;
 }
 
 .thumbnail-images img {
