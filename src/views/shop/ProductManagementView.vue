@@ -53,6 +53,7 @@
       <el-form-item label="ID相关" :label-width="formLabelWidth">
         <div>商店ID：{{modifyForm.storeId}} <br> 商品ID：{{modifyForm.productId}}   </div>
       </el-form-item>
+      <!--      todo: 商品的图片前端-->
       <el-form-item label="商品名称" :label-width="formLabelWidth">
         <el-input v-model="modifyForm.productName" autocomplete="off" />
       </el-form-item>
@@ -99,7 +100,9 @@
         <el-input v-model="selectedcommodity.stock" autocomplete="off" />
       </el-form-item>
 
-<!--      todo: 具体商品的上下架-->
+      <!--      todo: 具体商品的图片前端-->
+
+<!--      todo: 具体商品的上下架  这一版先不做了-->
 <!--      <el-radio-group v-model="selectedcommodity.radio2" class="ml-4">-->
 <!--        <el-radio :label="false" size="large">上架</el-radio>-->
 <!--        <el-radio :label="true" size="large">下架</el-radio>-->
@@ -172,7 +175,7 @@ let selectedcommodity = ref({});// 选中属性对应的那个产品
 // {
 //  commodityId
 // description
-// image: {
+// image: { // todo: 这是具体的pickid对应的商品，你自己log输出看看， 调用一下base64函数转化一下就行
 //    contentType
 //    fileContents
 // }
@@ -274,9 +277,9 @@ watch(classification, (newVal) => {
 })
 
 
-// setInterval(() => {
-//   console.log(modifyForm)
-// }, 1000)
+setInterval(() => {
+  console.log(modifyForm)
+}, 1000)
 
 const modifyForm = reactive({
   productName: '',
@@ -313,8 +316,8 @@ function modifyInfo(productId) {
         modifyForm.price = resp.data.price
         modifyForm.property = JSON.stringify(resp.data.property)
         modifyForm.radio1 = resp.data.isDeleted
-        // todo: 图片接收
-
+        // todo: 图片接收 先接收目前已有的预览 后面去修改图片
+        modifyForm.imageurl = base64ToUrl(resp.data.image.fileContents, resp.data.image.contentType)
       })
       .catch(resp => {
         ElMessage({
@@ -384,6 +387,9 @@ function confirmModifyConcrete() {
   formdata.append("IsDeleted", false)
   formdata.append("PickId", selectedcommodity.value.pickId)
   formdata.append("Stock", selectedcommodity.value.stock)
+  // todo: 具体商品的图片上传
+
+
   updateConcreteCommodity(formdata)
       .then(resp => {
         ElMessage.success("修改具体商品成功")
