@@ -1,4 +1,5 @@
 import axios from "axios";
+import {ElMessage} from "element-plus";
 
 // // 发送请求时携带cookie信息
 // axios.defaults.withCredentials = true;
@@ -30,6 +31,9 @@ service.interceptors.response.use(
         return response.data;
     },
     (error) => {
+        if (error.response.data.code !== 200) {
+            ElMessage.error(error.response.data.msg);
+        }
         return Promise.reject(error);
     }
 );
