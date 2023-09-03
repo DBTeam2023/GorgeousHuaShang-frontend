@@ -25,10 +25,8 @@
                 <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture" />
               </div>
             </el-dialog>
-
-
-
           </div>
+          <!-- 输入框 -->
           <el-input v-model="productName" placeholder="请输入商品名称"></el-input>
         </el-card>
       </el-col>
