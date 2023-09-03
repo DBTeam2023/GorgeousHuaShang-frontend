@@ -25,7 +25,6 @@
     // 点击菜单项事件：
     const handleSelect = (val) =>{
         selectedMenu.value = val.item;
-        console.log('parent',selectedMenu.value); 
     }
 
     const title = ref({

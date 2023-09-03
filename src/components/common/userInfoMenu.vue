@@ -38,8 +38,6 @@
     const MenuSelect = (value) =>{
         props.selectedMenu = value;
 
-        console.log("child choose",value);
-        console.log("child->parent",props.selectedMenu);
         //传给父组件的数据
         let param ={
             item: value //字段名可以自定义 
