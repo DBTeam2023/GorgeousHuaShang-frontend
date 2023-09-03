@@ -1,5 +1,7 @@
 <template>
     <div class="c-container" :class="{'container-invalid': coupon.isValid === false}">
+      <!-- 插槽，父组件可在CouponCard里包含子组件 -->
+        <slot></slot> 
         <!-- 1、优惠券类型 -->
         <div class="c-type center-container" :class="{'type-invalid': coupon.isValid === false}" >
             <!-- v-if 折扣 -->
