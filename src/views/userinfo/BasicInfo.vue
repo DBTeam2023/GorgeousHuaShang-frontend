@@ -1,73 +1,58 @@
 
 <template>
-    <el-container class="all-container" >
-        <el-header class="header">
-            <el-menu
-                :default-active="selectedMenu"
-                class="el-menu-demo"
-                mode="horizontal"
-                background-color="#545c64"
-                text-color="#fff"
-                active-text-color="#ffd04b"
-                @select="handleSelect"
-            >
-                <el-menu-item index="1">基本信息</el-menu-item>
-                <el-menu-item index="2">头像信息</el-menu-item>
-            </el-menu>
-        </el-header>
-
-        <el-main class="main" >
-            <!-- 显示基本信息卡片 -->
-                <el-card class="card" v-if="selectedMenu==='1'">
-                        <el-form class="form" :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="25%">
-                            <el-form-item label="昵称" prop="name">
-                                <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
-                                    maxlength="25" show-word-limit/>
-                            </el-form-item>
-                            <el-form-item v-if="role === 'buyer'" label="年龄" prop="age" >
-                                <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate" placeholder="请输入年龄"/>
-                            </el-form-item>
-                            <el-form-item v-if="role === 'buyer'" label="身高（cm）" prop="height">
-                                <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate" placeholder="请输入身高"/>
-                            </el-form-item>
-                            <el-form-item v-if="role === 'buyer'" label="体重（kg）" prop="weight">
-                                <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate" placeholder="请输入体重"/>
-                            </el-form-item>
-                            <el-form-item v-if="role === 'buyer'" label="性别" >
-                                <el-radio-group v-model="InfoForm.gender" :disabled="isUpdate">
-                                    <el-radio label="男" />
-                                    <el-radio label="女" />
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="详细地址">
-                                <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
-                                    maxlength="100" show-word-limit/>
-                            </el-form-item>
-                            <el-form-item label="手机号码" prop="tel" >
-                                <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate" placeholder="请输入11位合法手机号码"/>
-                            </el-form-item>
-                            <!-- 编辑个人信息 -->
-                            <el-form-item>
-                                <el-row class="button-row">
-                                    <el-col :span="8">
-                                        <el-button type="primary" @click="onEdit" :disabled="isEdit">编辑</el-button>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-button type="success" @click="onSubmit" :disabled="isUpdate">保存</el-button>                                        
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <el-button @click="onCancel" :disabled="isUpdate">取消</el-button>                                    
-                                    </el-col>
-                                </el-row>
-                            </el-form-item>
-                        </el-form>
-                </el-card>
-            <!-- 显示头像信息卡片 -->
-            <div v-if="selectedMenu ==='2'">
+        <el-main class="main">
+            <!-- 头像上传框 -->
+            <div class="info-bg">
+                <div class="gilding-text">修改头像</div>
                 <ImgUpload />
             </div>
+            <!-- 显示基本信息卡片 -->
+            <div class="info-bg">
+                <div class="gilding-text">修改信息</div>
+                <el-form class="form" :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="25%">
+                    <el-form-item label="昵称" prop="name">
+                        <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
+                            maxlength="25" show-word-limit/>
+                    </el-form-item>
+                    <el-form-item v-if="role === 'buyer'" label="年龄" prop="age" >
+                        <el-input class="input"  v-model.number="InfoForm.age" :disabled="isUpdate" placeholder="请输入年龄"/>
+                    </el-form-item>
+                    <el-form-item v-if="role === 'buyer'" label="身高（cm）" prop="height">
+                        <el-input class="input" v-model.number="InfoForm.height" :disabled="isUpdate" placeholder="请输入身高"/>
+                    </el-form-item>
+                    <el-form-item v-if="role === 'buyer'" label="体重（kg）" prop="weight">
+                        <el-input class="input" v-model.number="InfoForm.weight" :disabled="isUpdate" placeholder="请输入体重"/>
+                    </el-form-item>
+                    <el-form-item v-if="role === 'buyer'" label="性别" >
+                        <el-radio-group v-model="InfoForm.gender" :disabled="isUpdate">
+                            <el-radio label="男" />
+                            <el-radio label="女" />
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="详细地址">
+                        <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
+                            maxlength="100" show-word-limit/>
+                    </el-form-item>
+                    <el-form-item label="手机号码" prop="tel" >
+                        <el-input class="input" v-model="InfoForm.phonenumber" :disabled="isUpdate" placeholder="请输入11位合法手机号码"/>
+                    </el-form-item>
+                    <!-- 编辑个人信息 -->
+                    <el-form-item>
+                        <el-row class="button-row">
+                            <el-col :span="8" class="center-container">
+                                <el-button color="#ffcc00" @click="onEdit" :disabled="isEdit" class="btn-edit">编辑</el-button>
+                            </el-col>
+                            <el-col :span="8" class="center-container">
+                                <el-button type="success" @click="onSubmit" :disabled="isUpdate">保存</el-button>                                        
+                            </el-col>
+                            <el-col :span="8" class="center-container">
+                                <el-button color="graniso" @click="onCancel" :disabled="isUpdate">取消</el-button>                                    
+                            </el-col>
+                        </el-row>
+                    </el-form-item>
+                </el-form>
+            </div>
         </el-main>
-    </el-container>
 </template>
 
 <script setup>
@@ -373,21 +358,39 @@
 
 <style lang="scss" scoped>
 
-    .all-container{
+    .gilding-text{
+        font-size: 20px;
+        font-weight: bold;
+        text-align:center;
+        margin:20px auto;
+        background: linear-gradient(45deg, #ffcc00, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .center-container{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main{
         //上 右 下 左
         padding:0 10% 5% 10%;
     }
 
-    .main,
-    .header{
-        padding:0;
-    }
-  
-    .card-container{
-        display: flex;
-        justify-content: center;
-        align-items:center;
-        width:100%;
+    .info-bg{
+        background-image: url('@/assets/buyerCenter/account01.jpg');
+        background-position: center center;
+        background-repeat: no-repeat;  
+        background-size: cover;
+        box-shadow: 20px 20px 23px rgb(0 0 0 / 83%);
+        border-radius:20px;
+        overflow:hidden;
+        color:white;
+        margin-bottom:50px;
+        padding:20px 0;
     }
 
     .input{
@@ -396,8 +399,19 @@
 
     .button-row{
         width:75%;
+        margin-top:20px;
+    }
+
+    .btn-edit{
+        color:white;
     }
 
 
+</style>
+
+<style>
+    .info-bg .form .el-form-item__label{
+        color:white;
+    }
 </style>
 

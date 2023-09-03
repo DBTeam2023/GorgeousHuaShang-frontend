@@ -29,9 +29,9 @@
       <!-- 有优惠券 -->
       <el-card v-if="couponExit === true">
         <!-- 行 -->
-        <el-row v-for="(row, index) in couponRows" :key="index"  :gutter="60" style="margin:0 10px 0 0">
+        <el-row v-for="(row, index) in couponRows" :key="index" style="padding-top:20px;">
           <!-- 列 -->
-          <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="padding:20px">
+          <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="max-width:none;margin-bottom:5px;" class="center-container">
             <CouponCard :coupon="coupon" @mouseover="showShadow=true" @mouseout="showShadow=false">
                 <!-- 鼠标悬浮效果 -->
                 <div class="shadow" v-show="showShadow">

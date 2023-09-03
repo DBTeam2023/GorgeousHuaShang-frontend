@@ -67,12 +67,11 @@ import router from "@/router"
         //跳转到指定商品详情页
         console.log("godetail",id);
         // 跳转到指定店铺详情页
-      //   router.push({path: '/shop',
-      //   query: {
-      //     shopId: id,
-      //     productName: 123,
-      //   }
-      // });
+        router.push({path: '/shop',
+        query: {
+          shopId: id,
+        }
+      });
     }
 
     function cancelFollow(id){
@@ -155,11 +154,13 @@ import router from "@/router"
 </template>
   
 
-
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
 
     .follow-container {
-      padding:0 10% 0 10%;
+      padding: 3% 5% 3% 5%;
+      background-color: #fff;
+      margin:0 5% 5% 5%;
+      border-radius: 20px;
     }
 
     .shop-gallery {

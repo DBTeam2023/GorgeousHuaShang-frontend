@@ -1,5 +1,4 @@
 <template>
-  <el-card>
     <!-- 图片选择框 -->
     <div class="upload-container" >
       <el-upload 
@@ -37,11 +36,10 @@
     </div>
 
     <!-- 保存修改 -->
-    <div class="upload-container" style="margin-top:30px">
-        <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button @click="onCancel">取消</el-button>
+    <div class="upload-container" style="margin:30px 0 20px 0">
+        <el-button color="#ffcc00" @click="onSubmit" class="btn-save">保存</el-button>
+        <el-button color="graniso" @click="onCancel">取消</el-button>
     </div>
-  </el-card>
 </template>
   
 <script setup>
@@ -51,7 +49,6 @@ import { Plus } from '@element-plus/icons-vue'
 import store from '@/store'
 
 import { modifyUserAvatar,getUserAvatar } from '@/api/userinfo'
-import {getAvatar} from '@/utils/avatar'
 import { base64ToUrl } from '@/utils/photo'
 
 const dialogImageUrl = ref('')  //上传图片的url
@@ -118,6 +115,10 @@ const handleRemove = (uploadFile,uploadFiles) =>{
 const onSubmit = () =>{
   console.log('Submit');
   // 获取文件列表
+  if(fileList.length < 1){
+    ElMessage('请选择一张图片！');
+    return;
+  }
   showProgress.value = true; //显示进度条
 
   // // 将图片发送到后端服务器
@@ -132,12 +133,6 @@ const onSubmit = () =>{
       fileList.splice(0, 1);//删除fileList的第一个元素
       uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
 
-      // 获取用户头像
-      // getAvatar((error,imageSrc) => {
-      //   if(!error) {
-      //     store.commit('setUserPhoto', imageSrc);
-      //   }
-      // });
       getUserAvatar()
       .then(resp => {
         console.log('获取头像成功');
@@ -181,6 +176,11 @@ const onCancel = () =>{
     object-fit: cover;
     object-position: center;
   }
+
+  .upload-container .showUpload .el-upload__tip{
+    color:white;
+    text-align: center;
+  }
 </style>
   
 <style lang='scss' scoped>
@@ -208,6 +208,10 @@ const onCancel = () =>{
     margin-top:20px;
     margin-left:5%;
     width: 50%;
+  }
+
+  .btn-save{
+    color:white;
   }
 </style>
   
