@@ -6,9 +6,17 @@ import router from "@/router";
 import { ElMessage } from 'element-plus' //消息框提示
 import { getCartList, updateSize, deleteCartGoods } from '@/api/cart'
 
+// 获取购物车的所有商品的列表
 const cartList = ref([]);
 const showDropdown = ref(false);
 const sizes = ['S', 'M', 'L'];
+
+// // 商品具体款式信息
+// let respCommodityInfo;
+// let mergedProperties = ref([]); // 产品的所有属性
+// let selectProperties = reactive({}); // 顾客选中的属性
+// let selectIndex = ref(0);       // 选中款式的产品对应的index
+// let selectedcommodity = ref({});// 选中款式的产品
 
 // todo:
 // 获取用户购物车列表
@@ -51,6 +59,7 @@ const modifySize = (item, newSize) => {
             })
         });
 }
+
 // todo:生成订单
 const generateOrder = () => {
     // 后端todo: 调用生成订单的API，并获取订单ID
@@ -71,9 +80,19 @@ onMounted(() => {
     getCart();
 })
 
+// 计算属性————有效商品列表
+const effectiveGoodsList = computed(() => {
+    return cartList.value.filter((item) => !item.isDeleted && item.stock > 0);
+})
+
+// 计算属性————无效商品列表
+const invalidGoodsList = computed(() => {
+    return cartList.value.filter((item) => item.isDeleted || item.stock === 0);
+})
+
 // 计算属性————已选择的商品列表
 const selectedItems = computed(() => {
-    return cartList.value.filter((item) => item.isSelected);
+    return effectiveGoodsList.value.filter((item) => item.isSelected);
 })
 
 // 计算属性————已选择的商品数量
@@ -86,6 +105,8 @@ const selectedPrice = computed(() => {
     return selectedItems.value.reduce((sum, item) => sum + item.price * item.count, 0);
 });
 
+
+
 // 单选
 const singleCheck = (item, checked) => {
     // todo:这里需不需要调用接口修改数据库中商品的单选状态？
@@ -93,14 +114,13 @@ const singleCheck = (item, checked) => {
 
 };
 
-
 // 全选
 const selectAll = computed({
     get: () => {
-        return cartList.value.every((item) => item.isSelected);
+        return effectiveGoodsList.value.every((item) => item.isSelected);
     },
     set: (value) => {
-        cartList.value.forEach((item) => {
+        effectiveGoodsList.value.forEach((item) => {
             // todo:这里需不需要调用接口修改数据库中商品的全选（单选）状态？
             item.isSelected = value;
         });
@@ -144,7 +164,6 @@ function batchDelCart() {
             console.log("删除购物车商品成功！");
             // 暂时后端还不能删除，所以这里暂时注释掉，用下面这句实现删除（测试）
             cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
-
             // 重新获取购物车列表数据
             // getCartList()
             //     .then((response) => {
@@ -161,6 +180,31 @@ function batchDelCart() {
 
 }
 
+// 批量删除失效商品
+function batchDelInvalidCart() {
+    // 获取失效商品的ID数组
+    const ids = invalidGoodsList.value.map((item) => item.pickID);
+
+    // 调用删除购物车商品的接口
+    deleteCartGoods(ids)
+        .then(() => {
+            console.log("删除购物车无效商品成功！");
+            // 暂时后端还不能删除，所以这里暂时注释掉，用下面这句实现删除（测试）
+            cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
+            // 重新获取购物车列表数据
+            // getCartList()
+            //     .then((response) => {
+            //         cartList.value = response.data;
+            //         console.log("重新获取购物车商品列表数据成功！");
+            //     })
+            //     .catch((error) => {
+            //         console.error('重新获取购物车商品列表数据失败:', error);
+            //     });
+        })
+        .catch((error) => {
+            console.error('删除购物车无效商品失败！', error);
+        });
+}
 
 </script>
 
@@ -180,13 +224,10 @@ function batchDelCart() {
                             <!-- 表头目录 -->
                             <thead>
                                 <tr>
-                                    <th width="50">
+                                    <th width="100">
                                         <el-checkbox v-model="selectAll">全选</el-checkbox>
-                                        <!-- <XtxCheckbox :modelValue="selectAllButtonStatus" @update:modelValue="
-                                            $store.dispatch('cart/selectedAll', $event)
-                                            ">全选</XtxCheckbox> -->
                                     </th>
-                                    <th width="450">商品信息</th>
+                                    <th width="400">商品信息</th>
                                     <th width="100">大小</th>
                                     <th width="220">单价</th>
                                     <th width="180">数量</th>
@@ -194,9 +235,20 @@ function batchDelCart() {
                                     <th width="140">操作</th>
                                 </tr>
                             </thead>
-                            <!-- 商品列表 -->
+
+                            <!-- 有效商品列表 -->
                             <tbody>
-                                <tr v-for="item in cartList" :key="item.productID">
+                                <!-- 购物车列表为空： -->
+                                <tr v-if="effectiveGoodsList.length === 0">
+                                    <td colspan="7">
+                                        <div class="cart-none">
+                                            <el-empty description="购物车列表为空">
+                                                <el-button type="primary" @click="$router.push('/')">随便逛逛</el-button>
+                                            </el-empty>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-for="item in effectiveGoodsList" :key="item.productID">
                                     <td>
                                         <el-checkbox v-model="item.isSelected"
                                             @change="singleCheck(item, item.isSelected)"></el-checkbox>
@@ -229,17 +281,14 @@ function batchDelCart() {
                                             </template>
                                         </el-dropdown>
                                     </td>
-
-                                    <td class="tc">
+                                    <td>
                                         <p>&yen;{{ item.price }}</p>
                                     </td>
-                                    <td class="tc">
-                                        <el-input-number v-model="item.count"></el-input-number>
-                                    </td>
-                                    <td class="tc">
+                                    <td><el-input-number v-model="item.count"></el-input-number></td>
+                                    <td>
                                         <p class="f16 red">&yen;{{ (item.price * item.count).toFixed(2) }}</p>
                                     </td>
-                                    <td class="tc">
+                                    <td>
                                         <p>
                                             <el-popconfirm title="确认删除吗?" confirm-button-text="确认" cancel-button-text="取消"
                                                 @confirm="singleDelCart(item)">
@@ -251,17 +300,63 @@ function batchDelCart() {
                                     </td>
 
                                 </tr>
+                            </tbody>
 
-                                <!-- 购物车列表为空： -->
-                                <!-- <tr>
-                                    <td colspan="6">
-                                        <div class="cart-none">
-                                            <el-empty description="购物车列表为空">
-                                                <el-button type="primary">随便逛逛</el-button>
-                                            </el-empty>
+                            <!-- 失效商品列表 -->
+                            <p class="tit">失效商品</p>
+                            <tbody>
+                                <tr v-for="item in invalidGoodsList" :key="item.id">
+                                    <td></td>
+                                    <td>
+                                        <div class="goods">
+                                            <!-- 记得修改： 根据商品的id跳转-->
+                                            <!-- <RouterLink :to="'/goodsdetail/' + item.id"> -->
+                                            <RouterLink :to="'/goodsdetail/'">
+                                                <img class="pictureOfGoods" :src="item.picture" :alt="item.name" />
+                                            </RouterLink>
+                                            <span class="product-name">
+                                                {{ item.productName }}
+                                            </span>
+                                            <!-- todo：这里不知道放不放描述文字？还是只显示商品名称？ -->
+                                            <!-- <p class="name ellipsis">
+                                                {{ item.productName }}
+                                            </p>
+                                            <p class="attr">{{ item.description }}</p> -->
                                         </div>
                                     </td>
-                                </tr> -->
+                                    <td>
+                                        <el-dropdown trigger="click">
+                                            <span class="el-dropdown-link" @click="showDropdown = !showDropdown">
+                                                尺码：<span>{{ item.selectedSize }}</span><el-icon><arrow-down /></el-icon>
+                                            </span>
+                                            <template #dropdown>
+                                                <el-dropdown-menu>
+                                                    <el-dropdown-item v-for="size in sizes" :key="size"
+                                                        @click="modifySize(item, size)">
+                                                        {{ size }}
+                                                    </el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </template>
+                                        </el-dropdown>
+                                    </td>
+                                    <td>
+                                        <p>&yen;{{ item.price }}</p>
+                                    </td>
+                                    <td><el-input-number v-model="item.count"></el-input-number></td>
+                                    <td>
+                                        <p class="f16 red">&yen;{{ (item.price * item.count).toFixed(2) }}</p>
+                                    </td>
+                                    <td>
+                                        <p>
+                                            <el-popconfirm title="确认删除吗?" confirm-button-text="确认" cancel-button-text="取消"
+                                                @confirm="singleDelCart(item)">
+                                                <template #reference>
+                                                    <el-button type="info">删除</el-button>
+                                                </template>
+                                            </el-popconfirm>
+                                        </p>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -277,6 +372,13 @@ function batchDelCart() {
                                 @confirm="batchDelCart()">
                                 <template #reference>
                                     <el-button type="info" style="margin-left:20px;">删除选中的商品</el-button>
+                                </template>
+                            </el-popconfirm>
+
+                            <el-popconfirm title="确认删除所有失效的商品吗?" confirm-button-text="确认" cancel-button-text="取消"
+                                @confirm="batchDelInvalidCart()">
+                                <template #reference>
+                                    <el-button type="info" style="margin-left:20px;">删除所有失效商品</el-button>
                                 </template>
                             </el-popconfirm>
 
@@ -301,6 +403,14 @@ function batchDelCart() {
 
 <style scoped>
 /* 样式规则 */
+.tit {
+    color: #666;
+    font-size: 18px;
+    line-height: 60px;
+    font-weight: bolder;
+    text-align: center;
+}
+
 .container {
     background-color: #E6E8EB;
     height: 100%;
@@ -364,11 +474,12 @@ td {
     box-shadow: 0px -2px 4px rgba(0.1, 0.1, 0.1, 0.1), 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin-bottom: 10px;
+    /* background-color: #dfd3c5; */
+    background-color: #D7EBFB;
 }
 
 .action-box {
     display: flex;
-    background: #fff;
     height: 100%;
     align-items: center;
     font-size: 16px;
