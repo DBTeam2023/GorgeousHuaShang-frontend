@@ -4,13 +4,16 @@
     <el-row :gutter="20" class="product-list">
       <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
         <Card class="card">
-          <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
-            <img class="product-image" :src="product.imageurl" alt="Product Image" />
-            <h3 class="product-name">{{ product.productName }}</h3>
-            <div class="button-group">
-              <p style="color: orange;">￥{{ product.price }}</p>
+          <RouterLink :to="{path: '/goodsdetail', query: {productName: product.productName, goodsId: product.productId, storeId: route.query.storeid} }"
+          class="router-link-active">
+            <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
+              <img class="product-image" :src="product.imageurl" alt="Product Image" />
+              <h3 class="product-name">{{ product.productName }}</h3>
+              <div class="button-group">
+                <p style="color: orange;">￥{{ product.price }}</p>
+              </div>
             </div>
-          </div>
+          </RouterLink>
         </Card>
       </el-col>
     </el-row>
@@ -162,5 +165,10 @@ const getCommodities = () => {
   display: flex;
   align-items: center;
   margin-right: auto;
+}
+
+.router-link-active {
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

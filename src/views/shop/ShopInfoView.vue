@@ -20,10 +20,6 @@
     <div class="shop-actions">
       <el-button type="primary" @click="dialogVisible = true">修改信息</el-button>
     </div>
-    <div class="shop-actions">
-      <el-button type="primary" @click="dialogVisibleForManager = true"
-      style="margin-top: 30px;">邀请管理员</el-button>
-    </div>
   </div>
 
   <el-dialog
@@ -33,11 +29,6 @@
     :before-close="handleClose"
   >
     <el-form :model="infoForm" label-width="80px" ref="form">
-<!--      <el-form-item label="店铺头像">-->
-<!--        <el-input :v-model="infoForm.shopIcon" readonly :placeholder='picURL'></el-input>-->
-<!--        <input type="file" ref="imageInput2" style="display:none" @change="handleIconChange" accept="image/*">-->
-<!--        <button class="upload-image-button" @click.prevent="uploadIcon">请上传图片</button>-->
-<!--      </el-form-item>-->
       <el-form-item label="店铺评分">
         <el-input v-model="infoForm.score"/>
       </el-form-item>
@@ -57,27 +48,6 @@
     </template>
   </el-dialog>
 
-
-
-  <el-dialog
-      v-model="dialogVisibleForManager"
-      title="邀请管理员"
-      width="30%"
-      :before-close="handleClose"
-  >
-    <el-form label-width="80px" ref="form">
-      <el-form-item label="卖家账号">
-        <el-input v-model="account"></el-input>
-      </el-form-item>
-    </el-form>
-
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisibleForManager = false">取消</el-button>
-        <el-button type="primary" @click="saveChangesForManager">保存</el-button>
-      </span>
-    </template>
-  </el-dialog>
 </template>
 
 <script setup>
@@ -89,7 +59,6 @@ import {useRoute} from "vue-router";
 const route = useRoute();
 
 const dialogVisible = ref(false);
-const dialogVisibleForManager = ref(false)
 
 const infoForm = reactive({
   shopIcon: 'https://picsum.photos/200/200',
@@ -118,12 +87,6 @@ onMounted(() => {
       })
 })
 
-function saveChangesForManager() {
-//   todo: 邀请别人
-
-  dialogVisibleForManager.value = false;
-}
-
 async function saveChanges() {
   try {
     const addDescription = addStoreDescription({
@@ -150,16 +113,6 @@ async function saveChanges() {
     })
   }
 }
-
-const handleClose = (done) => {
-  ElMessageBox.confirm('确定要关闭对话框吗？')
-    .then(() => {
-      done();
-    })
-    .catch(() => {
-      // 处理错误
-    });
-};
 
 </script>
 
