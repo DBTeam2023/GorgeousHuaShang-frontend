@@ -108,7 +108,7 @@ Avatar,
 import {onMounted, reactive, ref} from 'vue'
 // import Chat from '@/views/shop_subs/Chat2SellerView.vue'
 // import OrderManage from '@/views/shop_subs/OrderManageView.vue'
-import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
+import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
 import ALLItems from '@/views/shop/ALLItemsView.vue';
 import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
 import {ElIcon, ElMessage} from 'element-plus';
