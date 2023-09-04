@@ -137,18 +137,27 @@
         this.$emit('selection-change', selectedItems);
       },
       handleDeleteSelectedOrder() {
-        console.log('进入函数');
         if (this.selectedOrdersInternal.length === 0) {
           console.log('没有选中订单');
           return;
         }
 
-        this.selectedOrdersInternal.forEach(selectedOrder => {
+        const deletableOrders = this.selectedOrdersInternal.filter(row => !this.isDeleteDisabled(row) && row.orderstate !== '待付款');;
+
+        if (deletableOrders.length === 0) {
+          console.log('没有可删除的订单');
+          return;
+        }
+
+        deletableOrders.forEach(selectedOrder => {
           this.deleteOrder(selectedOrder);
         });
 
-        this.selectedOrdersInternal = [];
+        // 保留不能删除的订单
+        const undeletableOrders = this.selectedOrdersInternal.filter(row => this.isDeleteDisabled(row) && row.orderstate !== '待付款');
+        this.selectedOrdersInternal = undeletableOrders;
       },
+
 
     },
 
