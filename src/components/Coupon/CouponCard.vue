@@ -1,11 +1,13 @@
 <template>
     <div class="c-container" :class="{'container-invalid': coupon.isValid === false}">
+      <!-- 插槽，父组件可在CouponCard里包含子组件 -->
+        <slot></slot> 
         <!-- 1、优惠券类型 -->
         <div class="c-type center-container" :class="{'type-invalid': coupon.isValid === false}" >
             <!-- v-if 折扣 -->
             <div  v-if="coupon.type === 'discount'">
             <div class="type-container">
-                <span class="discount-text">{{ coupon.discount }}</span>折
+                <span :class="{'text-invalid': coupon.isValid === false}" class="discount-text" >{{ coupon.discount }}</span>折
             </div>
             <div style="font-size: 35px;text-align: center;margin-top: 10px;font-weight: 300;">COUPON</div>
             </div>
@@ -66,8 +68,8 @@
   .c-container{
     width:210px;
     height: 400px;
-    color:#a7d0f5;
-    background-color: #94bee6;
+    color:#e5c46e;
+    background-color: #e5c46e;
     transition: all 0.3s ease;//过渡时间
     position: relative;
   }
@@ -86,22 +88,12 @@
     transition: opacity 0.3s ease;
   }
 
-  // .c-container:hover .shadow{
-  //   opacity: 1;
-  // }
-
-  // // 鼠标悬浮
-  // .c-container:hover{
-  //   transform: scale(1.05);
-  //   box-shadow: 0 6px 12px gray;
-  // }
-
   // 顶部优惠券类型
   .c-container .c-type{
     width: 100%;
     height: 66%;
-    background-color: rgb(10 30 57 / 94%);
-    border-bottom: dashed #94bee6;
+    background-color: #161616;
+    border-bottom: dashed #e5c46e;
   }
 
   .c-container .c-type .type-container{
@@ -112,7 +104,6 @@
   }
 
   .c-container .c-type .discount-text{
-    color: #a7d0f5;
     font-size: 76px;
     font-weight: bold;
   }
@@ -120,7 +111,7 @@
 
   // 中部基本信息
   .c-container .c-info{
-    color: rgb(10 30 57 / 94%);
+    color: #161616;
     font-size: 10px;
     width: 100%;
     height:50%;
@@ -152,16 +143,19 @@
 
   // 根据优惠券是否有效改变颜色
   .container-invalid{
-    background-color: #95b5d3;
+    background-color: #b8b7b7;
+    color:#b8b7b7;
+
   }
 
   .type-invalid{
     //强行覆盖父类（危险慎用）
-    background-color: #4b698F !important;
+    background-color: #6d7072 !important;
+    border-color: #b8b7b7 !important;
   }
   .text-invalid{
     // 强行覆盖父类（危险慎用）
-    color:#4b698F !important;
+    color:#6d7072 !important;
   }
 
 </style>
