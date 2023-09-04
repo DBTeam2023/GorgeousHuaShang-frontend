@@ -49,6 +49,31 @@
         </el-table-column>
 
       </el-table>
+      
+      <el-footer class="page-container">
+        <!-- 分页栏 -->
+        <el-row>
+            <el-col :span="12">
+                <div class="demo-pagination-block">
+                    <el-pagination
+                    v-model:current-page="currentPage"
+                    v-model:page-size="pageSize"
+                    :small="small"
+                    :disabled="disabled"
+                    :background="background"
+                    layout="prev, pager, next, jumper"
+                    :total="1000"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    />
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <!-- <el-button class="deleteSelect" type="danger" plain>删除选中订单</el-button> -->
+                <el-button class="deleteSelect" type="danger" plain @click="handleDeleteSelectedOrder">删除选中订单</el-button>
+            </el-col>
+        </el-row>
+    </el-footer>   
     </div>
   </template>
   
@@ -58,13 +83,20 @@
     props: {
       orderData: Array, // 订单数据
       title: String, // 标题
-      selectedOrders: Array, // 选中的订单数组
+      selectedOrders: Array,
       deleteOrder: Function,
       confirmOrder: Function,
       checkDetails: Function,
       payOrder: Function,
       cancelOrder: Function,
     },
+
+    data() {
+      return {
+        selectedOrdersInternal: [], // 用于存储选中的订单
+      };
+    },
+
     methods: {
       isDeleteDisabled(row) {
         // 检查是否禁用删除按钮
@@ -100,10 +132,44 @@
             this.cancelOrder(row); 
         }
       },
+      handleSelectionChange(selectedItems) {
+        this.selectedOrdersInternal = selectedItems;
+        this.$emit('selection-change', selectedItems);
+      },
+      handleDeleteSelectedOrder() {
+        console.log('进入函数');
+        if (this.selectedOrdersInternal.length === 0) {
+          console.log('没有选中订单');
+          return;
+        }
+
+        this.selectedOrdersInternal.forEach(selectedOrder => {
+          this.deleteOrder(selectedOrder);
+        });
+
+        this.selectedOrdersInternal = [];
+      },
+
     },
+
   };
   </script>
-  <style>
- 
-  </style>
+  <style scoped>
   
+  .demo-pagination-block + .demo-pagination-block {
+        margin-top: 10px;
+    }
+    .demo-pagination-block .demonstration {
+        margin-bottom: 16px;
+    }
+    /* .is-disabled {
+        cursor: not-allowed;
+        color: #ccc;
+    } */
+    .deleteSelect {
+        margin-left: 360px;
+    }
+    .page-container {
+      margin-top: 20px; /* 根据需要调整距离 */
+    }
+</style>

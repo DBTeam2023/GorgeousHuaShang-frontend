@@ -29,20 +29,19 @@
                     <!-- 显示全部订单 -->
                     <OrderList v-if="activeIndex === '1'" :orderData="orderSections.all" title="全部订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :checkDetails="checkDetails" :payOrder="payOrder"  :cancelOrder="cancelOrder" :selectedOrders="selectedOrders"/>
                     <!-- 显示待付款内容 -->
-                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :payOrder="payOrder" :cancelOrder="cancelOrder" :selectedOrders="selectedOrders"/>
+                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :payOrder="payOrder" :cancelOrder="cancelOrder" />
                     <!-- 显示待发货内容 -->
-                    <OrderList v-else-if="activeIndex === '3'" :orderData="orderSections.toSend" title="待发货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :selectedOrders="selectedOrders"/>
+                    <OrderList v-else-if="activeIndex === '3'" :orderData="orderSections.toSend" title="待发货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
                     <!-- 显示待收货内容 -->
-                    <OrderList v-else-if="activeIndex === '4'" :orderData="orderSections.toReceive" title="待收货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :selectedOrders="selectedOrders"/>
+                    <OrderList v-else-if="activeIndex === '4'" :orderData="orderSections.toReceive" title="待收货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
                     <!-- 显示待评价内容 -->
                     <!-- <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.toComment" title="待评价订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" /> -->
                     <!-- 显示已完成内容 -->
-                    <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.finish" title="已完成订单" :deleteOrder="deleteOrder" :selectedOrders="selectedOrders"/>
+                    <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.finish" title="已完成订单" :deleteOrder="deleteOrder" />
                 </div></el-main>
                 </div>
                 <OrderDetailView v-else :order="currentOrder" />
-                <el-footer>
-                    <!-- 分页栏 -->
+                <!-- <el-footer>
                     <el-row>
                         <el-col :span="12">
                             <div class="demo-pagination-block">
@@ -60,11 +59,10 @@
                             </div>
                         </el-col>
                         <el-col :span="12">
-                            <!-- <el-button class="deleteSelect" type="danger" plain>删除选中订单</el-button> -->
                             <el-button class="deleteSelect" type="danger" plain @click="handleDeleteSelectedOrder">删除选中订单</el-button>
                         </el-col>
                     </el-row>
-                </el-footer>   
+                </el-footer>    -->
             </el-main>
         </el-container>
     <!-- </div> -->
@@ -156,6 +154,17 @@ export default defineComponent({
         payment: 1199.00,
         orderstate: '已完成',
       },
+      {
+        orderID: '240655332765530423',
+        goods : {
+            image:"https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg",
+            description:"商品名",
+        },
+        unitprice: 199.00,
+        number: 1,
+        payment: 199.00,
+        orderstate: '已完成',
+      },
     ]);
 
     const orderSections = computed(() => {
@@ -171,8 +180,8 @@ export default defineComponent({
         return sections;
     });
 
-    // 存储选中的订单：初始化为空数组
     const selectedOrders = ref([]);
+
 
     const formatCurrency = (row, column, cellValue) => {
       return '￥' + cellValue;
@@ -216,29 +225,7 @@ export default defineComponent({
             });
     };
 
-    const deleteSelectedOrders = () => {
-        // 遍历选中的订单数组，并逐个删除它们
-        selectedOrders.value.forEach(selectedOrder => {
-            deleteOrder(selectedOrder);
-        });
-
-        // 清空选中的订单数组
-        selectedOrders.value = [];
-    };
-
-    // 将事件处理函数绑定到按钮的点击事件上
-    const handleDeleteSelected = () => {
-        if (selectedOrders.value.length > 0) {
-            deleteSelectedOrders();
-        } else {
-            console.warn("No selected orders can be deleted!");
-        }
-    };
-
-    // 将事件处理函数暴露给模板
-    const handleDeleteSelectedOrder = handleDeleteSelected;
-
-
+    
     return {
       activeIndex,
       handleSelect,
@@ -249,9 +236,9 @@ export default defineComponent({
       deleteOrder,
       checkDetails,
       cancelOrder,
-      handleDeleteSelectedOrder,
       orders,
       orderSections,
+      selectedOrders,
     }
   }
 });
@@ -265,19 +252,16 @@ export default defineComponent({
         background-color: #ffffff;
         margin-top: 10px;
     }
-
+/* 
     .demo-pagination-block + .demo-pagination-block {
         margin-top: 10px;
     }
     .demo-pagination-block .demonstration {
         margin-bottom: 16px;
     }
-    /* .is-disabled {
-        cursor: not-allowed;
-        color: #ccc;
-    } */
+
     .deleteSelect {
         margin-left: 360px;
-    }
+    } */
 
   </style>
