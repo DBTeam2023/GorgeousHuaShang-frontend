@@ -10,5 +10,13 @@ export function getOrderInfo() {
     })
 }
 
+export function cancelorder(data) {
+    return request({
+        url: "",
+        method: "POST",
+        data: data
+    })
+}
+
 
 
