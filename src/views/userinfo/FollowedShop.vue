@@ -13,7 +13,7 @@
             <Card style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
               <!-- 店铺图片 -->
               <div class="shop">
-                  <img :src="store.picture" class="image" />
+                  <img :src="store.picture" class="image" alt="该店铺未设置头像"/>
               </div>
               <div style="padding: 14px">
                 <!-- 店铺名称 -->
@@ -55,7 +55,8 @@ import Card from '@/components/common/Card.vue'
 import { ElMessage, ElMessageBox, ElRate } from 'element-plus'
 import router from "@/router"
 import { removeCollectStore } from '@/api/store'
-import { getFollowedStore, getStoreAvatar, setStoreAvatar } from '@/api/userinfo'
+import { getFollowedStore } from '@/api/userinfo'
+import { getStoreAvatar } from '@/api/store'
 import { base64ToUrl } from '@/utils/photo'
 
   const FollowedExit = ref(true);
@@ -66,7 +67,7 @@ import { base64ToUrl } from '@/utils/photo'
   const currentPage=ref(1) //当前页数，默认为第1页
   const pageSize = 8 //每页的图片数量，设置为8
   const rowSize = 4
-  let total = ref(9);
+  let total = ref(1);
 
   // 计算属性，计算storeList中图片对应的行；每行3列
   const imageRows = computed(() => {
@@ -81,44 +82,46 @@ import { base64ToUrl } from '@/utils/photo'
     return rows;
   })
 
-
   // 获取用关注店铺
   const getFollows = () =>{
     getFollowedStore({
       pageNo: currentPage.value,
       pageSize: pageSize,
     })
-    .then(resp => {
-      storeList.value = resp.data.records;
-      total.value = resp.data.total;
-      
-      if(total.value === 0){ //用户没有关注店铺
-          FollowedExit.value = false;
-      }       
-      else{
-          FollowedExit.value = true;
-      }     
-
-      // 获取店铺头像
-      for (const store of storeList.value) {
-        console.log(store.storeId);
-        getStoreAvatar({
-          storeId: store.storeId,
-        })
-        .catch(resp =>{
-          console.log(resp);
-          const imageUrl = base64ToUrl(resp.data.fileContents,'image/png');
-          store.picture = imageUrl;
-          // 设置头像(未设置)
-        })
-        .then(err =>{
-          console.log(err);
-        })
-      }
-    })
-    .catch(err =>{
-      ElMessage.error('获取店铺关注失败');
-    })
+      .then(resp => {
+        storeList.value = resp.data.records;
+        total.value = resp.data.total;
+        
+        if(total.value === 0){ //用户没有关注店铺
+            FollowedExit.value = false;
+        }       
+        else{
+            FollowedExit.value = true;
+        }     
+          
+        // 获取店铺头像
+        for (const store of storeList.value) {
+          getStoreAvatar({
+            storeId: store.storeId,
+          })
+          .then(resp =>{
+            if(resp.data === null){
+              Object.assign(store, { picture: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png' });
+            }
+            else{
+              const imageUrl = base64ToUrl(resp.data.fileContents,'image/png');
+              // 创建新对象，并添加 picture 字段
+              Object.assign(store, { picture: imageUrl });  
+            }
+          })
+          .catch(err =>{
+            ElMessage('获取店铺头像失败！')
+          })
+        }
+      })
+      .catch(err =>{
+        ElMessage.error('获取店铺关注失败');
+      })
   }
 
   onMounted(() =>{

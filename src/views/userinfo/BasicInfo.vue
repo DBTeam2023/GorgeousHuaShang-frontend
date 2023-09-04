@@ -4,7 +4,7 @@
             <!-- 头像上传框 -->
             <div class="info-bg">
                 <div class="gilding-text">修改头像</div>
-                <ImgUpload />
+                <AvatarUpload />
             </div>
             <!-- 显示基本信息卡片 -->
             <div class="info-bg">
@@ -58,11 +58,9 @@
 <script setup>
     import {reactive,ref, onMounted,computed,toRefs} from 'vue'
     import { ElMessage } from 'element-plus' //消息框提示
-
-
-    import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import { getUserInfo, updateUserInfo } from '@/api/userinfo';
     import store from '@/store';
+    import AvatarUpload from '@/views/userinfo/AvatarUpload.vue';
 
     const role = store.state.user.role;
 
@@ -90,7 +88,6 @@
         else{
             callback();
         }
-
     }
 
     // 电话验证条件
@@ -324,12 +321,6 @@
         });
     }
 
-    // 信息菜单栏被选中的菜单项
-    const selectedMenu=ref('1')
-    const handleSelect=(menuItem)=>{
-        selectedMenu.value=menuItem;
-    }
-
     // 取消按钮
     function onCancel(){
         console.log('cancel!');
@@ -353,6 +344,7 @@
             InfoForm.address = updateForm.value.sellerInfo.address;
         }
     }
+
 </script>
 
 

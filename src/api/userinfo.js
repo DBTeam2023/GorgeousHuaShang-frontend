@@ -45,18 +45,6 @@ export function getUserAvatar(data){
     })
 }
 
-// 分页获取用户收藏商品列表
-export function getCollectedCommodity(data){
-    return request({
-        url:"https://mock.apifox.cn/m1/2970478-0-default/api/BuyerCenter/getCollectedCommodity/",
-        method:"POST",
-        headers:{
-            'Authorization': "Bearer " + localStorage.getItem("jwtToken")
-        },
-        data:data,
-    })
-}
-
 // 分页获取用户关注列表
 export function getFollowedStore(data){
     return request({
@@ -65,24 +53,6 @@ export function getFollowedStore(data){
         headers:{
             'Authorization': "Bearer " + localStorage.getItem("jwtToken")
         },
-        data:data,
-    })
-}
-
-// 获取店铺头像
-export function getStoreAvatar(data){
-    return request({
-        url:"/api/Store/getAvatar/",
-        method:"POST",
-        data:data,
-    })
-}
-
-// // 设置店铺头像
-export function setStoreAvatar(data){
-    return request({
-        url:"/api/Store/setAvatar/",
-        method:"POST",
         data:data,
     })
 }
