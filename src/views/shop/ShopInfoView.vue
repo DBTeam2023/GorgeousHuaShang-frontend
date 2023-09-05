@@ -53,7 +53,7 @@
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
 import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage} from 'element-plus';
-import {addStoreAddress, addStoreDescription, getStoreInfo} from "@/api/store";
+import {addStoreAddress, addStoreDescription, getStoreInfo, setScore} from "@/api/store";
 import {useRoute} from "vue-router";
 
 const route = useRoute();
@@ -65,7 +65,7 @@ const infoForm = reactive({
   shopName: '',
   description: '',
   address: '',
-  score: 4,
+  score: 1,
   storeId: "",
 });
 
@@ -97,8 +97,13 @@ async function saveChanges() {
       storeId: infoForm.storeId,
       address: infoForm.address,
     });
+    const addScore = setScore({
+      storeId: infoForm.storeId,
+      score: infoForm.score
+    })
 
-    const [descriptionResult, addressResult] = await Promise.all([addDescription, addAddress]);
+
+    const [descriptionResult, addressResult, scoreResult] = await Promise.all([addDescription, addAddress, addScore]);
 
     ElMessage({
       message: '修改成功',

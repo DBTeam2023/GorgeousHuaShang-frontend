@@ -50,10 +50,10 @@
                 <el-icon><InfoFilled /></el-icon>
                 店铺信息
             </el-menu-item>
-            <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">
-                <el-icon><Histogram /></el-icon>
-                店铺分析
-            </el-menu-item>
+<!--            <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">-->
+<!--                <el-icon><Histogram /></el-icon>-->
+<!--                店铺分析-->
+<!--            </el-menu-item>-->
             <el-sub-menu index="3">
               <template #title>
                 <el-icon><Menu /></el-icon>
@@ -68,10 +68,10 @@
                 新增商品
             </el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="4" @click="selectMenu('OrderManage')">
-                <el-icon><MoreFilled /></el-icon>
-                订单管理
-            </el-menu-item>
+<!--            <el-menu-item index="4" @click="selectMenu('OrderManage')">-->
+<!--                <el-icon><MoreFilled /></el-icon>-->
+<!--                订单管理-->
+<!--            </el-menu-item>-->
             <el-menu-item index="5" @click="selectMenu('storeSellers')">
               <el-icon><MoreFilled /></el-icon>
                 卖家管理
