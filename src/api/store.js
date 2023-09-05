@@ -121,3 +121,24 @@ export function deleteSeller(data) {
         data: data
     })
 }
+
+// 修改店铺头像
+export function setStoreAvatar(data) {
+    return request({
+        url: "/api/Store/setAvatar/",
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/form-data',
+        },
+        data: data
+    })
+}
+
+// 获取店铺头像
+export function getStoreAvatar(data){
+    return request({
+        url:"/api/Store/getAvatar/",
+        method:"POST",
+        data:data,
+    })
+}

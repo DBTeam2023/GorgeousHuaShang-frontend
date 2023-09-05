@@ -29,56 +29,16 @@
       <!-- 有优惠券 -->
       <el-card v-if="couponExit === true">
         <!-- 行 -->
-        <el-row v-for="(row, index) in couponRows" :key="index"  :gutter="60" style="margin:0 10px 0 0">
+        <el-row v-for="(row, index) in couponRows" :key="index" style="padding-top:20px;">
           <!-- 列 -->
-          <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="padding:20px">
-            <!-- 单张优惠券容器 -->
-              <div class="c-container" :class="{'container-invalid': coupon.isValid === false}"
-                  @mouseenter.native="isHover = true" @mouseleave.native="isHover = false"
-                  @mouseover="showShadow=true" @mouseout="showShadow=false">
+          <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="max-width:none;margin-bottom:5px;" class="center-container">
+            <CouponCard :coupon="coupon" @mouseover="showShadow=true" @mouseout="showShadow=false">
                 <!-- 鼠标悬浮效果 -->
                 <div class="shadow" v-show="showShadow">
-                  <!-- goodsId: couponList.value[index * rowSize + i].commodityId -->
-                  <el-button v-if="coupon.isValid"  type="primary" :icon="Position" size="large" @click="turnToProduct(index, i)" circle style="margin-right:20px"/>
+                  <el-button v-if="coupon.isValid"  type="primary" :icon="Position" size="large" @click="turnToProduct(index,i)" circle style="margin-right:20px"/>
                   <el-button type="danger" :icon="Delete" size="large" @click="handleRemove(index,i)" circle/>
                 </div>
-
-                <!-- 1、优惠券类型 -->
-                <div class="c-type center-container" :class="{'type-invalid': coupon.isValid === false}" >
-                  <!-- v-if 折扣 -->
-                  <div  v-if="coupon.type === 'discount'">
-                    <div class="type-container">
-                      <span class="discount-text">{{ coupon.discount }}</span>折
-                    </div>
-                    <div style="font-size: 35px;text-align: center;margin-top: 10px;font-weight: 300;">COUPON</div>
-                  </div>
-
-                  <!-- v-if 满减 -->
-                  <div v-if="coupon.type === 'maxout'">
-                    <div class="type-container">
-                      <span>满{{ coupon.bar }}减</span>
-                      <span class="discount-text">{{ coupon.reduction }}</span>元
-                    </div>
-                    <div style="font-size: 35px;text-align: center;margin-top: 10px;font-weight: 300; ">COUPON</div> 
-                  </div>
-                </div>
-
-                <!-- 2、基本信息 -->
-                <div class="c-info">
-                  <!-- 使用限制 -->
-                  <div class="c-id" :class="{'text-invalid': coupon.isValid === false}">
-                    <div class="id-text">限用店铺：{{ coupon.storeId }}</div>
-                    <div class="id-text">限用商品：{{ coupon.commodityId }}</div>
-                    <!-- <div class="id-text">标签：{{ activeTag }}</div> -->
-                    <!-- <div class="id-text">有效: {{ coupon.isValid}} </div> -->
-                    <div style="text-align: center;font-size: 18px;font-weight: bold; margin:15px" >{{ coupon.couponId }}</div>
-                  </div>
-                  <!-- 有效期 -->
-                  <div class="c-time" :class="{'text-invalid': coupon.isValid === false}">
-                    <div>截止时间至：{{ coupon.validto }}</div>
-                  </div>
-                </div>
-              </div>
+            </CouponCard>
           </el-col>
         </el-row>
         <!-- 分页栏 -->
@@ -104,7 +64,7 @@ import {computed, ref, watch, onMounted} from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from "@/router";
 import { Delete,Position } from '@element-plus/icons-vue';
-
+import CouponCard from '@/components/Coupon/CouponCard'
 import { getCouponPage } from '@/api/coupon';
 import { deleteUserCoupon } from '@/api/coupon';
 
@@ -297,17 +257,6 @@ import { deleteUserCoupon } from '@/api/coupon';
       text-align:center;
   }
 
-  // 单张优惠券样式
-  // 优惠券信息容器
-  .c-container{
-    width:210px;
-    height: 400px;
-    color:#a7d0f5;
-    background-color: #94bee6;
-    transition: all 0.3s ease;//过渡时间
-    position: relative;
-  }
-
   .c-container .shadow{
     position: absolute;
     top: 0;
@@ -326,78 +275,6 @@ import { deleteUserCoupon } from '@/api/coupon';
     opacity: 1;
   }
 
-  // 鼠标悬浮
-  .c-container:hover{
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px gray;
-  }
-
-  // 顶部优惠券类型
-  .c-container .c-type{
-    width: 100%;
-    height: 66%;
-    background-color: rgb(10 30 57 / 94%);
-    border-bottom: dashed #94bee6;
-  }
-
-  .c-container .c-type .type-container{
-    text-align: center; //文字居中
-    border-style:  double none;//边线
-    border-width: 5px;
-    width:180px;
-  }
-
-  .c-container .c-type .discount-text{
-    color: #a7d0f5;
-    font-size: 76px;
-    font-weight: bold;
-  }
-
-
-  // 中部基本信息
-  .c-container .c-info{
-    color: rgb(10 30 57 / 94%);
-    font-size: 10px;
-    width: 100%;
-    height:50%;
-  }
-
-  // 编号信息
-  .c-container .c-info .c-id{
-    font-size: 14px;
-    margin: 5%;
-    height: 40%;
-    color:#000000ad;
-  }
-
-  .c-container .c-info .c-id .id-text{
-    overflow: hidden;
-    text-overflow: ellipsis; /* 将溢出的文本替换为省略号 */
-    white-space: nowrap; /* 防止内容换行 */
-  }
-
-  // 有效期
-  .c-container .c-info .c-time{
-    font-size: 10px;
-    height: 15%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color:#0000008c;
-  }
-
-  // 根据优惠券是否有效改变颜色
-  .container-invalid{
-    background-color: #95b5d3;
-  }
-
-  .type-invalid{
-    //强行覆盖父类（危险慎用）
-    background-color: #4b698F !important;
-  }
-  .text-invalid{
-    // 强行覆盖父类（危险慎用）
-    color:#4b698F !important;
-  }
+ 
 
 </style>
