@@ -8,6 +8,7 @@
           <div>
             <ImgUpload ref="ImgUploadRef" 
                 @uploadPicture = "uploadAvatar" 
+                @onCancel = "handleCancel"
                 :showProgress="showProgress"/>
           </div>
         </el-dialog>
@@ -71,6 +72,9 @@ const route = useRoute();
 const dialogVisible = ref(false);
 const dialogUploadVisible = ref(false); 
 const showProgress = ref(false);//显示图片上传进度
+const handleCancel = () =>{
+  dialogUploadVisible.value = false;
+}
 
 
 const infoForm = reactive({
@@ -118,7 +122,6 @@ onMounted(() => {
         infoForm.address = resp.data.address;
         infoForm.storeId = resp.data.storeId;
         infoForm.description = resp.data.description;
-        console.log(infoForm.storeId)
         getAvatar();
       })
       .catch(resp => {
