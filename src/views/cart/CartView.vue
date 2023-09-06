@@ -1,15 +1,12 @@
 
 <script setup>
 import { reactive, computed, ref, onMounted, onUnmounted } from 'vue';
-import { ArrowDown } from '@element-plus/icons-vue';
 import router from "@/router";
 import { ElMessage } from 'element-plus' //消息框提示
 import { getCartList, updateSize, deleteCartGoods } from '@/api/cart'
 
 // 获取购物车的所有商品的列表
 const cartList = ref([]);
-const showDropdown = ref(false);
-const sizes = ['S', 'M', 'L'];
 
 // // 商品具体款式信息
 // let respCommodityInfo;
@@ -23,42 +20,43 @@ const sizes = ['S', 'M', 'L'];
 const getCart = () => {
     getCartList()
         .then(resp => {
-            cartList.value = resp.data;
+            cartList.value = resp.data.items;
             // 暂时图片写的是网址url（写死）
             // for (const store of storeList.value) {
             //     const imageSrc = base64ToString(store.picture,'image/png');
             //     store.picture = imageSrc.value;
             // }
             console.log('获取购物车列表成功');
+            console.log(cartList.value);
         })
         .catch((error) => {
             console.error('获取购物车列表失败', error);
         });
 }
 
-// 修改商品尺码属性
-const modifySize = (item, newSize) => {
-    showDropdown.value = false
-    // 后端todo:修改属性（尺码）信息
-    updateSize({
-        id: item.productID,
-        size: newSize
-    })
-        // 实际中可以不要这个消息框，这里只是在测试...
-        .then(resp => {
-            ElMessage({
-                message: '修改尺码成功！',
-                type: 'success',
-            })
-            console.log(resp);
-        })
-        .catch(err => {
-            ElMessage({
-                message: '修改尺码失败！',
-                type: 'error',
-            })
-        });
-}
+// // 修改商品尺码属性
+// const modifySize = (item, newSize) => {
+//     showDropdown.value = false
+//     // 后端todo:修改属性（尺码）信息
+//     updateSize({
+//         id: item.productID,
+//         size: newSize
+//     })
+//         // 实际中可以不要这个消息框，这里只是在测试...
+//         .then(resp => {
+//             ElMessage({
+//                 message: '修改尺码成功！',
+//                 type: 'success',
+//             })
+//             console.log(resp);
+//         })
+//         .catch(err => {
+//             ElMessage({
+//                 message: '修改尺码失败！',
+//                 type: 'error',
+//             })
+//         });
+// }
 
 // todo:生成订单
 const generateOrder = () => {
@@ -82,12 +80,12 @@ onMounted(() => {
 
 // 计算属性————有效商品列表
 const effectiveGoodsList = computed(() => {
-    return cartList.value.filter((item) => !item.isDeleted && item.stock > 0);
+    return cartList.value.filter((item) => !item.isDeleted);
 })
 
 // 计算属性————无效商品列表
 const invalidGoodsList = computed(() => {
-    return cartList.value.filter((item) => item.isDeleted || item.stock === 0);
+    return cartList.value.filter((item) => item.isDeleted);
 })
 
 // 计算属性————已选择的商品列表
@@ -228,7 +226,7 @@ function batchDelInvalidCart() {
                                         <el-checkbox v-model="selectAll">全选</el-checkbox>
                                     </th>
                                     <th width="400">商品信息</th>
-                                    <th width="100">大小</th>
+                                    <th width="100">属性</th>
                                     <th width="220">单价</th>
                                     <th width="180">数量</th>
                                     <th width="180">金额</th>
@@ -248,7 +246,7 @@ function batchDelInvalidCart() {
                                         </div>
                                     </td>
                                 </tr>
-                                <tr v-for="item in effectiveGoodsList" :key="item.productID">
+                                <tr v-for="item in effectiveGoodsList" :key="item.pickID">
                                     <td>
                                         <el-checkbox v-model="item.isSelected"
                                             @change="singleCheck(item, item.isSelected)"></el-checkbox>
@@ -268,17 +266,7 @@ function batchDelInvalidCart() {
                                     </td>
                                     <td>
                                         <el-dropdown trigger="click">
-                                            <span class="el-dropdown-link" @click="showDropdown = !showDropdown">
-                                                尺码：<span>{{ item.selectedSize }}</span><el-icon><arrow-down /></el-icon>
-                                            </span>
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item v-for="size in sizes" :key="size"
-                                                        @click="modifySize(item, size)">
-                                                        {{ size }}
-                                                    </el-dropdown-item>
-                                                </el-dropdown-menu>
-                                            </template>
+                                            <span>{{ item.pickProperty }}</span>
                                         </el-dropdown>
                                     </td>
                                     <td>
