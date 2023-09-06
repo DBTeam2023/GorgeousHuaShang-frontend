@@ -8,19 +8,60 @@
             :column="2"
             :style="blockMargin"
         >
-            <el-descriptions-item label="商品总价" >￥298.00</el-descriptions-item>
+            <!-- <el-descriptions-item label="商品总价" >￥298.00</el-descriptions-item>
             <el-descriptions-item label="优惠" >-￥8.00</el-descriptions-item>
-            <el-descriptions-item label="运费" >￥0</el-descriptions-item>
-            <el-descriptions-item label="实付款" >￥298.00</el-descriptions-item>
-            <el-descriptions-item label="支付方式" >
-            <el-tag size="small">微信支付</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="支付时间" >2023-07-02 20:46</el-descriptions-item>
+            <el-descriptions-item label="实付款" >￥298.00</el-descriptions-item> -->
+
+            <el-descriptions-item label="商品总价：￥">{{ orderInfo.goodsTotalPrice }}</el-descriptions-item>
+            <el-descriptions-item label="优惠：￥">{{ orderInfo.discount }}</el-descriptions-item>
+            <!-- <el-descriptions-item label="运费">{{ orderInfo.shippingCost }}</el-descriptions-item> -->
+            <el-descriptions-item label="实付款：￥">{{ orderInfo.totalPrice }}</el-descriptions-item>
+    
+            
         </el-descriptions>
     </el-card>
 </template>
 
-<script></script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getOrderInfo } from '@/api/order';
+import { useRoute } from 'vue-router';
+
+const orderInfo = ref({
+  goodsTotalPrice: 0,
+  discount: 0,
+  // shippingCost: 0,
+  totalPrice: 0,
+});
+
+const route = useRoute();
+const orderID = route.params.orderID;
+
+// 对接部分报错！！！
+
+onMounted(() => {
+
+  //   getOrderInfo({ orderId: orderID })
+  getOrderInfo({orderId : "string"})
+    .then(response => {
+      // Assuming the API response contains fields like goodsTotalPrice, discount, and totalPrice
+      console.log('API 响应:', response.data); 
+    //   orderInfo.value = {
+    //     goodsTotalPrice: response.data.goodsTotalPrice,
+    //     discount: response.data.discount,
+    //     shippingCost: response.data.shippingCost,
+    //     totalPrice: response.data.Money,
+        
+    //   };
+      orderInfo.value.totalPrice = response.data.Money;
+    })
+    .catch(error => {
+      console.error('Error fetching order information:', error);
+      // Handle the error here, e.g., show an error message to the user
+    });
+});
+
+</script>
 
 <style scoped>
 /* 订单支付信息卡片 */

@@ -1,7 +1,7 @@
 <template>
     <!-- <div class="common-layout"> -->
     <!-- <div> -->
-        <el-container class="orderMainView">
+        <el-container class="orderMainView custom-container">
             <el-main>
                 
                 <el-header class="totalorder-head">
@@ -76,7 +76,9 @@ import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 // import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
-import { cancelorder } from '@/api/order'
+import { cancelorder, deleteOrder, updateOrder } from '@/api/order'
+
+
 
 export default defineComponent({
   name: 'Order',
@@ -189,6 +191,38 @@ export default defineComponent({
     const formatQuantity = (row, column, cellValue) => {
       return 'x' + cellValue;
     }
+    // const confirmOrder = function(order) {
+    //     // Assuming you have an order status field in your order object
+    //     order.orderstate = '已完成'; // Update the order status locally
+
+    //     // Create an object with the updated order data
+    //     const updatedOrderData = {
+    //         orderID: order.orderID,
+    //         state: true, // Set the order status to '已完成' (or the appropriate value)
+    //         // Add any other fields you need to update here
+    //     };
+
+    //     // Call the updateOrder API to update the order status on the server
+    //     updateOrder(updatedOrderData)
+    //         .then(response => {
+    //             // Handle the successful response here, such as updating the UI
+    //             console.log("Order confirmed successfully:", response.data);
+
+    //             // You may want to update the local orders array with the updated order data
+    //             const index = orders.value.findIndex(item => item.orderID === order.orderID);
+    //             if (index !== -1) {
+    //                 // Replace the existing order with the updated order data
+    //                 orders.value[index] = response.data; // Assuming the response contains the updated order data
+    //             }
+    //         })
+    //         .catch(error => {
+    //             // Handle errors, such as displaying an error message to the user
+    //             console.error("Error confirming order:", error);
+    //             // Revert the local order status if the API call fails
+    //             order.orderstate = '待发货'; // Revert to the previous status or handle it accordingly
+    //         });
+    // };
+
 
     const confirmOrder = function(order) {
         // 执行确认订单的逻辑
@@ -201,12 +235,31 @@ export default defineComponent({
         }
     };
     const deleteOrder = function(order) {
-        const index = orders.value.findIndex(item => item.orderID === order.orderID);
-        if (index !== -1) {
-            orders.value.splice(index, 1); // 从主订单数组中删除订单
-        }
-        console.log("Deleting order:", order);
+        // Call the deleteOrder API with the order ID
+        deleteOrder({ orderID: order.orderID })
+            .then(response => {
+                // Handle the successful response here, such as updating the UI
+                console.log("Order deleted successfully:", response.data);
+
+                // Remove the deleted order from the local orders array
+                const index = orders.value.findIndex(item => item.orderID === order.orderID);
+                if (index !== -1) {
+                    orders.value.splice(index, 1); // Remove the order from the local array
+                }
+            })
+            .catch(error => {
+                // Handle errors, such as displaying an error message to the user
+                console.error("Error deleting order:", error);
+            });
     };
+
+    // const deleteOrder = function(order) {
+    //     const index = orders.value.findIndex(item => item.orderID === order.orderID);
+    //     if (index !== -1) {
+    //         orders.value.splice(index, 1); 
+    //     }
+    //     console.log("Deleting order:", order);
+    // };
     const payOrder = function(order) {
         console.log("Paying for order:", order);
     };
@@ -251,8 +304,21 @@ export default defineComponent({
     .orderMainView {
         background-color: #ffffff;
         margin-top: 10px;
+        display: flex;
     }
-/* 
+    .allOrder {
+        display: flex;
+        flex-wrap: wrap; /* 可以换行 */
+        justify-content: space-between; /* 在容器内水平居中对齐子元素 */
+        align-items: flex-start; /* 在容器内垂直居上对齐子元素 */
+    }
+    /* .custom-container {
+        background-color: transparent !important; 
+    } */
+
+    
+
+    /* 
     .demo-pagination-block + .demo-pagination-block {
         margin-top: 10px;
     }
