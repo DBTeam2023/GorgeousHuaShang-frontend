@@ -1,7 +1,7 @@
 <template>
-    <!-- <div class="common-layout"> -->
+    <div class="common-layout">
     <!-- <div> -->
-        <el-container class="orderMainView custom-container">
+        <el-container class="orderMainView custom-main">
             <el-main>
                 
                 <el-header class="totalorder-head">
@@ -24,6 +24,7 @@
                     </el-menu>
                     
                 </el-header>
+                <el-container class="white-background-container">
                 <div v-if="!showDetails">
                 <el-main class="allOrder"> <div>
                     <!-- 显示全部订单 -->
@@ -63,9 +64,9 @@
                         </el-col>
                     </el-row>
                 </el-footer>    -->
-            </el-main>
+            </el-container></el-main>
         </el-container>
-    <!-- </div> -->
+    </div>
 </template>
 
 <script>
@@ -303,18 +304,34 @@ export default defineComponent({
   <style scoped>
     .orderMainView {
         background-color: #ffffff;
-        margin-top: 10px;
+        margin-top: -10px;
         display: flex;
     }
-    .allOrder {
+    /* .allOrder {
         display: flex;
-        flex-wrap: wrap; /* 可以换行 */
-        justify-content: space-between; /* 在容器内水平居中对齐子元素 */
-        align-items: flex-start; /* 在容器内垂直居上对齐子元素 */
-    }
-    /* .custom-container {
-        background-color: transparent !important; 
+        flex-wrap: wrap; 
+        justify-content: space-between; 
+        align-items: flex-start; 
     } */
+    .custom-main {
+        background-color: transparent !important; /* 使用 !important 确保样式覆盖默认样式 */
+    }
+    .white-background-container {
+        /* 设置白底容器的样式，包括高度、背景颜色等 */
+        /* 例如： */
+        height: auto;
+        background-color: white;
+        width: 97%;
+    }
+    .totalorder-head{
+        width: 100.5%;
+        margin-left: -20px;
+    }
+    .common-layout {
+        display: flex; /* 使用 flexbox 布局 */
+        height: 100vh; /* 设置高度为视口高度，以使内容垂直居中 */
+        margin-left: 35px;
+    }
 
     
 

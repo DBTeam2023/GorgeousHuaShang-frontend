@@ -7,19 +7,19 @@
         @selection-change="handleSelectionChange"
       >
 
-        <el-table-column type="selection" width="80%" />
-        <el-table-column property="orderID" label="订单编号" width="250%" />
-        <el-table-column property="goods" label="宝贝" width="230%" >
+        <el-table-column type="selection" width="40%" />
+        <el-table-column property="orderID" label="订单编号" width="200%" />
+        <el-table-column property="goods" label="宝贝" width="180%" >
             <template v-slot="{ row }">
                 <img :src="row.goods.image" alt="goods image" style="width: 50%; height: 50px;"/>
                 <div>{{ row.goods.description }}</div>
             </template>
         </el-table-column>
-        <el-table-column property="unitprice" label="单价/元" width="115%" :formatter="formatCurrency"/>
-        <el-table-column property="number" label="数量" width="115%" :formatter="formatQuantity"/>
-        <el-table-column property="payment" label="实付/元" width="115%" :formatter="formatCurrency"/>
+        <el-table-column property="unitprice" label="单价/元" width="80%" :formatter="formatCurrency"/>
+        <el-table-column property="number" label="数量" width="80%" :formatter="formatQuantity"/>
+        <el-table-column property="payment" label="实付/元" width="80%" :formatter="formatCurrency"/>
         <el-table-column property="orderstate" label="订单状态" width="150%" />
-        <el-table-column property="operation" label="交易操作" width="170%" >
+        <el-table-column property="operation" label="交易操作" width="120%" >
             <template v-slot="{ row }">
                 <el-button v-if="row.orderstate === '待付款'" type="primary" round size="mini" @click="payOrder(row)">立即支付</el-button>
                 <el-button v-else-if="row.orderstate === '待发货'" type="danger" round size="mini" @click="confirmOrder(row)">确认收货</el-button>
@@ -28,7 +28,7 @@
             </template>
         </el-table-column>
 
-        <el-table-column property="operationforOder" label="&nbsp;&nbsp;&nbsp;订单操作" width="150%">
+        <el-table-column property="operationforOder" label="&nbsp;&nbsp;&nbsp;订单操作" width="120%">
           <template v-slot="{ row }">
             <div>
               <div>
@@ -166,8 +166,8 @@
   <style scoped>
   
   .demo-pagination-block + .demo-pagination-block {
-        margin-top: 10px;
-    }
+    margin-top: 10px;
+  }
     .demo-pagination-block .demonstration {
         margin-bottom: 16px;
     }
@@ -176,9 +176,9 @@
         color: #ccc;
     } */
     .deleteSelect {
-        margin-left: 550px;
+        margin-left: 400px;
     }
     .page-container {
-      margin-top: 20px; /* 根据需要调整距离 */
+      margin-top: 25px; /* 根据需要调整距离 */
     }
 </style>
