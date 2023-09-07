@@ -38,8 +38,6 @@
     const MenuSelect = (value) =>{
         props.selectedMenu = value;
 
-        console.log("child choose",value);
-        console.log("child->parent",props.selectedMenu);
         //传给父组件的数据
         let param ={
             item: value //字段名可以自定义 
@@ -79,12 +77,12 @@
                         <span style="margin-left:10px">个人信息</span>
                     </span>
                 </el-menu-item>
-                <el-menu-item v-if="role === 'buyer'" index="collectedItem" class="menu-item">
+                <!-- <el-menu-item v-if="role === 'buyer'" index="collectedItem" class="menu-item">
                     <span>
                         <el-icon><Goods /></el-icon>
                         <span style="margin-left:10px">我的收藏</span>
                     </span>
-                </el-menu-item>
+                </el-menu-item> -->
                 <el-menu-item v-if="role === 'buyer'" index="followedShop" class="menu-item">
                     <span>
                         <el-icon><CollectionTag /></el-icon>

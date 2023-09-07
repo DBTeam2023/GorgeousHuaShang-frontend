@@ -1,8 +1,8 @@
 <template>
     <el-main class="account-container">
         <!-- 修改密码 -->
-        <el-card style="margin-bottom:50px">
-            <h3>修改密码</h3>
+        <div style="margin-bottom:50px;padding:0 10%" class="account-bg" >
+            <div class="gilding-text">修改密码</div>
             <el-form 
                 ref="ruleFormRef"
                 :model="ruleForm"
@@ -10,6 +10,7 @@
                 :rules="rules"
                 label-width="120px"
                 class="pwdform"
+                color="white"
                 >   
                     <el-form-item label="输入旧密码" prop="oldpass">
                         <el-input v-model="ruleForm.oldpass" :type="showOldPass ? 'password' : 'text'" autocomplete="off" show-password/>
@@ -26,19 +27,19 @@
                     </el-form-item>
                     <el-form-item >
                         <el-row class="button-row">
-                            <el-col :offset="8" :span="4">
-                                <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
+                            <el-col :span="10" class="center-button">
+                                <el-button color="#ffcc00" @click="submitForm(ruleFormRef)">保存</el-button>
                             </el-col>
-                            <el-col :span="4">
-                                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                            <el-col :span="10" class="center-button">
+                                <el-button type="info" @click="resetForm(ruleFormRef)">重置</el-button>
                             </el-col>
                         </el-row>
                     </el-form-item>
             </el-form>
-        </el-card>
+        </div>
         <!-- 注销账号 -->
-        <el-card>
-            <h3>注销账号</h3>
+        <div class="account-bg" style="padding:0 10%">
+            <div class="gilding-text">注销账号</div>
             <h4>注销后，您将放弃以下权益：</h4>
             <p>1.您的所有交易记录将被清空，请确保所有交易已完结且无纠纷，账号注销后因历史交易可能产生的
                 退换货、维权相关的资金退回等权益将视作自动放弃。
@@ -54,7 +55,7 @@
             <el-form :model="logoutForm" class="center-button">
                 <el-button type="danger" @click="handlelogout" style="text-align: center;">注销账号</el-button>
             </el-form>
-        </el-card>
+        </div>
     </el-main>
 
 </template>
@@ -191,8 +192,31 @@
         text-align: center;
     }
 
+    // 鎏金字体
+    .gilding-text{
+        font-size: 20px;
+        font-weight: bold;
+        text-align:center;
+        margin:20px auto;
+        background: linear-gradient(45deg, #ffcc00, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
     .account-container{
         padding:0 10% 5% 10%;
+    }
+
+    .account-bg{
+        background-image: url('@/assets/buyerCenter/account01.jpg');
+        background-position: center center;
+        background-repeat: no-repeat;  
+        background-size: cover;
+        box-shadow: 20px 20px 23px rgb(0 0 0 / 83%);
+        border-radius:20px;
+        overflow:hidden;
+        color:white;
     }
 
     .center-button{
@@ -204,6 +228,13 @@
 
     .button-row{
         width:100%;
+        margin-top:20px;
     }
 
+</style>
+
+<style>
+    .account-bg .el-form .el-form-item__label{
+        color:white;
+    }
 </style>

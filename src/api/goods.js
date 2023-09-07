@@ -56,3 +56,13 @@ export function updateConcreteCommodity(data) {
     });
 }
 
+export function createOrderInGoods(data) {
+    return request({
+        url: "http://47.115.231.142:1029/Order/createOrder",
+        method: "POST",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data: data,
+    });
+}

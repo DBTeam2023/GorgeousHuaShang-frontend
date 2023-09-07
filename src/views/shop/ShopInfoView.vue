@@ -3,8 +3,16 @@
     <div class="shop-header">
       <div class="shop-icon-container">
         <img :src="infoForm.shopIcon" alt="Shop Icon" class="shop-icon" />
-<!--        <input type="file" ref="imageInput" style="display:none" @change="handleImageChange" accept="image/*">-->
-<!--        <button class="upload-image-button" @click="uploadImage">上传图片</button>-->
+        <button class="upload-image-button" @click="dialogUploadVisible = true">上传图片</button>
+        <el-dialog v-model="dialogUploadVisible" title="修改头像">
+          <div>
+            <ImgUpload ref="ImgUploadRef" 
+                @uploadPicture = "uploadAvatar"
+                @onCancel = "handleCancel"
+                :showProgress="showProgress"/>
+          </div>
+        </el-dialog>
+      
       </div>
       <h1 class="shop-name">{{ infoForm.shopName }}</h1>
       <div class="shop-rating">
@@ -52,16 +60,25 @@
 
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
-import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage} from 'element-plus';
-import {addStoreAddress, addStoreDescription, getStoreInfo} from "@/api/store";
+import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage, ElStep} from 'element-plus';
+import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar, setScore} from "@/api/store";
 import {useRoute} from "vue-router";
+import ImgUpload from '@/components/common/ImgUpload.vue';
+import { base64ToUrl } from '@/utils/photo';
+
 
 const route = useRoute();
 
 const dialogVisible = ref(false);
+const dialogUploadVisible = ref(false); 
+const showProgress = ref(false);//显示图片上传进度
+const handleCancel = () =>{
+  dialogUploadVisible.value = false;
+}
+
 
 const infoForm = reactive({
-  shopIcon: 'https://picsum.photos/200/200',
+  shopIcon: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
   shopName: '',
   description: '',
   address: '',
@@ -70,6 +87,30 @@ const infoForm = reactive({
 });
 
 const account = ref();
+
+const ImgUploadRef = ref(null);//上传图片组件的引用
+
+const getAvatar = () =>{
+    // 获取头像信息
+    getStoreAvatar({
+      storeId:infoForm.storeId,
+    })
+    .then(resp => {
+        // 转为可见链接
+        if(resp.data === null){
+          infoForm.shopIcon='https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png';
+        }
+        else{
+          const imageUrl = base64ToUrl(resp.data.fileContents,'image/png');
+          infoForm.shopIcon = imageUrl;
+        }
+
+    })
+    .catch(error => {
+        ElMessage('获取店铺头像失败！')
+        console.log(error);
+    });
+}
 
 onMounted(() => {
   getStoreInfo({
@@ -81,6 +122,7 @@ onMounted(() => {
         infoForm.address = resp.data.address;
         infoForm.storeId = resp.data.storeId;
         infoForm.description = resp.data.description;
+        getAvatar();
       })
       .catch(resp => {
         ElMessage.error('商店信息获取异常');
@@ -97,8 +139,13 @@ async function saveChanges() {
       storeId: infoForm.storeId,
       address: infoForm.address,
     });
+    const addScore = setScore({
+      storeId: infoForm.storeId,
+      score: infoForm.score
+    })
 
-    const [descriptionResult, addressResult] = await Promise.all([addDescription, addAddress]);
+
+    const [descriptionResult, addressResult, scoreResult] = await Promise.all([addDescription, addAddress, addScore]);
 
     ElMessage({
       message: '修改成功',
@@ -112,6 +159,29 @@ async function saveChanges() {
       type: 'warning',
     })
   }
+}
+
+// 修改头像
+const uploadAvatar = (val) => {
+  val.fileList.forEach(file => {
+    const formData = new FormData();
+    formData.append('image',file.raw);//将文件添加到formData
+    formData.append('imageName',infoForm.storeId);
+
+    setStoreAvatar(formData)
+    .then(resp => {
+        val.fileList.splice(0, 1);
+        ImgUploadRef.value.$refs.uploadRef.clearFiles();
+        getAvatar();
+        ElMessage.success('店铺头像修改成功！')
+        showProgress.value = false; //取消进度条显示
+        dialogUploadVisible.value = false;
+    })
+    .catch(err => {
+        ElMessage.error('图片上传失败，请重试！')
+        showProgress.value = false; //取消进度条显示
+    }) 
+  });
 }
 
 </script>
