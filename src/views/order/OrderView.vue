@@ -1,7 +1,7 @@
 <template>
-    <!-- <div class="common-layout"> -->
+    <div class="common-layout">
     <!-- <div> -->
-        <el-container class="orderMainView">
+        <el-container class="orderMainView custom-main">
             <el-main>
                 
                 <el-header class="totalorder-head">
@@ -24,6 +24,7 @@
                     </el-menu>
                     
                 </el-header>
+                <el-container class="white-background-container">
                 <div v-if="!showDetails">
                 <el-main class="allOrder"> <div>
                     <!-- 显示全部订单 -->
@@ -63,9 +64,9 @@
                         </el-col>
                     </el-row>
                 </el-footer>    -->
-            </el-main>
+            </el-container></el-main>
         </el-container>
-    <!-- </div> -->
+    </div>
 </template>
 
 <script>
@@ -76,7 +77,9 @@ import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 // import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
-import { cancelorder } from '@/api/order'
+import { cancelorder, deleteOrder, finishOrder } from '@/api/order'
+
+
 
 export default defineComponent({
   name: 'Order',
@@ -189,24 +192,84 @@ export default defineComponent({
     const formatQuantity = (row, column, cellValue) => {
       return 'x' + cellValue;
     }
+    // const confirmOrder = function(order) {
+    //     // Assuming you have an order status field in your order object
+    //     order.orderstate = '已完成'; // Update the order status locally
+
+    //     // Create an object with the updated order data
+    //     const updatedOrderData = {
+    //         orderID: order.orderID,
+    //         state: true, // Set the order status to '已完成' (or the appropriate value)
+    //         // Add any other fields you need to update here
+    //     };
+
+    //     // Call the updateOrder API to update the order status on the server
+    //     updateOrder(updatedOrderData)
+    //         .then(response => {
+    //             // Handle the successful response here, such as updating the UI
+    //             console.log("Order confirmed successfully:", response.data);
+
+    //             // You may want to update the local orders array with the updated order data
+    //             const index = orders.value.findIndex(item => item.orderID === order.orderID);
+    //             if (index !== -1) {
+    //                 // Replace the existing order with the updated order data
+    //                 orders.value[index] = response.data; // Assuming the response contains the updated order data
+    //             }
+    //         })
+    //         .catch(error => {
+    //             // Handle errors, such as displaying an error message to the user
+    //             console.error("Error confirming order:", error);
+    //             // Revert the local order status if the API call fails
+    //             order.orderstate = '待发货'; // Revert to the previous status or handle it accordingly
+    //         });
+    // };
+
 
     const confirmOrder = function(order) {
         // 执行确认订单的逻辑
         console.log("Confirming order:", order);
 
-        // 更新订单状态为 "已完成"
+        // 更新订单状态为 "已完成"->用 finishOrder
         const index = orders.value.findIndex(item => item.orderID === order.orderID);
         if (index !== -1) {
             orders.value[index].orderstate = '已完成';
+            finishOrder({ orderId: order.orderID })
+            // finishOrder({ orderId: "b39374a5-4622-42f0-b5fb-be5595a47217" })
+                .then(response => {
+                    console.log('订单状态已更新为已完成');
+                })
+                .catch(error => {
+                    console.error('更新订单状态时发生错误:', error);
+                });
         }
     };
     const deleteOrder = function(order) {
-        const index = orders.value.findIndex(item => item.orderID === order.orderID);
-        if (index !== -1) {
-            orders.value.splice(index, 1); // 从主订单数组中删除订单
-        }
-        console.log("Deleting order:", order);
+        // Call the deleteOrder API with the order ID
+        // deleteOrder({ orderID: order.orderID })
+        deleteOrder({ orderId: "aed4e77f-d23d-4734-a157-0315c4ef17d2"})
+            .then(response => {
+                // Handle the successful response here, such as updating the UI
+                console.log("Order deleted successfully:", response.data);
+
+                // Remove the deleted order from the local orders array
+                const index = orders.value.findIndex(item => item.orderID === order.orderID);
+                if (index !== -1) {
+                    orders.value.splice(index, 1); // Remove the order from the local array
+                }
+            })
+            .catch(error => {
+                // Handle errors, such as displaying an error message to the user
+                console.error("Error deleting order:", error);
+            });
     };
+
+    // const deleteOrder = function(order) {
+    //     const index = orders.value.findIndex(item => item.orderID === order.orderID);
+    //     if (index !== -1) {
+    //         orders.value.splice(index, 1); 
+    //     }
+    //     console.log("Deleting order:", order);
+    // };
     const payOrder = function(order) {
         console.log("Paying for order:", order);
     };
@@ -216,6 +279,7 @@ export default defineComponent({
 
         // 调用接口
         cancelorder({ orderId: order.orderID })
+        // cancelorder({ orderId: "dd10ed2b-3140-4074-97ed-e2c2aeaf991d" })
             .then(response => {
                 console.log('Order cancelled successfully:', response.data);
                 deleteOrder(order);
@@ -236,6 +300,7 @@ export default defineComponent({
       deleteOrder,
       checkDetails,
       cancelOrder,
+      finishOrder,
       orders,
       orderSections,
       selectedOrders,
@@ -250,9 +315,38 @@ export default defineComponent({
   <style scoped>
     .orderMainView {
         background-color: #ffffff;
-        margin-top: 10px;
+        margin-top: -10px;
+        display: flex;
     }
-/* 
+    /* .allOrder {
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: space-between; 
+        align-items: flex-start; 
+    } */
+    .custom-main {
+        background-color: transparent !important; /* 使用 !important 确保样式覆盖默认样式 */
+    }
+    .white-background-container {
+        /* 设置白底容器的样式，包括高度、背景颜色等 */
+        /* 例如： */
+        height: auto;
+        background-color: white;
+        width: 97%;
+    }
+    .totalorder-head{
+        width: 100.5%;
+        margin-left: -20px;
+    }
+    .common-layout {
+        display: flex; /* 使用 flexbox 布局 */
+        height: 100vh; /* 设置高度为视口高度，以使内容垂直居中 */
+        margin-left: 35px;
+    }
+
+    
+
+    /* 
     .demo-pagination-block + .demo-pagination-block {
         margin-top: 10px;
     }

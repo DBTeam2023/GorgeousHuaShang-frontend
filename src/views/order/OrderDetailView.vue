@@ -4,7 +4,7 @@
         <el-main>
             <el-row class="row-1"><!--返回按钮+页面功能描述-->
                 <el-col :span="2" class="row-1-text">
-                    <router-link to="/order/"><!--添加路由跳转-->
+                    <router-link to="/userinfo/myOrder/"><!--添加路由跳转-->
                         <el-button class="returnButton" type="return" plain @click="onReturnButtonClick">返回</el-button><!--返回按钮，返回我的订单-->
                     </router-link>
                 </el-col>
@@ -21,9 +21,8 @@
                 <el-col :span="12" class="row-3-card"><paymentInfoCard/></el-col>
                 
             </el-row>
-            <el-row class="row-4"><!--订单明细表--><orderdetailsCard/></el-row>
-            <!--订单支付信息列表-->
-            <!-- <el-row class="row-5" ><paymentInfoCard/></el-row> -->
+            <el-row class="row-4"><orderdetailsCard/></el-row>
+            
         </el-main>
     </el-container>
 </template>
@@ -57,7 +56,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter(); // 获取路由实例
 const onReturnButtonClick = () => { // 点击返回按钮时的跳转逻辑
-    router.push('/order/');
+    // router.push('/order/');
+    router.push({ name: 'UserInfo', params: { selected: 'myOrder' } });
 }
 
 
