@@ -1,16 +1,15 @@
 <template>
   <el-container class="follow-container">
-    <div class="shop-gallery" v-if="FollowedExit === false" >
-      <h2>店铺关注</h2>
+    <el-main class="shop-gallery" v-if="FollowedExit === false" >
       <el-empty description="您还没有关注任何店铺哦~"/>
-    </div>
+    </el-main>
 
     <el-main class="shop-gallery" v-if="FollowedExit === true">
           <!-- 行 -->
         <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="20">
           <!-- 列 -->
           <el-col v-for="(store, i) in row" :key="i" :span="6" class="shopcol" style="max-width:none;">
-            <Card style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="hover">
+            <el-card class="card" style="margin:auto" :body-style="{ padding: '0' }" :style="{ width: '210px', height: '300px'}" shadow="none">
               <!-- 店铺图片 -->
               <div class="shop">
                   <img :src="store.picture" class="image" alt="该店铺未设置头像"/>
@@ -23,11 +22,11 @@
                   <el-rate v-model="store.score" disabled></el-rate>
                 </div>
                 <div class="bottom">
-                  <el-button class="details-btn" type="primary" @click="goDetails(store.storeId)">查看详情</el-button>
-                  <el-button class="cancel-btn" type="info" @click="cancelFollow(store.storeId)">取消关注</el-button>
+                  <el-button class="details-btn" type="success" :icon="House" @click="goDetails(store.storeId)" circle></el-button>
+                  <el-button class="cancel-btn" color="#ffcc00" :icon="Star" @click="cancelFollow(store.storeId)" circle></el-button>
                 </div>
               </div>
-            </Card>
+            </el-card>
           </el-col>
         </el-row>
         <!-- 分页栏 -->
@@ -58,6 +57,9 @@ import { removeCollectStore } from '@/api/store'
 import { getFollowedStore } from '@/api/userinfo'
 import { getStoreAvatar } from '@/api/store'
 import { base64ToUrl } from '@/utils/photo'
+import { checkPermission } from '@/utils/auth';
+import { Star, House } from '@element-plus/icons-vue';
+
 
   const FollowedExit = ref(true);
 
@@ -125,6 +127,7 @@ import { base64ToUrl } from '@/utils/photo'
   }
 
   onMounted(() =>{
+    checkPermission(["buyer"]);
     getFollows();
   })
 
@@ -138,7 +141,7 @@ import { base64ToUrl } from '@/utils/photo'
         // 跳转到指定店铺详情页
         router.push({path: '/shop',
         query: {
-          shopId: id,
+          storeid: id,
         }
       });
     }
@@ -160,12 +163,13 @@ import { base64ToUrl } from '@/utils/photo'
             })
             .then(resp =>{
                 ElMessage.success('取消关注成功');
+                // 重新获取关注店铺列表
+                getFollows();
             })
             .catch(err =>{
                 ElMessage.error('取消关注失败，请重试');
             })
-            // 重新获取关注店铺列表
-            getFollows();
+
 
         })
         .catch(()=>{
@@ -178,7 +182,7 @@ import { base64ToUrl } from '@/utils/photo'
 <style lang="scss" scoped>
 
     .follow-container {
-      padding: 3% 5% 3% 5%;
+      padding: 3%;
       background-color: #fff;
       margin:0 5% 5% 5%;
       border-radius: 20px;
@@ -190,9 +194,6 @@ import { base64ToUrl } from '@/utils/photo'
 
     .shoprow{
         margin-bottom:30px;
-        display:flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .shopcol{
@@ -235,9 +236,24 @@ import { base64ToUrl } from '@/utils/photo'
     }
 
     .bottom .cancel-btn{
-        position: absolute;
-        bottom:0;
-        right:0;
+      color:#fff;
+      position: absolute;
+      right:15%;
+    }
+
+    .bottom .details-btn{
+      position: absolute;
+      left:15%;
+    }
+
+    .bottom .details-btn:hover{
+      background-color: #fff;
+      color:#67c23a;
+    }
+
+    .bottom .cancel-btn:hover{
+      background-color: #fff;
+      color:#ffcc00;
     }
 
     h2{
@@ -245,10 +261,17 @@ import { base64ToUrl } from '@/utils/photo'
     }
 
     .pagination{
-        margin-top:20px;
-        justify-content: center;
-        text-align:center;
-        width:100%;
+      margin-top:20px;
+      justify-content: center;
+      text-align:center;
+      width:100%;
+    }
+
+    .card{
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
     }
 
   </style>
