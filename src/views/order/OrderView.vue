@@ -18,8 +18,8 @@
                         <el-menu-item index="2">待付款</el-menu-item>
                         <el-menu-item index="3">待发货</el-menu-item>
                         <el-menu-item index="4">待收货</el-menu-item>
-                        <el-menu-item index="5">待评价</el-menu-item>
-                        <el-menu-item index="6">已完成</el-menu-item>
+                        <!-- <el-menu-item index="5">待评价</el-menu-item> -->
+                        <el-menu-item index="5">已完成</el-menu-item>
                         
                     </el-menu>
                     
@@ -27,22 +27,21 @@
                 <div v-if="!showDetails">
                 <el-main class="allOrder"> <div>
                     <!-- 显示全部订单 -->
-                    <OrderList v-if="activeIndex === '1'" :orderData="orderSections.all" title="全部订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :checkDetails="checkDetails" :payOrder="payOrder"/>
+                    <OrderList v-if="activeIndex === '1'" :orderData="orderSections.all" title="全部订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :checkDetails="checkDetails" :payOrder="payOrder"  :cancelOrder="cancelOrder" :selectedOrders="selectedOrders"/>
                     <!-- 显示待付款内容 -->
-                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" :payOrder="payOrder"/>
+                    <OrderList v-else-if="activeIndex === '2'" :orderData="orderSections.toPay" title="待付款订单" :deleteOrder="deleteOrder" :payOrder="payOrder" :cancelOrder="cancelOrder" />
                     <!-- 显示待发货内容 -->
                     <OrderList v-else-if="activeIndex === '3'" :orderData="orderSections.toSend" title="待发货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
                     <!-- 显示待收货内容 -->
-                    <OrderList v-else-if="activeIndex === '4'" :orderData="orderSections.toReceive" title="待收货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder"/>
+                    <OrderList v-else-if="activeIndex === '4'" :orderData="orderSections.toReceive" title="待收货订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
                     <!-- 显示待评价内容 -->
-                    <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.toComment" title="待评价订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
+                    <!-- <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.toComment" title="待评价订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" /> -->
                     <!-- 显示已完成内容 -->
-                    <OrderList v-else-if="activeIndex === '6'" :orderData="orderSections.finish" title="已完成订单" :deleteOrder="deleteOrder" :confirmOrder="confirmOrder" />
+                    <OrderList v-else-if="activeIndex === '5'" :orderData="orderSections.finish" title="已完成订单" :deleteOrder="deleteOrder" />
                 </div></el-main>
                 </div>
                 <OrderDetailView v-else :order="currentOrder" />
-                <el-footer>
-                    <!-- 分页栏 -->
+                <!-- <el-footer>
                     <el-row>
                         <el-col :span="12">
                             <div class="demo-pagination-block">
@@ -60,10 +59,10 @@
                             </div>
                         </el-col>
                         <el-col :span="12">
-                            <el-button class="deleteSelect" type="danger" plain>删除选中订单</el-button>
+                            <el-button class="deleteSelect" type="danger" plain @click="handleDeleteSelectedOrder">删除选中订单</el-button>
                         </el-col>
                     </el-row>
-                </el-footer>   
+                </el-footer>    -->
             </el-main>
         </el-container>
     <!-- </div> -->
@@ -77,6 +76,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 // import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
+import { cancelorder } from '@/api/order'
 
 export default defineComponent({
   name: 'Order',
@@ -144,28 +144,6 @@ export default defineComponent({
         orderstate: '待收货',
       },
       {
-        orderID: '5676381848455309723',
-        goods : {
-            image:"https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg",
-            description:"商品名",
-        },
-        unitprice: 298.00,
-        number: 1,
-        payment: 298.00,
-        orderstate: '待评价',
-      },
-      {
-        orderID: '9864381848455308655',
-        goods : {
-            image:"https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg",
-            description:"商品名",
-        },
-        unitprice: 99.00,
-        number: 1,
-        payment: 99.00,
-        orderstate: '待评价',
-      },
-      {
         orderID: '240655332765530422',
         goods : {
             image:"https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg",
@@ -174,6 +152,17 @@ export default defineComponent({
         unitprice: 1199.00,
         number: 1,
         payment: 1199.00,
+        orderstate: '已完成',
+      },
+      {
+        orderID: '240655332765530423',
+        goods : {
+            image:"https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg",
+            description:"商品名",
+        },
+        unitprice: 199.00,
+        number: 1,
+        payment: 199.00,
         orderstate: '已完成',
       },
     ]);
@@ -185,11 +174,14 @@ export default defineComponent({
             toPay: orders.value.filter(order => order.orderstate === '待付款'),
             toSend: orders.value.filter(order => order.orderstate === '待发货'),
             toReceive: orders.value.filter(order => order.orderstate === '待收货'),
-            toComment: orders.value.filter(order => order.orderstate === '待评价'),
+            // toComment: orders.value.filter(order => order.orderstate === '待评价'),
             finish: orders.value.filter(order => order.orderstate === '已完成'),
         };
         return sections;
     });
+
+    const selectedOrders = ref([]);
+
 
     const formatCurrency = (row, column, cellValue) => {
       return '￥' + cellValue;
@@ -202,10 +194,10 @@ export default defineComponent({
         // 执行确认订单的逻辑
         console.log("Confirming order:", order);
 
-        // 更新订单状态为 "待评价"
+        // 更新订单状态为 "已完成"
         const index = orders.value.findIndex(item => item.orderID === order.orderID);
         if (index !== -1) {
-            orders.value[index].orderstate = '待评价';
+            orders.value[index].orderstate = '已完成';
         }
     };
     const deleteOrder = function(order) {
@@ -215,21 +207,25 @@ export default defineComponent({
         }
         console.log("Deleting order:", order);
     };
-
-    // TODO
     const payOrder = function(order) {
-        // 执行支付订单的逻辑，可能包括向服务器发送请求等
         console.log("Paying for order:", order);
     };
-    const commentOrder = function(order) {
-        // 执行评价订单的逻辑
-        console.log("Commenting order:", order);
-    };
-    const moreOrder = function(order) {
-        //执行再来一单的逻辑
-        console.log("more order:", order);
+
+    const cancelOrder = function(order) {
+        console.log("Cancelling order:", order);
+
+        // 调用接口
+        cancelorder({ orderId: order.orderID })
+            .then(response => {
+                console.log('Order cancelled successfully:', response.data);
+                deleteOrder(order);
+            })
+            .catch(error => {
+                console.error('Error cancelling order:', error);
+            });
     };
 
+    
     return {
       activeIndex,
       handleSelect,
@@ -237,12 +233,12 @@ export default defineComponent({
       formatQuantity,
       payOrder,
       confirmOrder,
-      commentOrder,
-      moreOrder,
       deleteOrder,
       checkDetails,
+      cancelOrder,
       orders,
       orderSections,
+      selectedOrders,
     }
   }
 });
@@ -256,19 +252,16 @@ export default defineComponent({
         background-color: #ffffff;
         margin-top: 10px;
     }
-
+/* 
     .demo-pagination-block + .demo-pagination-block {
         margin-top: 10px;
     }
     .demo-pagination-block .demonstration {
         margin-bottom: 16px;
     }
-    /* .is-disabled {
-        cursor: not-allowed;
-        color: #ccc;
-    } */
+
     .deleteSelect {
         margin-left: 360px;
-    }
+    } */
 
   </style>
