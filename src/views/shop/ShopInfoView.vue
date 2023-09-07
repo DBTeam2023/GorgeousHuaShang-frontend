@@ -6,12 +6,13 @@
         <button class="upload-image-button" @click="dialogUploadVisible = true">上传图片</button>
         <el-dialog v-model="dialogUploadVisible" title="修改头像">
           <div>
-            <ImgUpload ref="ImgUploadRef"
+            <ImgUpload ref="ImgUploadRef" 
                 @uploadPicture = "uploadAvatar"
+                @onCancel = "handleCancel"
                 :showProgress="showProgress"/>
           </div>
         </el-dialog>
-
+      
       </div>
       <h1 class="shop-name">{{ infoForm.shopName }}</h1>
       <div class="shop-rating">
@@ -60,7 +61,7 @@
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
 import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage, ElStep} from 'element-plus';
-import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar, setScore} from "@/api/store";
+import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar} from "@/api/store";
 import {useRoute} from "vue-router";
 import ImgUpload from '@/components/common/ImgUpload.vue';
 import { base64ToUrl } from '@/utils/photo';
@@ -69,8 +70,11 @@ import { base64ToUrl } from '@/utils/photo';
 const route = useRoute();
 
 const dialogVisible = ref(false);
-const dialogUploadVisible = ref(false);
+const dialogUploadVisible = ref(false); 
 const showProgress = ref(false);//显示图片上传进度
+const handleCancel = () =>{
+  dialogUploadVisible.value = false;
+}
 
 
 const infoForm = reactive({
@@ -78,7 +82,7 @@ const infoForm = reactive({
   shopName: '',
   description: '',
   address: '',
-  score: 1,
+  score: 4,
   storeId: "",
 });
 
@@ -118,7 +122,6 @@ onMounted(() => {
         infoForm.address = resp.data.address;
         infoForm.storeId = resp.data.storeId;
         infoForm.description = resp.data.description;
-        console.log(infoForm.storeId)
         getAvatar();
       })
       .catch(resp => {
@@ -177,7 +180,7 @@ const uploadAvatar = (val) => {
     .catch(err => {
         ElMessage.error('图片上传失败，请重试！')
         showProgress.value = false; //取消进度条显示
-    })
+    }) 
   });
 }
 

@@ -62,11 +62,11 @@
               <el-menu-item index="3-1" @click="selectMenu('ProductManagement')">
                 <el-icon><setting /></el-icon>
                 已上架商品管理
-            </el-menu-item>
-            <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
-                <el-icon><setting /></el-icon>
-                新增商品
-            </el-menu-item>
+              </el-menu-item>
+              <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
+                  <el-icon><setting /></el-icon>
+                  新增商品
+              </el-menu-item>
             </el-sub-menu>
 <!--            <el-menu-item index="4" @click="selectMenu('OrderManage')">-->
 <!--                <el-icon><MoreFilled /></el-icon>-->
@@ -76,6 +76,11 @@
               <el-icon><MoreFilled /></el-icon>
                 卖家管理
             </el-menu-item>
+            <el-menu-item index="6" @click="selectMenu('CouponManage')">
+              <el-icon><MoreFilled /></el-icon>
+                优惠券管理
+            </el-menu-item>
+            
           </el-menu>
         </el-col>
     <el-col :span="20">
@@ -97,6 +102,9 @@
       </template>
       <template v-else-if="selectedMenu === 'storeSellers'">
         <StoreSellers></StoreSellers>
+      </template>
+      <template v-else-if="selectedMenu === 'CouponManage'">
+        <CouponManage></CouponManage>
       </template>
     </div>
     </el-col>
@@ -127,6 +135,7 @@ import {
   import ProductManagement from '@/views/shop/ProductManagementView.vue';
   import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
   import StoreSellers from '@/views/shop/StoreSellersView.vue';
+  import CouponManage from '@/views/shop/CouponManageView.vue';
   import { ElIcon } from 'element-plus';
 
 const selectedMenu = ref('ShopInfo');

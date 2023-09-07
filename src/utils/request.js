@@ -31,9 +31,9 @@ service.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        if (error.response.data.code !== 200) {
-            ElMessage.error(error.response.data.msg);
-        }
+        // if (error.response.data.code !== 200) {
+        //     ElMessage.error(error.response.data.msg);
+        // }
         return Promise.reject(error);
     }
 );

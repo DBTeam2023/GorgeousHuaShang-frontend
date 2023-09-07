@@ -142,3 +142,12 @@ export function getStoreAvatar(data){
         data:data,
     })
 }
+
+// 获取关注该店铺的买家
+export function getBuyers(data) {
+    return request({
+        url: "/api/Store/getBuyer/",
+        method: "POST",
+        data: data
+    })
+}

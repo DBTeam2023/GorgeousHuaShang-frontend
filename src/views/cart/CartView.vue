@@ -1,93 +1,88 @@
 
 <script setup>
-import { reactive, computed, ref, onMounted, onUnmounted } from 'vue';
-import { ArrowDown } from '@element-plus/icons-vue';
+import { computed, ref, onMounted } from 'vue';
 import router from "@/router";
 import { ElMessage } from 'element-plus' //消息框提示
-import { getCartList, updateSize, deleteCartGoods } from '@/api/cart'
+import { getCartList, deleteCartGoods, createOrder } from '@/api/cart'
+import { checkPermission } from '@/utils/auth';
+import { base64ToUrl } from "@/utils/photo";
 
 // 获取购物车的所有商品的列表
 const cartList = ref([]);
-const showDropdown = ref(false);
-const sizes = ['S', 'M', 'L'];
 
-// // 商品具体款式信息
-// let respCommodityInfo;
-// let mergedProperties = ref([]); // 产品的所有属性
-// let selectProperties = reactive({}); // 顾客选中的属性
-// let selectIndex = ref(0);       // 选中款式的产品对应的index
-// let selectedcommodity = ref({});// 选中款式的产品
+onMounted(() => {
+    // 0.角色授权
+    checkPermission(["buyer"]);
+    // 1.获取购物车
+    getCart();
+})
 
-// todo:
 // 获取用户购物车列表
 const getCart = () => {
     getCartList()
         .then(resp => {
-            cartList.value = resp.data;
-            // 暂时图片写的是网址url（写死）
-            // for (const store of storeList.value) {
-            //     const imageSrc = base64ToString(store.picture,'image/png');
-            //     store.picture = imageSrc.value;
-            // }
             console.log('获取购物车列表成功');
+
+            for (let i = 0; i < resp.data.items.length; i++) {
+
+                console.log(resp.data.items[i])
+
+                // const pickInfo = resp.data.items[i].pick.commodityInfo[0];
+                // cartList.value.push({
+                //     productID: resp.data.items[i].pick.commodityId,
+                //     // productName: resp.data.items[i].pick.productName,
+                //     pickID: pickInfo.pickId,
+                //     picture: base64ToUrl(pickInfo.image.fileContents, pickInfo.image.contentType),
+                //     price: pickInfo.price,
+                //     pickProperty: pickInfo.property,
+                //     stock: pickInfo.stock,
+                //     description: pickInfo.description,
+                //     count: resp.data.items[i].count,
+                // })
+            }
+            console.log(cartList.value);
+
         })
         .catch((error) => {
+            console.log(error)
             console.error('获取购物车列表失败', error);
         });
 }
 
-// 修改商品尺码属性
-const modifySize = (item, newSize) => {
-    showDropdown.value = false
-    // 后端todo:修改属性（尺码）信息
-    updateSize({
-        id: item.productID,
-        size: newSize
-    })
-        // 实际中可以不要这个消息框，这里只是在测试...
-        .then(resp => {
-            ElMessage({
-                message: '修改尺码成功！',
-                type: 'success',
-            })
-            console.log(resp);
-        })
-        .catch(err => {
-            ElMessage({
-                message: '修改尺码失败！',
-                type: 'error',
-            })
-        });
-}
-
-// todo:生成订单
+// 下单结算————生成订单
 const generateOrder = () => {
-    // 后端todo: 调用生成订单的API，并获取订单ID
-    const orderID = ""; // 假设获取到的订单ID
-    turnToPay(orderID);
+    // 提取pickID和count
+    const orderCreate = selectedItems.value.map((item) => ({
+        pickId: item.pickID,
+        number: item.count,
+    }));
+    // 调用生成订单的API，并]获取订单ID并跳转至支付页面
+    createOrder({ orderCreate })
+        .then(resp => {
+            console.log(resp)
+            ElMessage.success("订单创建成功，正在跳转支付页面")
+            //   跳转支付
+            router.push({
+                path: '/pay/',
+                query: {
+                    orderId: resp.data.orderId
+                }
+            })
+        })
+        .catch(resp => {
+            console.log(resp)
+            ElMessage.error("订单创建失败")
+        })
 };
-
-// todo:跳转支付界面
-function turnToPay() {
-    //todo:跳转到支付界面，需要传递参数订单ID
-    router.push({
-        path: '/pay/',
-        params: orderID,
-    });
-}
-
-onMounted(() => {
-    getCart();
-})
 
 // 计算属性————有效商品列表
 const effectiveGoodsList = computed(() => {
-    return cartList.value.filter((item) => !item.isDeleted && item.stock > 0);
+    return cartList.value.filter((item) => !item.isDeleted);
 })
 
 // 计算属性————无效商品列表
 const invalidGoodsList = computed(() => {
-    return cartList.value.filter((item) => item.isDeleted || item.stock === 0);
+    return cartList.value.filter((item) => item.isDeleted);
 })
 
 // 计算属性————已选择的商品列表
@@ -105,13 +100,14 @@ const selectedPrice = computed(() => {
     return selectedItems.value.reduce((sum, item) => sum + item.price * item.count, 0);
 });
 
-
+// 获取商品的pick款式信息
+const getPropertyValues = (pickProperty) => {
+    return Object.values(pickProperty).join('; ');
+};
 
 // 单选
 const singleCheck = (item, checked) => {
-    // todo:这里需不需要调用接口修改数据库中商品的单选状态？
     item.isSelected = checked;
-
 };
 
 // 全选
@@ -121,7 +117,6 @@ const selectAll = computed({
     },
     set: (value) => {
         effectiveGoodsList.value.forEach((item) => {
-            // todo:这里需不需要调用接口修改数据库中商品的全选（单选）状态？
             item.isSelected = value;
         });
     },
@@ -228,7 +223,7 @@ function batchDelInvalidCart() {
                                         <el-checkbox v-model="selectAll">全选</el-checkbox>
                                     </th>
                                     <th width="400">商品信息</th>
-                                    <th width="100">大小</th>
+                                    <th width="100">属性</th>
                                     <th width="220">单价</th>
                                     <th width="180">数量</th>
                                     <th width="180">金额</th>
@@ -248,7 +243,7 @@ function batchDelInvalidCart() {
                                         </div>
                                     </td>
                                 </tr>
-                                <tr v-for="item in effectiveGoodsList" :key="item.productID">
+                                <tr v-for="item in effectiveGoodsList" :key="item.pickID">
                                     <td>
                                         <el-checkbox v-model="item.isSelected"
                                             @change="singleCheck(item, item.isSelected)"></el-checkbox>
@@ -261,25 +256,12 @@ function batchDelInvalidCart() {
                                             <RouterLink :to="'/goodsdetail/'">
                                                 <img class="pictureOfGoods" :src="item.picture" :alt="item.name" />
                                             </RouterLink>
-                                            <span class="product-name">
-                                                {{ item.productName }}
-                                            </span>
+                                            <!-- <span class="product-name">{{ item.productName }}</span> -->
+                                            <span class="txt">{{ item.description }}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <el-dropdown trigger="click">
-                                            <span class="el-dropdown-link" @click="showDropdown = !showDropdown">
-                                                尺码：<span>{{ item.selectedSize }}</span><el-icon><arrow-down /></el-icon>
-                                            </span>
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item v-for="size in sizes" :key="size"
-                                                        @click="modifySize(item, size)">
-                                                        {{ size }}
-                                                    </el-dropdown-item>
-                                                </el-dropdown-menu>
-                                            </template>
-                                        </el-dropdown>
+                                        <span>{{ getPropertyValues(item.pickProperty) }}</span>
                                     </td>
                                     <td>
                                         <p>&yen;{{ item.price }}</p>
@@ -314,30 +296,12 @@ function batchDelInvalidCart() {
                                             <RouterLink :to="'/goodsdetail/'">
                                                 <img class="pictureOfGoods" :src="item.picture" :alt="item.name" />
                                             </RouterLink>
-                                            <span class="product-name">
-                                                {{ item.productName }}
-                                            </span>
-                                            <!-- todo：这里不知道放不放描述文字？还是只显示商品名称？ -->
-                                            <!-- <p class="name ellipsis">
-                                                {{ item.productName }}
-                                            </p>
-                                            <p class="attr">{{ item.description }}</p> -->
+                                            <!-- <span class="product-name">{{ item.productName }}</span> -->
+                                            <span class="txt">{{ item.description }}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <el-dropdown trigger="click">
-                                            <span class="el-dropdown-link" @click="showDropdown = !showDropdown">
-                                                尺码：<span>{{ item.selectedSize }}</span><el-icon><arrow-down /></el-icon>
-                                            </span>
-                                            <template #dropdown>
-                                                <el-dropdown-menu>
-                                                    <el-dropdown-item v-for="size in sizes" :key="size"
-                                                        @click="modifySize(item, size)">
-                                                        {{ size }}
-                                                    </el-dropdown-item>
-                                                </el-dropdown-menu>
-                                            </template>
-                                        </el-dropdown>
+                                        <span>{{ getPropertyValues(item.pickProperty) }}</span>
                                     </td>
                                     <td>
                                         <p>&yen;{{ item.price }}</p>
@@ -389,7 +353,7 @@ function batchDelInvalidCart() {
                                 <span class="red">¥ {{ selectedPrice.toFixed(2) }} </span>
                             </div>
                             <div class="total">
-                                <el-button size="large" type="primary" @click="turnToPay()">下单结算</el-button>
+                                <el-button size="large" type="primary" @click="generateOrder()">下单结算</el-button>
                             </div>
                         </div>
                     </div>
@@ -511,5 +475,13 @@ td {
     border: 1px solid #ccc;
     border-radius: 4px;
     padding-left: 15%;
+}
+
+.style-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 </style>

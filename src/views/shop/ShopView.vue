@@ -6,6 +6,9 @@
         <el-icon style="font-size: 25px;"><house /></el-icon>
         <div class="shop-name">{{ storeInfo.shopName }}</div>
       </div>
+      <div style=" display: flex;align-items: center;justify-content: space-between;">
+        <div >{{ storeInfo.description }}</div>
+      </div>
       <div class="shop-stats">
         <div class="shop-stat">
           <el-icon style="font-size: 25px;"><User /></el-icon>
@@ -55,14 +58,14 @@
               <el-icon><Grid /></el-icon>
               全部宝贝
           </el-menu-item>
-          <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">
-              <el-icon><Comment /></el-icon>
-              店铺动态
-          </el-menu-item>
-          <el-menu-item index="3" @click="selectMenu('ShopAnalysis')">
-              <el-icon><Menu /></el-icon>
-              宝贝分类
-          </el-menu-item>
+<!--          <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">-->
+<!--              <el-icon><Comment /></el-icon>-->
+<!--              店铺动态-->
+<!--          </el-menu-item>-->
+<!--          <el-menu-item index="3" @click="selectMenu('ShopAnalysis')">-->
+<!--              <el-icon><Menu /></el-icon>-->
+<!--              宝贝分类-->
+<!--          </el-menu-item>-->
           <el-menu-item index="4" @click="selectMenu('OrderManage')">
               <el-icon><Avatar /></el-icon>
               联系客服
@@ -78,7 +81,7 @@
       <ALLItems></ALLItems>
     </template>
     <template v-else-if="selectedMenu === 'OrderManage'">
-      <Chat></Chat>
+       <img src="../../assets/homePage/kefu.png" style="width: 50%;margin-left: 25%;">
     </template>
     <template v-if="selectedMenu === 'ProductIncrease'">
       <ProductIncrease></ProductIncrease>
@@ -105,7 +108,7 @@ Location,
 Menu,
 Avatar,
 } from '@element-plus/icons-vue'
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, reactive, ref, watch} from 'vue'
 // import Chat from '@/views/shop_subs/Chat2SellerView.vue'
 // import OrderManage from '@/views/shop_subs/OrderManageView.vue'
 import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
@@ -114,6 +117,7 @@ import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
 import {ElIcon, ElMessage} from 'element-plus';
 import {collectStore, getStoreInfo, removeCollectStore} from "@/api/store";
 import {useRoute} from "vue-router";
+import {getFollowedStore} from "@/api/userinfo";
 
 const route = useRoute();
 
@@ -192,9 +196,28 @@ const storeInfo = reactive({
   storeId: "",
   shopName: "",
   favoriteUserCount: 17,
-  score: 3,
+  score: 1,
   address: "山西",
 })
+
+const getFollowedStoreForPage = () => {
+  getFollowedStore({
+    pageNo: 1,
+    pageSize: 1,
+    storeName: storeInfo.shopName
+  })
+      .then(resp => {
+        storeInfo.favoriteUserCount = resp.data.total;
+      })
+      .catch(resp => {
+        ElMessage.error("获取商家信息错误")
+      })
+}
+
+watch(collect, () => {
+  getFollowedStoreForPage()
+})
+
 
 const getStoreInfoById = () => {
   getStoreInfo({
@@ -205,6 +228,8 @@ const getStoreInfoById = () => {
         storeInfo.score = resp.data.score;
         storeInfo.address = resp.data.address;
         storeInfo.storeId = resp.data.storeId;
+        storeInfo.description = resp.data.description;
+        console.log(resp)
       })
       .catch(resp => {
         ElMessage.error('商店信息获取异常');
