@@ -121,7 +121,7 @@
 
       <el-dialog
           v-model="dialogVisibleCart"
-          title="加入购物车"
+          title="购买"
           width="40%"
       >
         <span>
@@ -164,7 +164,7 @@
     </div>
   </div>
 
-  <comment-view/>
+<!--  <comment-view/>-->
 </template>
 
 
@@ -177,7 +177,7 @@ import lgpic from "../../assets/product/3.png";
 import CommentView from './CommentView.vue';
 import router from "@/router";
 import {useRoute} from "vue-router";
-import {getGoodsDetail} from "@/api/goods";
+import {createOrderInGoods, getGoodsDetail} from "@/api/goods";
 import {ElMessage} from "element-plus";
 import { base64ToUrl } from '@/utils/photo'
 import { ElMessageBox } from 'element-plus';
@@ -290,7 +290,7 @@ function openOrderForm() {
     ElMessage.error('卖家无法购买！');
     return;
   }
-  dialogVisibleCart.value = true
+  dialogVisibleOrder.value = true
 }
 
 function cancelAddCart() {
@@ -312,7 +312,28 @@ function cancelAddOrder() {
 
 function confirmAddOrder() {
   // 跳转支付页面
-
+  createOrderInGoods({
+    orderCreate: [
+      {
+        pickId: selectedcommodity.value.pickId,
+        number: selectedcommodity.value.selectedQuantity,
+      }
+    ]
+  })
+      .then(resp => {
+        console.log(resp)
+        ElMessage.success("订单创建成功，正在跳转支付页面")
+      //   跳转支付
+        router.push({
+          path: '/pay',
+          query: {
+            orderId: resp.data.orderId
+          }
+        })
+      })
+      .catch(resp => {
+        ElMessage.error("订单创建失败")
+      })
   // 创建订单
 
   dialogVisibleOrder.value = false
