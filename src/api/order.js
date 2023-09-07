@@ -34,7 +34,7 @@ export function deleteOrder(data) {
 // 更改订单状态为已经完成
 export function finishOrder(data) {
     return request({
-        url: "",
+        url: "http://47.115.231.142:1029/Order/ChangeOrderPaidComplete",
         method: "POST",
         headers: {
             Authorization: "Bearer " + localStorage.getItem("jwtToken")

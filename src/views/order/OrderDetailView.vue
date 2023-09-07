@@ -21,7 +21,7 @@
                 <el-col :span="12" class="row-3-card"><paymentInfoCard/></el-col>
                 
             </el-row>
-            <!-- <el-row class="row-4"><orderdetailsCard/></el-row> -->
+            <el-row class="row-4"><orderdetailsCard/></el-row>
             
         </el-main>
     </el-container>

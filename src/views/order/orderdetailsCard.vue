@@ -1,17 +1,17 @@
 <template>
     <el-card class="row-3-card">
-        <el-table :data="orderTableData" style="width: 100%">
-            <el-table-column prop="goodsID" label="商品编号" width="300px"/>
-            <el-table-column prop="goods" label="商品" width="250px">
+        <el-table :data="orderTableData" style="width: 100">
+            <el-table-column prop="goodsID" label="商品编号" width="300"/>
+            <el-table-column prop="goods" label="商品" width="250">
                 <template v-slot="{ row }">
-                    <img :src="row.goods.image" alt="goods image" style="width: 50px; height: 50px;"/>
+                    <img :src="row.goods.image" alt="goods image" style="width: 50; height: 50;"/>
                     <div>{{ row.goods.description }}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="unitprice" label="单价" width="160px" :formatter="formatCurrency"/>
-            <el-table-column prop="number" label="数量" width="160px" :formatter="formatQuantity"/>
-            <el-table-column prop="total" label="总额" width="160px" :formatter="formatCurrency"/>
-            <el-table-column prop="payment" label="实付" width="160px" :formatter="formatCurrency"/>
+            <el-table-column prop="unitprice" label="单价" width="160" :formatter="formatCurrency"/>
+            <el-table-column prop="number" label="数量" width="160" :formatter="formatQuantity"/>
+            <el-table-column prop="total" label="总额" width="160" :formatter="formatCurrency"/>
+            <el-table-column prop="payment" label="实付" width="160" :formatter="formatCurrency"/>
         </el-table>
     </el-card>
 </template>
@@ -36,7 +36,7 @@ const fetchOrderInfo = () => {
           goodsID: item.pickId,
           unitprice: item.price,
           number: item.number,
-          payment: item.price,
+          payment: item.price*item.number,
           goods: {
             image: item.pickImage,
             description: item.description,

@@ -234,12 +234,9 @@ export default defineComponent({
         if (index !== -1) {
             orders.value[index].orderstate = '已完成';
             finishOrder({ orderId: order.orderID })
+            // finishOrder({ orderId: "b39374a5-4622-42f0-b5fb-be5595a47217" })
                 .then(response => {
-                    if (response.code === 200) {
                     console.log('订单状态已更新为已完成');
-                    } else {
-                    console.error('更新订单状态失败:', response.msg);
-                    }
                 })
                 .catch(error => {
                     console.error('更新订单状态时发生错误:', error);
@@ -281,8 +278,8 @@ export default defineComponent({
         console.log("Cancelling order:", order);
 
         // 调用接口
-        // cancelorder({ orderId: order.orderID })
-        cancelorder({ orderId: "74bb9d17-e312-4988-9251-45a1a2d85a60" })
+        cancelorder({ orderId: order.orderID })
+        // cancelorder({ orderId: "dd10ed2b-3140-4074-97ed-e2c2aeaf991d" })
             .then(response => {
                 console.log('Order cancelled successfully:', response.data);
                 deleteOrder(order);
