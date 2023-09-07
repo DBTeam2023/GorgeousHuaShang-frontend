@@ -1,33 +1,13 @@
 <template>
-  <el-container class="coupon-container">
-
-    <!-- 优惠券选择菜单 -->
-    <el-header class="header">
-      <el-menu
-          :default-active="activeTag"
-          class="el-menu-demo"
-          mode="horizontal"
-          background-color="#545c64"
-          text-color="#fff"
-          active-text-color="#ffd04b"
-          @select="handleSelect"
-      >
-          <el-menu-item index="all">全部</el-menu-item>
-          <el-menu-item index="discount">折扣优惠券</el-menu-item>
-          <el-menu-item index="maxout">满减优惠券</el-menu-item>
-          <el-menu-item index="expired">已过期</el-menu-item>
-      </el-menu>
-    </el-header>
-    
-    <!-- 优惠券显示栏 -->
-    <el-main class="main">
+  <!-- 优惠券显示栏 -->
+  <el-container class="coupon-container">    
       <!-- 没有优惠券 -->
-      <el-card v-if="couponExit === false">
+      <el-main v-if="couponExit === false">
         <el-empty description="您还没有优惠券哦~" />
-      </el-card>
+      </el-main>
 
       <!-- 有优惠券 -->
-      <el-card v-if="couponExit === true">
+      <el-main v-if="couponExit === true" style="padding: 0">
         <!-- 行 -->
         <el-row v-for="(row, index) in couponRows" :key="index" style="padding-top:20px;">
           <!-- 列 -->
@@ -35,8 +15,8 @@
             <CouponCard :coupon="coupon" @mouseover="showShadow=true" @mouseout="showShadow=false">
                 <!-- 鼠标悬浮效果 -->
                 <div class="shadow" v-show="showShadow">
-                  <el-button v-if="coupon.isValid"  type="primary" :icon="Position" size="large" @click="turnToProduct(index,i)" circle style="margin-right:20px"/>
-                  <el-button type="danger" :icon="Delete" size="large" @click="handleRemove(index,i)" circle/>
+                  <el-button type="primary" :icon="Position" @click="turnToProduct(index,i)" circle style="margin-right:2vw"/>
+                  <el-button type="danger" :icon="Delete" @click="handleRemove(index,i)" circle/>
                 </div>
             </CouponCard>
           </el-col>
@@ -54,8 +34,7 @@
               @current-change="handleCurrentChange"
               />
         </el-row>
-      </el-card>
-    </el-main>
+      </el-main>
   </el-container>
 </template>
 
@@ -65,8 +44,9 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import router from "@/router";
 import { Delete,Position } from '@element-plus/icons-vue';
 import CouponCard from '@/components/Coupon/CouponCard'
-import { getCouponPage } from '@/api/coupon';
-import { deleteUserCoupon } from '@/api/coupon';
+import { getCouponPage, deleteUserCoupon } from '@/api/coupon';
+import { utc2cn } from '@/utils/timeTransfer';
+
 
   const couponExit = computed(()=>{
     return !(total.value === 0);
@@ -84,20 +64,18 @@ import { deleteUserCoupon } from '@/api/coupon';
   const queryParams = ref({
     pageNo: 1,
     pageSize: 4,
-    storeId: null,
-    commodityId: null,
-    tag: "all" //默认获取全部
+    storeId: '',
+    storeName:'',
   })
 
   // 分页栏用到的数据
   const currentPage=ref(1); //当前页数，默认为第1页
   const pageSize=4; //每页的图片数量，
   const rowSize = 4; //每行优惠券数量：4
-  let total = ref(5);//总数据
+  let total = ref(1);//总数据
 
   queryParams.value.pageSize = pageSize;  //总页数
   queryParams.value.pageNo = currentPage; //当前页数
-  queryParams.value.tag = activeTag; //选择的标签
 
   // 计算属性，计算couponList中图片对应的行；每行4列
   const couponRows = computed(() => {
@@ -112,30 +90,20 @@ import { deleteUserCoupon } from '@/api/coupon';
     return rows;
   })
 
-
-  /**
-   * 将后端传入的时间戳转换为显示的字符串
-   * @param {string} timestamp - 类似"2023-07-28T05:28:20.962"的字符串
-   * @returns {string} 转换后的字符串"2023.07.28 05:28:20""
-   */
-  const stamp2string = (timestamp) =>{
-    const dataObj = new Date(timestamp);
-    const formatted = dataObj.toISOString().replace("T"," ").split(".")[0];
-    return formatted;
-  }
-
   // 分页拉取优惠券
   const getCoupon = () =>{
-    getCouponPage(queryParams)
+    getCouponPage({
+      pageNo: currentPage.value,
+      pageSize: pageSize,
+    })
     .then(resp => {
-      total = resp.data.total;
-      console.log(total);
+      console.log(resp);
+
+      total.value = resp.data.total;
       couponList.value=resp.data.records;
-      console.log(couponList.value);
       for (const coupon of couponList.value) {
-        coupon.validto = stamp2string(coupon.validto);
+        coupon.validto = utc2cn(coupon.validto);
       }
-      console.log("优惠券拉取成功")
     })
     .catch(err => {
       console.log(err);
@@ -143,10 +111,6 @@ import { deleteUserCoupon } from '@/api/coupon';
     })
   }
 
-  // 改变页数
-  // function handleCurrentChange(){
-  //     // getCoupon();
-  // }
 
   //选择菜单项
   const handleSelect = (value) => {
@@ -154,11 +118,6 @@ import { deleteUserCoupon } from '@/api/coupon';
     currentPage.value = 1; //默认显示菜单的第一页
     // getCoupon();
   }
-
-  //监听activeTag的变化并对应修改请求参数的tag
-  watch(activeTag.value, (newValue) => {
-    queryParams.value.tag = newValue;
-  })
 
   watch(queryParams.value, (newValue) => {
     getCoupon();
@@ -173,18 +132,15 @@ import { deleteUserCoupon } from '@/api/coupon';
     //当前选中的优惠券
     const coupon = couponList.value[index * rowSize + i];
     //如果coupon.commodityId非空，则优先跳转到指定商品详情productDetail
-    if(coupon.commodityId){
-      console.log('turn to goods')
-      router.push({path: '/goodsdetail',
-        query: {
-          goodsId: coupon.commodityId,
-        }
-      });
-    }  
-    else if(coupon.storeId) {
+    if(coupon.storeId) {
       // 如果commodityId为空但storeId非空，则跳转到店铺详情页shop
       //还不能跳转
-      console.log('turn to shopdetail');
+      router.push({
+        path:'/shop',
+        query:{
+          storeid: coupon.storeId,
+        }
+      })
     }
     else {
       //无使用限制，跳转到主页
@@ -194,7 +150,6 @@ import { deleteUserCoupon } from '@/api/coupon';
 
   // 删除优惠券
   const handleRemove = (index,i) => {
-    console.log('remove');
     ElMessageBox.confirm(
     '是否要删除该优惠券?',
     {
@@ -206,7 +161,7 @@ import { deleteUserCoupon } from '@/api/coupon';
     .then(() => {
       // 请求后端删除
       deleteUserCoupon({
-        couponId: couponList.value[index * rowSize + i],
+        couponId: couponList.value[index * rowSize + i].couponId,
       })
       .then(resp => {
         ElMessage.success('删除成功');
@@ -214,6 +169,7 @@ import { deleteUserCoupon } from '@/api/coupon';
       })
       .catch(resp =>{
         ElMessage.error('删除失败，请重试')
+        console.log(resp);
       })
     })
     .catch(() => {
@@ -232,7 +188,10 @@ import { deleteUserCoupon } from '@/api/coupon';
 <style lang="scss" scoped> 
 
   .coupon-container{        
-    padding:0 5% 5% 5%;
+    padding: 3% 5% 3% 5%;
+    background-color: #fff;
+    margin:0 5% 5% 5%;
+    border-radius: 20px;
   }
 
   .main,
@@ -246,6 +205,7 @@ import { deleteUserCoupon } from '@/api/coupon';
       justify-content:center;
       align-items:center;
       height:100%;
+      padding:5px;
   }
 
   // 分页栏样式

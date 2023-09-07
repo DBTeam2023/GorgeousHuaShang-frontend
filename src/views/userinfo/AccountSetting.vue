@@ -28,10 +28,10 @@
                     <el-form-item >
                         <el-row class="button-row">
                             <el-col :span="10" class="center-button">
-                                <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
+                                <el-button color="#ffcc00" @click="submitForm(ruleFormRef)">保存</el-button>
                             </el-col>
                             <el-col :span="10" class="center-button">
-                                <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                                <el-button type="info" @click="resetForm(ruleFormRef)">重置</el-button>
                             </el-col>
                         </el-row>
                     </el-form-item>

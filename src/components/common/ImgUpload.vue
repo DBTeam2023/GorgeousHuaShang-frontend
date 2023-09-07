@@ -51,10 +51,10 @@ import { Plus } from '@element-plus/icons-vue'
 import { defineEmits } from 'vue'
 import { defineProps } from 'vue'  
 
-const emit = defineEmits(['uploadPicture']);//定义传值给父组件的方法
+const emit = defineEmits(['uploadPicture','onCancel']);//定义传值给父组件的方法
 
 const props = defineProps({
-  showProgress:Boolean//显示进度条
+  showProgress:Boolean,//显示进度条
 })
 
 const dialogImageUrl = ref('')  //上传图片的url
@@ -130,6 +130,8 @@ const onCancel = () =>{
   fileList.splice(0, 1);//删除fileList的第一个元素
   uploadRef.value.clearFiles();//调用el-upload的clearFiles()函数清空已经选择的文件列表
   props.showProgress = false; //取消进度条显示
+  emit('onCancel');
+
 };
 
 </script>

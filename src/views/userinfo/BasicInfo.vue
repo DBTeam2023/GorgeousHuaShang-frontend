@@ -29,7 +29,7 @@
                             <el-radio label="女" />
                         </el-radio-group>
                     </el-form-item>
-                    <el-form-item label="详细地址">
+                    <el-form-item label="详细地址" prop="address">
                         <el-input class="input"  :disabled="isUpdate" v-model="InfoForm.address" placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等信息"
                             maxlength="100" show-word-limit/>
                     </el-form-item>
@@ -79,23 +79,20 @@
     //updata请求参数
     const updateForm = ref();
 
-    // 昵称验证条件
-    const validateName = (rule, value, callback) => {
-        value=InfoForm.name;
-        if(!value){
-            callback(new Error('昵称不能为空'));
-        }
-        else{
-            callback();
-        }
-    }
+    // // 昵称验证条件
+    // const validateName = (rule, value, callback) => {
+    //     value=InfoForm.name;
+    //     if(!value){
+    //         callback(new Error('昵称不能为空'));
+    //     }
+    //     else{
+    //         callback();
+    //     }
+    // }
 
     // 电话验证条件
     const validateTel = (rule, value, callback) => {
         const phoneNum = InfoForm.phonenumber;
-        // if (phoneNum === null){  //手机号码可为空
-        //     callback();
-        // }
         //正则验证是否为130/150/180开头的11位数字（手机号码不一定存在）
         // 后期可以引入电话号码验证 https://github.com/google/libphonenumber
         const reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
@@ -114,8 +111,8 @@
             callback();
         }
         else if (!value) {
-            return callback(new Error('请输入年龄'));
-            // return callback();
+            // return callback(new Error('请输入年龄'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -135,8 +132,8 @@
         if(value === null)
             return callback();
         else if (!value) {
-            return callback(new Error('请输入身高'));
-            // return callback();
+            // return callback(new Error('请输入身高'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -155,8 +152,8 @@
         if (value === null)
             return callback();
         else if (!value) {
-            return callback(new Error('请输入体重'));
-            // return callback();
+            // return callback(new Error('请输入体重'));
+            return callback();
         }
         else if (!Number.isInteger(value)) {
             callback(new Error('请输入数字'))
@@ -172,19 +169,22 @@
     // 个人信息验证规则
     const InfoRules = reactive({
     name:[
-        {validator: validateName, trigger: 'change'},
+        {required:true, message: '昵称不能为空',trigger: 'blur'},
     ],
     age: [
-        { validator: validateAge, trigger: 'change' },
+        { validator: validateAge, trigger: 'blur' },
     ],
     height:[
-        { validator: validateHeight, trigger: 'change' },
+        { validator: validateHeight, trigger: 'blur' },
     ],
     weight:[
-        { validator: validateWeight, trigger: 'change' },
+        { validator: validateWeight, trigger: 'blur' },
     ],
     tel:[
-        {validator: validateTel, trigger: 'change'},
+        {required:true,message:'手机号码不能为空',validator: validateTel, trigger: 'blur'},
+    ],
+    address:[
+        {required:true, message: '地址不能为空',trigger:'blur'}
     ]
     });
 
@@ -274,6 +274,7 @@
                     updateForm.value.sellerInfo.address = InfoForm.address;
                 }
 
+                console.log('updateForm.value.', updateForm.value)
                 // 提交表单
                 updateUserInfo(updateForm.value)
                     .then(resp=>{

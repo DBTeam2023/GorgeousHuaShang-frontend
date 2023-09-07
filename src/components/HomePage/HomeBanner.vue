@@ -94,12 +94,12 @@
 
             <div v-if="store.state.user.isLogin" class="personal-container">
               <!-- 我的钱包 -->
-              <div class="info-item" @click="goToPage('我的收藏')">
+              <div class="info-item" @click="goToPage('关注店铺')">
               <div>
                 <el-icon :size="40">
-                  <Goods />
+                  <House />
                 </el-icon>
-                <div class="label">我的收藏</div>
+                <div class="label">关注店铺</div>
               </div>
               </div>
               <!-- 购物车 -->
@@ -144,7 +144,7 @@
 </template>
 
 <script setup>
-import { Van, Box, ShoppingCart, DocumentCopy, CreditCard, Goods, Tickets, Message, ShoppingBag} from '@element-plus/icons-vue'
+import { Van, Box, ShoppingCart, DocumentCopy, CreditCard, House, Tickets, Message, ShoppingBag} from '@element-plus/icons-vue'
 import {computed, reactive} from 'vue'
 import router from '@/router'
 import { ref } from 'vue'
@@ -222,9 +222,9 @@ const getRandomColor = () => {
 // 根据点击的选项进行页面跳转逻辑
 const goToPage = (page) => {
   switch (page) {
-    case '我的收藏':
+    case '关注店铺':
       // 跳转到我的钱包页面
-      router.push({ path: '/userinfo/collectedItem' })
+      router.push({ path: '/userinfo/followedShop' })
       break;
     case '购物车':
       // 跳转到购物车页面
