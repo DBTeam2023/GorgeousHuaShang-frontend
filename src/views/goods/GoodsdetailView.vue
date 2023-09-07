@@ -327,7 +327,7 @@ function confirmAddOrder() {
         router.push({
           path: '/pay',
           query: {
-            orderId: resp.data.orderId
+            orderId: resp.data.orderID
           }
         })
       })

@@ -17,6 +17,7 @@ export function utc2cn(timeString){
     });
 
     return formattedChinaTime;
+    return timeString;
 }
 
 

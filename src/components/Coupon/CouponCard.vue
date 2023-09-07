@@ -7,7 +7,7 @@
             <!-- v-if 折扣 -->
             <div  v-if="coupon.type === 'discount'">
             <div class="type-container">
-                <span :class="{'text-invalid': coupon.isValid === false}" class="discount-text" >{{ coupon.discount * 10 }}</span>折
+                <span :class="{'text-invalid': coupon.isValid === false}" class="discount-text" >{{  coupon.discount * 10  }}</span>折
             </div>
             <div style="font-size: 30px;text-align: center;margin-top: 20px;font-weight: 300;">COUPON</div>
             </div>
@@ -38,8 +38,8 @@
 </template>
 
 <script setup>
-    import { defineProps } from 'vue';
-
+import { defineProps } from 'vue';
+ 
     // 模板使用coupon
     const props = defineProps({
         coupon: {

@@ -31,11 +31,11 @@
                                 <div class="center-container">
                                     应付金额：
                                     <span class="amount" 
-                                    :class="{'delete-line':useCoupon  && selectedCouponID!==''}">
+                                    :class="{'delete-line':useCoupon  && selectedCouponID!==null}">
                                         ￥{{orderAmount}}
                                     </span>
                                     <span class="amount" style="margin-left:10px" 
-                                        v-show="useCoupon && selectedCouponID!==''">
+                                        v-show="useCoupon && selectedCouponID!==null">
                                         ￥{{orderAmount - discountAmount}}
                                     </span>
                                 </div>
@@ -119,29 +119,28 @@
   </template>
   
 <script setup>
-  import { ref, computed,onMounted, watch } from 'vue';
+  import { ref, computed,onMounted } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { Check } from '@element-plus/icons-vue'
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import router from '@/router';
   import CouponCard from '@/components/Coupon/CouponCard'
   import { checkPermission } from '@/utils/auth';
   import { getOrderInfo, getValidCoupon, payOrder } from '@/api/pay';
   import { utc2cn } from '@/utils/timeTransfer';
-import { deleteUserCoupon } from '@/api/coupon';
 
 
     const route = useRoute(); // 来自：获取路由对象
 
     const orderID = ref(route.query.orderId);//订单编号（页面传参）
 
-    const orderAmount = ref(324.3);//订单总金额
+    const orderAmount = ref(0);//订单总金额
     const discountAmount = ref(0);//优惠金额
 
     const showCountdown = ref(false);//是否显示页面跳转倒计时对话框
     const countdown = ref(10);//倒计时的秒数
     const disableMouseEvents = ref(false);// 禁用优惠券鼠标事件
-    const selectedCouponID = ref('');//选中的优惠券id（默认值为后端所给的最优）
+    const selectedCouponID = ref(null);//选中的优惠券id（默认值为后端所给的最优）
 
     const payMessage = ref('支付成功！');//支付状态信息
     const useCoupon = ref(false);//是否使用优惠券
@@ -213,7 +212,9 @@ import { deleteUserCoupon } from '@/api/coupon';
             orderAmount.value = resp.data.money;
             // 遍历数组提取pickId
             for (const obj of resp.data.picks) {
-                queryParams.value.pickIds.push(obj.pickId);
+                for (let i = 0; i < obj.number; i++) {
+                    queryParams.value.pickIds.push(obj.pickId);
+                }
             }
             console.log(queryParams.value.pickIds);
         })
@@ -221,8 +222,6 @@ import { deleteUserCoupon } from '@/api/coupon';
             ElMessage('获取订单详情失败，请刷新重试');
             console.log(err);
         })
-
-
     });
 
     //跳转10s倒计时
@@ -235,7 +234,14 @@ import { deleteUserCoupon } from '@/api/coupon';
         } else {
             showCountdown.value = false;
             // 跳转到订单详情页
-            router.push({ name: 'OrderDetail', params: { orderID: orderID } });
+            router.push({ 
+                name: 'OrderDetail', 
+                params: { orderID: orderID },
+                query:{
+                    actual: orderAmount.value,
+                    discount:discountAmount.value,
+                }
+            });
         }
     };
 
@@ -257,56 +263,31 @@ import { deleteUserCoupon } from '@/api/coupon';
         payMessage.value = message;
         updateCountdown();
     }
-
-   //调用后端api对钱包扣款   
-    // const deductMoney = () => {
-    //     deductWallet({
-    //         amount: orderAmount.value,
-    //     })
-    //     .then(resp =>{
-    //         jumpToOrder('支付成功！');
-    //     })
-    //     .catch(err =>{
-    //         jumpToOrder('支付失败！');
-    //     })
-    // }
-    
-    // 检查钱包是否可支付
-    // const isPayable = () =>{
-    //     const wallet = ref();//用户钱包
-    //     getWallet()
-    //     .then(resp => {
-    //         wallet.value = resp.data;
-    //         if(wallet.value.status === false){
-    //             jumpToOrder('钱包已被冻结，支付失败！');
-    //         }
-    //         else if(wallet.value.balance < orderAmount.value){
-    //             jumpToOrder('钱包余额不足，支付失败！');
-    //         }
-    //         else{
-    //             deductMoney();//对钱包扣款
-    //         }
-    //     })
-    //     .catch(resp =>{
-    //         jumpToOrder('无法获取钱包信息，支付失败！');
-    //     })
-    // }
   
     // 确认支付按钮
     const submitPayment = () => {
         console.log(selectedCouponID.value);
-        console.log(queryParams.value.pickIds.value);
+        console.log(queryParams.value.pickIds);
         payOrder({
-            pickIds:queryParams.value.pickIds.value,
+            pickIds:queryParams.value.pickIds,
             couponId: selectedCouponID.value,
         })
         .then(resp =>{
-            // jumpToOrder('支付成功！');
+            // ElMessage.success('支付成功！');
+            jumpToOrder('支付成功！');
             console.log(resp);
         })
         .catch(err =>{
-            // jumpToOrder(err.message);
-            console.log(err);
+            if(err.response.data.msg === "This seller is not a manager.")
+                jumpToOrder('卖家不是管理员,支付失败！');
+            else if(err.response.data.msg === "This wallet does not exist.")
+                jumpToOrder('您的钱包不存在，支付失败！')
+            else if(err.response.data.msg === "The wallet is frozen.")
+                jumpToOrder('您的钱包已被冻结，支付失败！')
+            else if(err.response.data.msg === "Your balance is not enough.")
+                jumpToOrder('钱包余额不足，支付失败！')
+            else
+                jumpToOrder('支付失败，请重试！');
         })
     };
 
