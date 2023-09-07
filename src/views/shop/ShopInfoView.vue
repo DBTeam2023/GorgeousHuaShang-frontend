@@ -61,7 +61,7 @@
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
 import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage, ElStep} from 'element-plus';
-import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar} from "@/api/store";
+import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar, setScore} from "@/api/store";
 import {useRoute} from "vue-router";
 import ImgUpload from '@/components/common/ImgUpload.vue';
 import { base64ToUrl } from '@/utils/photo';
