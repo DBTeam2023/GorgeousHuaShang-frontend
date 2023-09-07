@@ -21,9 +21,8 @@
                 <el-col :span="12" class="row-3-card"><paymentInfoCard/></el-col>
                 
             </el-row>
-            <el-row class="row-4"><!--订单明细表--><orderdetailsCard/></el-row>
-            <!--订单支付信息列表-->
-            <!-- <el-row class="row-5" ><paymentInfoCard/></el-row> -->
+            <!-- <el-row class="row-4"><orderdetailsCard/></el-row> -->
+            
         </el-main>
     </el-container>
 </template>

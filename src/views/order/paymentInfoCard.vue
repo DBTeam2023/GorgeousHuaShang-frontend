@@ -12,10 +12,10 @@
             <el-descriptions-item label="优惠" >-￥8.00</el-descriptions-item>
             <el-descriptions-item label="实付款" >￥298.00</el-descriptions-item> -->
 
-            <el-descriptions-item label="商品总价：￥">{{ orderInfo.goodsTotalPrice }}</el-descriptions-item>
-            <el-descriptions-item label="优惠：￥">{{ orderInfo.discount }}</el-descriptions-item>
-            <!-- <el-descriptions-item label="运费">{{ orderInfo.shippingCost }}</el-descriptions-item> -->
-            <el-descriptions-item label="实付款：￥">{{ orderInfo.totalPrice }}</el-descriptions-item>
+            <el-descriptions-item label="商品总价：" >￥{{ orderInfo.goodsTotalPrice }}元</el-descriptions-item>
+            <el-descriptions-item label="优惠：" >￥{{ orderInfo.discount }}元</el-descriptions-item>
+            <!-- <el-descriptions-item label="运费">￥{{ orderInfo.shippingCost }}</el-descriptions-item> -->
+            <el-descriptions-item label="实付款：" >￥{{ orderInfo.totalPrice }}元</el-descriptions-item>
     
             
         </el-descriptions>
@@ -37,27 +37,24 @@ const orderInfo = ref({
 const route = useRoute();
 const orderID = route.params.orderID;
 
-// 对接部分报错！！！
-
 onMounted(() => {
 
   //   getOrderInfo({ orderId: orderID })
-  getOrderInfo({orderId : "string"})
+  getOrderInfo({orderId : "f3ef0168-0142-4c6e-b3d1-82b353629c95"})
     .then(response => {
-      // Assuming the API response contains fields like goodsTotalPrice, discount, and totalPrice
       console.log('API 响应:', response.data); 
     //   orderInfo.value = {
     //     goodsTotalPrice: response.data.goodsTotalPrice,
     //     discount: response.data.discount,
     //     shippingCost: response.data.shippingCost,
-    //     totalPrice: response.data.Money,
+        // totalPrice: response.data.Money,
         
     //   };
-      orderInfo.value.totalPrice = response.data.Money;
+      orderInfo.value.totalPrice = response.data.money;
+      orderInfo.value.goodsTotalPrice = response.data.money;
     })
     .catch(error => {
       console.error('Error fetching order information:', error);
-      // Handle the error here, e.g., show an error message to the user
     });
 });
 

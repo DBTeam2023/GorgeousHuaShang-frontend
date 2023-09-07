@@ -79,6 +79,7 @@
   
   <script>
   import Vue from 'vue';
+
   export default {
     props: {
       orderData: Array, // 订单数据

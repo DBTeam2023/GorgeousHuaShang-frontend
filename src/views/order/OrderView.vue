@@ -77,7 +77,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { ElTable, ElMenu, ElMenuItem, ElHeader } from 'element-plus';
 // import { Edit, View , Delete as IconView } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router';
-import { cancelorder, deleteOrder, updateOrder } from '@/api/order'
+import { cancelorder, deleteOrder, finishOrder } from '@/api/order'
 
 
 
@@ -229,15 +229,27 @@ export default defineComponent({
         // 执行确认订单的逻辑
         console.log("Confirming order:", order);
 
-        // 更新订单状态为 "已完成"
+        // 更新订单状态为 "已完成"->用 finishOrder
         const index = orders.value.findIndex(item => item.orderID === order.orderID);
         if (index !== -1) {
             orders.value[index].orderstate = '已完成';
+            finishOrder({ orderId: order.orderID })
+                .then(response => {
+                    if (response.code === 200) {
+                    console.log('订单状态已更新为已完成');
+                    } else {
+                    console.error('更新订单状态失败:', response.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('更新订单状态时发生错误:', error);
+                });
         }
     };
     const deleteOrder = function(order) {
         // Call the deleteOrder API with the order ID
-        deleteOrder({ orderID: order.orderID })
+        // deleteOrder({ orderID: order.orderID })
+        deleteOrder({ orderId: "aed4e77f-d23d-4734-a157-0315c4ef17d2"})
             .then(response => {
                 // Handle the successful response here, such as updating the UI
                 console.log("Order deleted successfully:", response.data);
@@ -269,7 +281,8 @@ export default defineComponent({
         console.log("Cancelling order:", order);
 
         // 调用接口
-        cancelorder({ orderId: order.orderID })
+        // cancelorder({ orderId: order.orderID })
+        cancelorder({ orderId: "74bb9d17-e312-4988-9251-45a1a2d85a60" })
             .then(response => {
                 console.log('Order cancelled successfully:', response.data);
                 deleteOrder(order);
@@ -290,6 +303,7 @@ export default defineComponent({
       deleteOrder,
       checkDetails,
       cancelOrder,
+      finishOrder,
       orders,
       orderSections,
       selectedOrders,
