@@ -3,7 +3,7 @@ import request from '@/utils/request';
 // todo: api
 export function getGoodsDetail(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/displayPicks/",
+        url: "/api/Product/displayPicks/",
         method: "POST",
         data: data,
     });
@@ -11,7 +11,7 @@ export function getGoodsDetail(data) {
 
 export function getGoodsInPage(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/CommoditypageQuery/",
+        url: "/api/Product/CommoditypageQuery/",
         method: "POST",
         data: data,
     });
@@ -19,7 +19,7 @@ export function getGoodsInPage(data) {
 
 export function getSingleCommodity(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/getCommodity/",
+        url: "/api/Product/getCommodity/",
         method: "POST",
         data: data,
     });
@@ -28,7 +28,7 @@ export function getSingleCommodity(data) {
 
 export function deleteSingleCommodity(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/deleteCommodity/",
+        url: "/api/Product/deleteCommodity/",
         method: "POST",
         data: data,
     });
@@ -36,9 +36,33 @@ export function deleteSingleCommodity(data) {
 
 export function updateCommodity(data) {
     return request({
-        url: "http://47.115.231.142:1030/Product/updateCommodity/",
+        url: "/api/Product/updateCommodity/",
         method: "POST",
+        headers: {
+            'Content-Type': 'application/form-data',
+        },
         data: data,
     });
 }
 
+export function updateConcreteCommodity(data) {
+    return request({
+        url: "/api/Product/updatePick/",
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/form-data',
+        },
+        data: data,
+    });
+}
+
+export function createOrderInGoods(data) {
+    return request({
+        url: "http://47.115.231.142:1029/Order/createOrder",
+        method: "POST",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data: data,
+    });
+}

@@ -47,7 +47,7 @@
                     <!-- 支付选择 -->
                     <el-main>
                         <!-- 支付方式 -->
-                        <el-row class="row">请选择支付方式:</el-row>
+                        <!-- <el-row class="row">请选择支付方式:</el-row>
                         <el-row>
                             <el-col :span="4">
                                 <el-button @click="payType = '微信'">微信支付</el-button>
@@ -56,19 +56,19 @@
                                 <el-button @click="payType = '支付宝'">支付宝支付</el-button>
                             </el-col>
                         </el-row>
-                        <el-divider></el-divider>
+                        <el-divider></el-divider> -->
                         <!-- 优惠券 -->
                         <el-row class="row">可用优惠券(单选)：</el-row>
                         <!-- 行 -->
-                        <el-row v-for="(row, index) in couponRows" :key="index" class="couponrow" :gutter="60" style="margin:0 10px 0 0">
+                        <el-row v-for="(row, index) in couponRows" :key="index" :gutter="20">
                             <!-- 列 -->
-                            <el-col v-for="(coupon, i) in row" :key="i" :span="6" class="couponcol" style="padding:20px">
-                                <el-row class="center-container" style="margin-bottom:10px">
+                            <el-col v-for="(coupon, i) in row" :key="i" :span="6" style="max-width:none;margin-bottom:30px;" class="center-container">
+                                <el-row class="center-container" style="margin-bottom:10px;">
                                     <el-button type="primary" plain :icon="Check" circle 
                                         :class="{ 'blue-button': coupon.couponId == selectedCouponID }" 
                                      @click="selectCoupon(coupon.couponId)"/>
                                 </el-row>
-                                <el-row>
+                                <el-row class="center-container">
                                     <CouponCard :coupon="coupon" :disableMouseEvents="disableMouseEvents" 
                                         @click="selectCoupon(coupon.couponId)"/>
                                 </el-row>

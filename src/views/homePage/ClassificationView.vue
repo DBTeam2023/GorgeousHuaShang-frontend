@@ -220,7 +220,7 @@
 <!--js脚本函数-->
 <script setup>
 import store from "@/store";
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import SearchBar from "@/components/HomePage/SearchBar.vue";
 import SortRow from "@/components/HomePage/SortRow.vue";
 import {useRoute} from "vue-router";
@@ -262,17 +262,16 @@ onMounted(() => {
   if (route.query.search !== null) {
     filters.value.searchVal = route.query.search;
   }
+
+  nextTick(() => {
+    watch(filters.value, (newVal) => {
+      getCommodities();
+      console.log(filters.value)
+    })
+  })
   getCommodities();
 })
 
-watch(filters.value, (newVal) => {
-  getCommodities();
-})
-
-// setInterval(() => {
-//   console.log(itemList.value[0].productId)
-// },1000)
-//分类筛选标签
 
 const toggleSelection = (value) => {
   const existingTag = selectedTags.value.find(tag => tag.value === value);
@@ -382,8 +381,10 @@ const getCommodities = () => {
 function turnToProduct(index, i) {
   router.push({path: '/goodsdetail',
     query: {
-      goodsId: itemList.value[index * rowSize + i].productId},
-      // productName: 123,
+      goodsId: itemList.value[index * rowSize + i].productId,
+      storeId: itemList.value[index * rowSize + i].storeId,
+      productName: itemList.value[index * rowSize + i].productName,
+    },
   });
 }
 </script>

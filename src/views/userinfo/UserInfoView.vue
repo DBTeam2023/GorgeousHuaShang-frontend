@@ -25,13 +25,12 @@
     // 点击菜单项事件：
     const handleSelect = (val) =>{
         selectedMenu.value = val.item;
-        console.log('parent',selectedMenu.value); 
     }
 
     const title = ref({
         'basicInfo':'个人信息',
         'followedShop':'关注店铺',
-        'collectedItem':'我的收藏',
+        // 'collectedItem':'我的收藏',
         'accountSetting':'账号设置',
         'myOrder':'我的订单',
         'myWallet':'我的钱包',
@@ -67,9 +66,9 @@
                     </div>
 
                     <!-- 商品收藏 -->
-                    <div v-else-if="selectedMenu === 'collectedItem'">
-                        <CollectedItem />
-                    </div>
+                    <!-- <div v-else-if="selectedMenu === 'collectedItem'"> -->
+                        <!-- <CollectedItem /> -->
+                    <!-- </div> -->
 
                     <!-- 账号设置 -->
                     <div v-else-if="selectedMenu === 'accountSetting'">
@@ -99,7 +98,6 @@
 
 <!-- 样式表 -->
 <style lang="scss" scoped>
-
     .aside{
         min-height:80vh;
         background-color: #545c64;
@@ -107,13 +105,10 @@
 
     // 左侧菜单栏样式
     .header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
         font-size: 30px;
         font-weight: bold;
-        padding:5px 0 5px 0;
+        margin:0 auto;
+        padding-top:20px;
     }
 
 </style>
