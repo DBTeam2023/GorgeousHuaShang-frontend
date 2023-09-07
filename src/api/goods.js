@@ -66,3 +66,14 @@ export function createOrderInGoods(data) {
         data: data,
     });
 }
+
+export function addCartByGoods(data) {
+    return request({
+        url: "/api/Cart/addItem",
+        method: "POST",
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+        },
+        data: data,
+    });
+}

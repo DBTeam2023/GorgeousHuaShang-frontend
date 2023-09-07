@@ -177,7 +177,7 @@ import lgpic from "../../assets/product/3.png";
 import CommentView from './CommentView.vue';
 import router from "@/router";
 import {useRoute} from "vue-router";
-import {createOrderInGoods, getGoodsDetail} from "@/api/goods";
+import {addCartByGoods, createOrderInGoods, getGoodsDetail} from "@/api/goods";
 import {ElMessage} from "element-plus";
 import { base64ToUrl } from '@/utils/photo'
 import { ElMessageBox } from 'element-plus';
@@ -299,14 +299,21 @@ function cancelAddCart() {
 
 function confirmAddCart() {
   // 添加购物车
+  addCartByGoods({
+    pickId: selectedcommodity.value.pickId,
+    number: selectedcommodity.value.selectedQuantity,
+  })
+      .then(resp => {
+        ElMessage.success("成功加入购物车")
+      })
+      .catch(resp => {
+        ElMessage.error("加入购物车失败")
+      })
 
   dialogVisibleCart.value = false
 }
 
 function cancelAddOrder() {
-  // 创建订单
-
-
   dialogVisibleOrder.value = false
 }
 
@@ -321,7 +328,6 @@ function confirmAddOrder() {
     ]
   })
       .then(resp => {
-        console.log(resp)
         ElMessage.success("订单创建成功，正在跳转支付页面")
       //   跳转支付
         router.push({
