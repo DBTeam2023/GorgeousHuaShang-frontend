@@ -1,7 +1,7 @@
 <template>
     <!-- 可用余额 -->
     <el-container>
-        <el-main class="wallet-container">
+        <el-main class="wallet-container" v-loading="isload">
             <!-- 余额 -->
             <el-row class="wallet-row" :gutter="60">
                 <el-col :span="24" style="justify-content: center; align-items: center;">
@@ -54,12 +54,13 @@
 
   
 <script setup>
-    import {reactive,ref} from 'vue'
+    import {onMounted, reactive,ref} from 'vue'
     import { computed } from 'vue';
     import { ElMessage } from 'element-plus' //消息框提示
 
     import { getWallet, rechargeWallet} from '@/api/mywallet'
 
+    const isload = ref(false);
 
     // 钱包：从后端获取的数据
     const walletForm=reactive({
@@ -135,19 +136,29 @@
     })
 
     // 获取用户钱包信息
-    getWallet()
-    .then(resp => {
-        walletForm.balance=resp.data.balance;
-        walletForm.status=resp.data.status;
+    const getMyWallet = () =>{
+        isload.value = true;
+        getWallet()
+        .then(resp => {
+            walletForm.balance=resp.data.balance;
+            walletForm.status=resp.data.status;
+        })
+        .catch(error => {
+            console.log('获取失败！');
+            console.log(error);
+            ElMessage({
+                        message: '获取钱包信息错误，请刷新重试！',
+                        type: 'info',
+                    })
+        })
+        .finally(()=>{
+            isload.value = false;
+        });
+    }
+
+    onMounted(()=>{
+        getMyWallet();
     })
-    .catch(error => {
-        console.log('获取失败！');
-        console.log(error);
-        ElMessage({
-                    message: '获取钱包信息错误，请刷新重试！',
-                    type: 'info',
-                })
-    });
 
     // 充值处理函数
     const handleRecharge = () => {

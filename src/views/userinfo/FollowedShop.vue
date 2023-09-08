@@ -4,7 +4,7 @@
       <el-empty description="您还没有关注任何店铺哦~"/>
     </el-main>
 
-    <el-main class="shop-gallery" v-if="FollowedExit === true">
+    <el-main class="shop-gallery" v-if="FollowedExit === true" v-loading = "isload">
           <!-- 行 -->
         <el-row v-for="(row, index) in imageRows" :key="index" class="shoprow" :gutter="20">
           <!-- 列 -->
@@ -50,7 +50,6 @@
 <script setup>
 import {computed,onMounted} from 'vue'
 import {ref} from 'vue'
-import Card from '@/components/common/Card.vue'
 import { ElMessage, ElMessageBox, ElRate } from 'element-plus'
 import router from "@/router"
 import { removeCollectStore } from '@/api/store'
@@ -60,6 +59,7 @@ import { base64ToUrl } from '@/utils/photo'
 import { checkPermission } from '@/utils/auth';
 import { Star, House } from '@element-plus/icons-vue';
 
+  const isload = ref(false);
 
   const FollowedExit = ref(true);
 
@@ -86,6 +86,7 @@ import { Star, House } from '@element-plus/icons-vue';
 
   // 获取用关注店铺
   const getFollows = () =>{
+    isload.value = true;
     getFollowedStore({
       pageNo: currentPage.value,
       pageSize: pageSize,
@@ -123,6 +124,9 @@ import { Star, House } from '@element-plus/icons-vue';
       })
       .catch(err =>{
         ElMessage.error('获取店铺关注失败');
+      })
+      .finally(() =>{
+        isload.value = false;
       })
   }
 

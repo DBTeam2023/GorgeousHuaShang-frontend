@@ -236,11 +236,7 @@
             // 跳转到订单详情页
             router.push({ 
                 name: 'OrderDetail', 
-                params: { orderID: orderID },
-                query:{
-                    actual: orderAmount.value,
-                    discount:discountAmount.value,
-                }
+                params: { orderID: orderID.value },
             });
         }
     };

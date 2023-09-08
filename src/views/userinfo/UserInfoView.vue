@@ -18,9 +18,9 @@
     // 使用路由参数作为初始值，如果未传递参数，则默认为 'basicinfo'
     const selectedMenu = ref(route.params.selected || 'basicInfo' );
     // 监听路由参数的变化
-    watchEffect(() => {
-        router.replace({ params: { selected: selectedMenu.value } });//修改路由参数
-    });
+    // watchEffect(() => {
+    //     router.replace({ params: { selected: selectedMenu.value } });//修改路由参数
+    // });
 
     // 点击菜单项事件：
     const handleSelect = (val) =>{
