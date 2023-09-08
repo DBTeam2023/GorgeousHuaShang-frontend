@@ -16,7 +16,8 @@ export function addStore(data) {
         url: "/api/Store/add/",
         method: "POST",
         headers: {
-            Authorization: "Bearer " + localStorage.getItem("jwtToken")
+            Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+            'Content-Type': 'application/form-data',
         },
         data: data
     })

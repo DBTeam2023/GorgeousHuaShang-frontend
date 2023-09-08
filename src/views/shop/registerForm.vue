@@ -11,6 +11,8 @@
 <!--        </div>-->
         <ElFormItem prop="username">
             <ElInput placeholder="请输入店铺名字" :prefix-icon="House" v-model="registerParam.storeName" size="large"></ElInput>
+          <ElInput placeholder="请输入店铺描述" :prefix-icon="House" v-model="des" size="large" style="margin-top: 10px;"></ElInput>
+          <ElInput placeholder="请输入店铺地址" :prefix-icon="House" v-model="address" size="large"  style="margin-top: 10px;"></ElInput>
         </ElFormItem>
         <el-radio-group v-model="radio1" class="ml-4">
           <el-radio label="1" size="large">管理员</el-radio>
@@ -30,6 +32,8 @@ import {ElButton, ElIcon, ElMessage} from 'element-plus';
 import {addStore} from "@/api/store";
 
 let radio1 = ref("1")
+const des = ref("默认描述");
+const address = ref("默认地址")
 
 const registerParam = reactive({
   storeName: "",
@@ -43,14 +47,18 @@ const submit = (formEl) => {
   if (formEl.storeName === "") {
     return false;
   }
-  addStore({
-    storeName: registerParam.storeName,
-    isManager: radio1.value
-  })
+
+  const formdata = new FormData();
+
+  formdata.append("storeName", registerParam.storeName);
+  formdata.append("isManager", radio1.value);
+  formdata.append("des", des.value);
+  formdata.append("address", address.value);
+
+  addStore(formdata)
       .then(resp => {
-        ElMessage({
-          message: "新建成功！",
-        });
+        ElMessage.success("新建成功！");
+        window.location.reload();
       })
       .catch(resp => {
         ElMessage({
