@@ -214,7 +214,7 @@ function turnToProduct(index, i) {
 
 .recommend {
   padding-bottom: 20px;
-  margin: 10px 140px;
+  margin: 10px 120px;
   /*上下左右四个方向的外部空白区域 */
   border: 0;
   /* 设置边框样式 */
@@ -321,12 +321,12 @@ function turnToProduct(index, i) {
 
 .item {
   margin: 0 auto;
-  width: 150px;
-  height: 150px;
+  width: 170px;
+  height: 170px;
   overflow: hidden;
 }
 
-.img {
+.item .img {
   width: 100%;
   height: 100%;
   object-fit: cover;

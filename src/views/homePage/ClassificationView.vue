@@ -590,4 +590,18 @@ function turnToProduct(index, i) {
   justify-content: center;
   align-items: center;
 }
+
+.item {
+  margin: 0 auto;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+
+.item .img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 </style>

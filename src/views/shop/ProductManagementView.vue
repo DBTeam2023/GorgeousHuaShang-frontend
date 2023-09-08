@@ -18,7 +18,9 @@
         <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
           <Card class="card">
             <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
-              <img class="product-image" :src="product.imageurl" alt="Product Image" />
+              <div class="image-container">
+                <img class="product-image" :src="product.imageurl" alt="Product Image" />
+              </div>
               <h3 class="product-name">{{ product.productName }}</h3>
               <div class="button-group">
                 <el-button type="primary" size="small" @click="modifyInfo(products[index].productId)">修改</el-button>
@@ -212,42 +214,6 @@ let mergedProperties = ref([]); // 产品的所有属性
 let selectProperties = reactive({}); // 顾客选中的属性
 let selectIndex = ref(0);       // 选中产品对应的index
 let selectedcommodity = ref({});// 选中属性对应的那个产品
-
-// selectedcommodity 如下
-// {
-//  commodityId
-// description
-// image: { // todo: 这是具体的pickid对应的商品，你自己log输出看看， 调用一下base64函数转化一下就行
-//    contentType
-//    fileContents
-// }
-// pickId
-// price
-// stock
-// }
-
-// 测试
-// setInterval(resp => {
-//   // console.log(mergedProperties.value)
-//   // 尺寸
-//   //     :
-//   //     (3) ['大', '小', '中']
-//   // 松紧
-//   //     :
-//   //     (2) ['oversize', 'overfit']
-//   // 款式
-//   //     :
-//   //     (2) ['欧美', '日韩']
-
-//   // console.log(selectProperties.value)
-//   // {款式: '欧美', 松紧: 'oversize', 尺寸: '大'}
-//   // console.log(selectIndex.value)
-//   // 0
-//   // console.log(selectedcommodity.value)
-//   // {pickId: '0c826a3c-a7dc-4163-b915-eaba4092eade', price: 10086, description: '欧美款更加时尚！', stock: 0, image: {…}, …}
-// }, 2000)
-
-
 let total = ref();
 
 onMounted(() => {
@@ -1326,5 +1292,19 @@ const options = [
 .my-selection {
   display: flex;
   flex-direction: column;
+}
+
+.image-container {
+  margin: 0 auto;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.image-container .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 </style>
