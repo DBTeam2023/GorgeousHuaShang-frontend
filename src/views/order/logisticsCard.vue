@@ -30,12 +30,12 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute(); // 获取路由实例
 const LogisticsInfo = reactive([]); // 初始化为空数组
-
+const orderNumber = route.params.orderID;
 
 onMounted(() => {
-  const orderNumber = route.params.orderID;
-  getAllLogisticsInfo({ logisticsId: "341b25e2-8722-4113-82e1-5312d10663ea" })
-  // getAllLogisticsInfo({logisticsId:orderNumber})
+
+  // getAllLogisticsInfo({ logisticsId: "341b25e2-8722-4113-82e1-5312d10663ea" })
+  getAllLogisticsInfo({logisticsId:orderNumber})
     .then(resp => {
       const logisticsData = resp.data;
 

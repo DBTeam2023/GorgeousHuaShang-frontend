@@ -16,7 +16,7 @@
     <div class="flex-grow" />
     <el-menu-item index="1" v-if="store.state.user.role === 'buyer'">我的购物车</el-menu-item>
     <el-menu-item index="2" v-if="store.state.user.role === 'seller'">我的店铺</el-menu-item>
-    <el-menu-item index="3" v-if="store.state.user.role === 'buyer'">我的订单</el-menu-item>
+    <!-- <el-menu-item index="3" v-if="store.state.user.role === 'buyer'">我的订单</el-menu-item> -->
     <!--  添加其他导航  -->
 
     <el-sub-menu index="2" v-if="store.state.user.isLogin">
@@ -65,10 +65,12 @@ const handleSelect = (key, keyPath) => {
     router.push('/cart/');
   } else if (key === '2') {
     router.push('/shopselect/')
-  } else if (key === '3') {
-    // todo: 可能需要加路由参数
-    router.push('/order/')
-  }
+  } 
+  // else if (key === '3') {
+  //   // todo: 可能需要加路由参数
+  //   router.push('/Order/')
+
+  // }
 
 }
 

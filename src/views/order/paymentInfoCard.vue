@@ -8,19 +8,39 @@
             :column="2"
             :style="blockMargin"
         >
-            <el-descriptions-item label="商品总价" >￥298.00</el-descriptions-item>
-            <el-descriptions-item label="优惠" >-￥8.00</el-descriptions-item>
-            <el-descriptions-item label="运费" >￥0</el-descriptions-item>
-            <el-descriptions-item label="实付款" >￥298.00</el-descriptions-item>
-            <el-descriptions-item label="支付方式" >
-            <el-tag size="small">微信支付</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="支付时间" >2023-07-02 20:46</el-descriptions-item>
+            <el-descriptions-item label="商品总价：" >￥{{ orderInfo.goodsTotalPrice }}元</el-descriptions-item>    
         </el-descriptions>
     </el-card>
 </template>
 
-<script></script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import { getOrderInfo } from '@/api/order';
+import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
+
+const orderInfo = ref({
+  goodsTotalPrice: 0,
+  discount: 0,
+  totalPrice: 0,
+});
+
+const route = useRoute();
+const orderID = route.params.orderID;
+
+onMounted(() => {
+
+    getOrderInfo({ orderId: orderID })
+    .then(response => {
+      orderInfo.value.totalPrice = response.data.money;
+      orderInfo.value.goodsTotalPrice = response.data.money;
+    })
+    .catch(error => {
+        ElMessage('获取订单信息失败，请刷新！');
+    });
+});
+
+</script>
 
 <style scoped>
 /* 订单支付信息卡片 */
