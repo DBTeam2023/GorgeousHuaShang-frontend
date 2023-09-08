@@ -107,7 +107,8 @@
                                     <td>
                                         <p>&yen;{{ item.price }}</p>
                                     </td>
-                                    <td><el-input-number v-model="item.count" @change="modifyCount(item)"></el-input-number>
+                                    <td><el-input-number v-model="item.count" @change="modifyCount(item)"
+                                            @click="openFullScreen2"></el-input-number>
                                     </td>
                                     <td>
                                         <p class="f16 red">&yen;{{ (item.price * item.count).toFixed(2) }}</p>
@@ -172,6 +173,7 @@ import { ElMessage } from 'element-plus' //消息框提示
 import { getCartList, addCartByGoods, deleteCartGoods, createOrder } from '@/api/cart'
 import { checkPermission } from '@/utils/auth';
 import { base64ToUrl } from "@/utils/photo";
+import { ElLoading } from 'element-plus' //loading图标
 
 // 获取购物车的所有商品的列表
 const cartList = ref([]);
@@ -283,13 +285,24 @@ const getPropertyValues = (pickProperty) => {
     return Object.values(pickProperty).join('; ');
 };
 
+// 加载动画
+const openFullScreen2 = () => {
+
+}
 
 function modifyCount(item) {
+    // 加载中loading的动画
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+
     const pickID = item.pickID
     console.log(countArray)
     const changedItem = countArray.find(item => item.pickID === pickID);
     // value是+1或-1，作为number参数
-    const value = changedItem.count - item.count;
+    const value = item.count - changedItem.count;
     console.log(value)
     //  添加购物车————修改数量
     addCartByGoods({
@@ -301,6 +314,9 @@ function modifyCount(item) {
         })
         .catch(resp => {
             ElMessage.error("数量修改失败")
+        })
+        .finally((resp) => {
+            loading.close()
         })
 }
 
