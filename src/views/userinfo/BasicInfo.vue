@@ -2,13 +2,13 @@
 <template>
         <el-main class="main">
             <!-- 头像上传框 -->
-            <div class="info-bg">
+            <!-- <div class="info-bg">
                 <div class="gilding-text">修改头像</div>
                 <AvatarUpload />
-            </div>
+            </div> -->
             <!-- 显示基本信息卡片 -->
             <div class="info-bg">
-                <div class="gilding-text">修改信息</div>
+                <div class="gilding-text">个人信息</div>
                 <el-form class="form" :model="InfoForm" :rules="InfoRules" ref="formRef" label-width="25%">
                     <el-form-item label="昵称" prop="name">
                         <el-input class="input"  v-model="InfoForm.name" :disabled="isUpdate" placeholder="请输入昵称"
@@ -60,7 +60,7 @@
     import { ElMessage } from 'element-plus' //消息框提示
     import { getUserInfo, updateUserInfo } from '@/api/userinfo';
     import store from '@/store';
-    import AvatarUpload from '@/views/userinfo/AvatarUpload.vue';
+    // import AvatarUpload from '@/views/userinfo/AvatarUpload.vue';
 
     const role = store.state.user.role;
 

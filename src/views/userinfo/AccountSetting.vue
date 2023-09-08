@@ -38,7 +38,7 @@
             </el-form>
         </div>
         <!-- 注销账号 -->
-        <div class="account-bg" style="padding:0 10%">
+        <!-- <div class="account-bg" style="padding:0 10%">
             <div class="gilding-text">注销账号</div>
             <h4>注销后，您将放弃以下权益：</h4>
             <p>1.您的所有交易记录将被清空，请确保所有交易已完结且无纠纷，账号注销后因历史交易可能产生的
@@ -55,7 +55,7 @@
             <el-form :model="logoutForm" class="center-button">
                 <el-button type="danger" @click="handlelogout" style="text-align: center;">注销账号</el-button>
             </el-form>
-        </div>
+        </div> -->
     </el-main>
 
 </template>

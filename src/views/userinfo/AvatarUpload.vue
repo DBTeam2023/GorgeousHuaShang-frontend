@@ -1,5 +1,6 @@
 <template>
-    <ImgUpload ref="ImgUploadRef" @uploadPicture = "uploadAvatar" :showProgress="showProgress"/>
+    <ImgUpload ref="ImgUploadRef" @uploadPicture = "uploadAvatar"
+                                  :showProgress="showProgress" />
 </template>
 
 <script setup>

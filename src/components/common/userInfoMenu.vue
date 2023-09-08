@@ -1,12 +1,17 @@
 <script setup>
-    import { reactive, computed } from 'vue'
+    import { reactive, computed,ref } from 'vue'
     import store from '@/store';
     import { defineEmits } from 'vue' //子组件传值给父组件
     import { defineProps } from 'vue' //子组件接收来自父组件的值
     import {
-        Setting,User,Tickets,CollectionTag,Goods,Wallet,Position,
+        Setting,User,Tickets,CollectionTag,Edit,Wallet,Position,
     } from '@element-plus/icons-vue'
+    import AvatarUpload from '@/views/userinfo/AvatarUpload.vue';
 
+
+
+    const dialogUploadVisible = ref(false); 
+    const showShadow = ref(false);
     // 菜单栏顶部头像和昵称信息
     const info = reactive({
         avatarUrl: computed(() => {
@@ -57,7 +62,16 @@
         <el-header class="header" >
             <!--用户头像-->
             <el-row class="avatar-row">
-                <el-avatar :size="100" :src="info.avatarUrl" />            
+                <el-col :span="18">
+                    <el-avatar :size="100" :src="info.avatarUrl">
+                    </el-avatar>  
+                </el-col>
+                <el-col :span="6">
+                    <Edit type="primary" color="#ffcc00" @click = "dialogUploadVisible=true"/>
+                </el-col>
+                <el-dialog v-model="dialogUploadVisible" title="修改头像">
+                    <AvatarUpload @onCancel = "dialogUploadVisible=false"/>
+                </el-dialog>        
             </el-row>
             <!--用户昵称-->
             <el-row class="name-row">{{ info.userName }}</el-row>
@@ -164,5 +178,39 @@
     .header .name-row{
         color:white;
     }
+
+    .upload-image-button {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 8px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .upload-image-button:hover {
+        opacity: 1;
+    }
+
+    .shadow{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
 </style>

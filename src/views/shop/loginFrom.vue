@@ -42,7 +42,9 @@
 import {computed, onMounted, reactive, ref, watch} from 'vue';
 import {ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination, ElMessage} from 'element-plus';
 import Card from "@/components/common/Card.vue";
-import {deleteStore, getMySTore} from "@/api/store";
+import {deleteStore, getMySTore, getStoreAvatar} from "@/api/store";
+import { base64ToUrl } from '@/utils/photo';
+
 
 let stores = ref([]);
 
@@ -52,6 +54,26 @@ const currentPage = ref(1);
 const pageSize = 2;
 let total = ref(1);
 
+const getAvatar = () =>{
+  for( const store of stores.value ){
+      getStoreAvatar({
+        storeId:store.storeId
+      })
+      .then(resp =>{
+        if(resp.data === null){
+          Object.assign(store, { image: 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png' }); 
+        }
+        else{
+          const imageUrl = base64ToUrl(resp.data.fileContents,resp.data.contentType);
+          Object.assign(store, { image: imageUrl }); 
+        }
+      })
+      .catch(error =>{
+          ElMessage('获取店铺头像失败');
+      })
+  }
+}
+
 watch(currentPage, (newVal) => {
   getMySTore({
     pageNo: newVal,
@@ -59,14 +81,15 @@ watch(currentPage, (newVal) => {
   })
       .then(resp => {
         stores.value = []
+        console.log(resp);
         for (let i = 0; i < resp.data.records.length; i ++) {
           stores.value.push({
             storeId: resp.data.records[i].storeId,
             storeName: resp.data.records[i].storeName,
-            image: 'https://picsum.photos/200/200',
           })
         }
         total.value = resp.data.total;
+        getAvatar();
       })
       .catch(resp => {
         console.log(resp)
@@ -98,15 +121,17 @@ onMounted(() => {
     pageSize: pageSize
   })
       .then(resp => {
+        console.log(resp);
+
         stores.value = []
         for (let i = 0; i < resp.data.records.length; i ++) {
           stores.value.push({
             storeId: resp.data.records[i].storeId,
             storeName: resp.data.records[i].storeName,
-            image: 'https://picsum.photos/200/200',
           })
         }
         total.value = resp.data.total;
+        getAvatar();
       })
       .catch(resp => {
         console.log(resp)
@@ -181,6 +206,8 @@ function deleteShop(index) {
 
 .store-image {
   border-radius: 20px;
+  width:200px;
+  height:200px;
 }
 
 .store-info {

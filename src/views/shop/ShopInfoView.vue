@@ -7,7 +7,7 @@
         <el-dialog v-model="dialogUploadVisible" title="修改头像">
           <div>
             <ImgUpload ref="ImgUploadRef" 
-                @uploadPicture = "uploadAvatar" 
+                @uploadPicture = "uploadAvatar"
                 @onCancel = "handleCancel"
                 :showProgress="showProgress"/>
           </div>
@@ -61,7 +61,7 @@
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
 import {ElRate, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessageBox, ElMessage, ElStep} from 'element-plus';
-import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar} from "@/api/store";
+import {addStoreAddress, addStoreDescription, getStoreInfo, setStoreAvatar, getStoreAvatar, setScore} from "@/api/store";
 import {useRoute} from "vue-router";
 import ImgUpload from '@/components/common/ImgUpload.vue';
 import { base64ToUrl } from '@/utils/photo';
@@ -139,8 +139,13 @@ async function saveChanges() {
       storeId: infoForm.storeId,
       address: infoForm.address,
     });
+    const addScore = setScore({
+      storeId: infoForm.storeId,
+      score: infoForm.score
+    })
 
-    const [descriptionResult, addressResult] = await Promise.all([addDescription, addAddress]);
+
+    const [descriptionResult, addressResult, scoreResult] = await Promise.all([addDescription, addAddress, addScore]);
 
     ElMessage({
       message: '修改成功',
