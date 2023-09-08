@@ -157,14 +157,6 @@ onMounted(() => {
     align-items: center;
 }
 
-.text {
-    font-size: 14px;
-}
-
-.item {
-    margin-bottom: 18px;
-}
-
 .orderState-card{
     margin-top: 30px;
     margin-left: 70px;
