@@ -230,7 +230,7 @@ const route = useRoute()
 const selectedTags = ref([])
 
 let filters = ref({
-  pageSize: 15,
+  pageSize: 10,
   pageIndex: 1,
   searchVal: "",
   selectedTag: [],
