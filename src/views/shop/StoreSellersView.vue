@@ -2,10 +2,10 @@
   <div class="order-summary">
     <h1 class="title">卖家列表</h1>
     <el-row :gutter="20" class="filters">
-      <div class="shop-actions">
+      <el-col :span="4" class="shop-actions">
         <el-button type="primary" @click="dialogVisibleForManager = true"
                    style="margin-top: 30px;">邀请管理员</el-button>
-      </div>
+      </el-col>
 
       <el-dialog
           v-model="dialogVisibleForManager"
@@ -38,7 +38,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="pagination-wrapper">
+    <el-row class="pagination-wrapper">
       <el-pagination
           background
           :current-page="currentPage"
@@ -47,7 +47,7 @@
           @current-change="handlePageChange"
       >
       </el-pagination>
-    </div>
+    </el-row>
 
   </div>
 </template>
@@ -202,6 +202,9 @@ const handlePageChange = (newPage) => {
   text-align: right;
 }
 .pagination-wrapper {
-  margin-top: 20px;
+  margin-top:20px;
+  margin-bottom:20px;
+  justify-content: center;
+  text-align:center;
 }
 </style>

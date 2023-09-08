@@ -60,11 +60,11 @@
                 <span>店铺管理</span>
               </template>
               <el-menu-item index="3-1" @click="selectMenu('ProductManagement')">
-                <el-icon><setting /></el-icon>
+                <el-icon><Goods /></el-icon>
                 已上架商品管理
               </el-menu-item>
               <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
-                  <el-icon><setting /></el-icon>
+                <el-icon><Sell /></el-icon>
                   新增商品
               </el-menu-item>
             </el-sub-menu>
@@ -73,11 +73,11 @@
 <!--                订单管理-->
 <!--            </el-menu-item>-->
             <el-menu-item index="5" @click="selectMenu('storeSellers')">
-              <el-icon><MoreFilled /></el-icon>
+              <el-icon><UserFilled /></el-icon>
                 卖家管理
             </el-menu-item>
             <el-menu-item index="6" @click="selectMenu('CouponManage')">
-              <el-icon><MoreFilled /></el-icon>
+              <el-icon><Discount /></el-icon>
                 优惠券管理
             </el-menu-item>
             
@@ -120,11 +120,11 @@ import {
   DocumentAdd,
   Collection,
   Menu as IconMenu,
-  Location,
-  Setting,
   InfoFilled,
-  Histogram,
-  MoreFilled,
+  UserFilled,
+  Discount,
+  Sell,
+  Goods,
   Menu,
   Tools,
 } from '@element-plus/icons-vue'

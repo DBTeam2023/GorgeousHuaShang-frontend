@@ -2,10 +2,10 @@
     <div class="order-summary">
       <h1 class="title">现有优惠券列表</h1>
       <el-row :gutter="20" class="filters">
-        <div>
+        <el-col :span="4">
           <el-button type="primary" @click="dialogGenerateVisible = true"
                      style="margin-top: 30px;">新增优惠券</el-button>
-        </div>
+        </el-col>
         <!-- 生成优惠券表单 -->
         <el-dialog
             v-model="dialogGenerateVisible"
@@ -89,8 +89,7 @@
         </div>
 
         <!-- 用户列表分页 -->
-        <div class="pagination-wrapper">
-            <el-pagination
+            <el-pagination class="pagination"
                 background
                 v-model:currentPage="buyerCurrentPage"
                 v-model:pageSize="buyerPageSize"
@@ -98,12 +97,11 @@
                 @current-change="handleBuyerPageChange"
             >
             </el-pagination>
-        </div>
       </el-dialog>
 
       <!-- 优惠券列表分页 -->
-      <div class="pagination-wrapper">
-        <el-pagination
+      <el-row class="pagination">
+        <el-pagination 
             background
             v-model:currentPage="currentPage"
             v-model:pageSize="pageSize"
@@ -111,7 +109,7 @@
             @current-change="handlePageChange"
         >
         </el-pagination>
-      </div>
+      </el-row>
   
     </div>
   </template>
@@ -395,8 +393,12 @@
     margin-top: 20px;
     text-align: right;
   }
-  .pagination-wrapper {
-    margin-top: 20px;
+
+  .pagination{
+      margin-top:20px;
+      margin-bottom:20px;
+      justify-content: center;
+      text-align:center;
   }
   </style>
   
