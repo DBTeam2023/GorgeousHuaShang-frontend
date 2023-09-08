@@ -25,7 +25,8 @@
                 :show-header="true"
                 :highlight-current-row="false"
                 @selection-change="selectOrders"
-                empty-text="订单列表为空">
+                empty-text="订单列表为空"
+                v-loading="isload">
                 <el-table-column type="selection" width="50" :selectable="checkSelect" />
                 <el-table-column label="订单列表" width="1000">
                     <!-- 使用 slot-scope 定义作用域 -->
@@ -97,6 +98,7 @@
     import { useRouter } from 'vue-router';
 
     const router = useRouter();
+    const isload = ref(false);
 
     // 菜单栏选项
     const activeIndex = ref('all');
@@ -130,6 +132,7 @@
 
     // 分页获取订单信息
     const getOrderInPage = () =>{
+        isload.value = true;
         myOrders({
             pageSize:pageSize,
             pageIndex:currentPage.value,
@@ -145,15 +148,16 @@
             for (const order of orderList.value){
                 for(const pick of order.picks){
                     const imageUrl = base64ToUrl(pick.image,pick.imageType);
-                    console.log('fileContents',pick.image);
                     Object.assign(pick, { picture: imageUrl }); 
-                    console.log('imageUrl',pick.picture);
                 }
             }
         })
         .catch(error =>{
             ElMessage('获取订单信息失败，请刷新重试！');
             console.log(error)
+        })
+        .finally(()=>{
+            isload.value = false;
         })
     }
     
@@ -205,6 +209,7 @@
 
     // 取消订单
     const cancel = (id) =>{
+        isload.value = true;
         cancelorder({
             orderId: id
         })
@@ -215,10 +220,14 @@
         .catch(error =>{
             ElMessage.error('取消订单失败！');
         })
+        .finally(()=>{
+            isload.value = false;
+        })
     }
 
     // 删除订单
     const deleteMyOrder = (id) =>{
+        isload.value = true;
         deleteOrder({
             orderId:id
         })
@@ -229,10 +238,14 @@
         .catch(erro =>{
             ElMessage.error('删除订单失败');
         })
+        .finally(()=>{
+            isload.value = false;
+        })
     }
 
     // 删除已选所有订单
     const deleteAll = async () =>{
+        isload.value = true;
         let showSuccess = ref(true);
         const promises = [];
         for(const order of selectedOrders.value){
@@ -257,6 +270,7 @@
 
     // 确认订单（状态改为已完成）
     const finish = (id) =>{
+        isload.value = true;
         finishOrder({
             orderId:id
         })
@@ -266,6 +280,9 @@
         })
         .catch(error =>{
             ElMessage.error('确认收货失败！');
+        })
+        .finally(()=>{
+            isload.value = false;
         })
     }
 </script>

@@ -7,7 +7,7 @@
       </el-main>
 
       <!-- 有优惠券 -->
-      <el-main v-if="couponExit === true" style="padding: 0">
+      <el-main v-if="couponExit === true" style="padding: 0" v-loading="isload">
         <!-- 行 -->
         <el-row v-for="(row, index) in couponRows" :key="index" style="padding-top:20px;">
           <!-- 列 -->
@@ -47,6 +47,8 @@ import { Delete,Position } from '@element-plus/icons-vue';
 import CouponCard from '@/components/Coupon/CouponCard'
 import { getCouponPage, deleteUserCoupon } from '@/api/coupon';
 import { utc2cn } from '@/utils/timeTransfer';
+
+  const isload = ref(false);
 
 
   const couponExit = computed(()=>{
@@ -93,6 +95,7 @@ import { utc2cn } from '@/utils/timeTransfer';
 
   // 分页拉取优惠券
   const getCoupon = () =>{
+    isload.value = true;
     getCouponPage({
       pageNo: currentPage.value,
       pageSize: pageSize,
@@ -109,6 +112,9 @@ import { utc2cn } from '@/utils/timeTransfer';
     .catch(err => {
       console.log(err);
       ElMessage('优惠券拉取失败')
+    })
+    .finally(()=>{
+      isload.value = false;
     })
   }
 

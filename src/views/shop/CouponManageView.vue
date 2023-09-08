@@ -50,7 +50,7 @@
       </el-row>
 
       <!-- 优惠券信息列表 -->
-      <el-table :data="couponList" border stripe>
+      <el-table :data="couponList" border stripe v-loading="isload">
         <el-table-column prop="couponId" label="优惠券ID" width="125"></el-table-column>
         <el-table-column prop="type" label="类型" width="85"></el-table-column>
         <el-table-column prop="discount" label="折扣" width="80"></el-table-column>
@@ -123,6 +123,7 @@
   import { utc2cn } from '@/utils/timeTransfer';
   
   const route = useRoute();
+  const isload = ref(false);
   
   const dialogGenerateVisible = ref(false);//生成优惠券是否可见
   const dialogBuyerVisible = ref(false);//用户列表是否可见
@@ -263,6 +264,7 @@
   
   // 分页获取商店当前优惠券
   function getCouponInPage() {
+    isload.value = true;
     getStoreCoupon({
       pageNo: currentPage.value,
       pageSize: pageSize.value,
@@ -281,10 +283,14 @@
         .catch(resp => {
           ElMessage.error("拉取优惠券列表失败！")
         })
+        .finally(()=>{
+          isload.value = false;
+        })
   }
 
   // 分页获取商店的关注用户
   const getBuyersInPage = () =>{
+    isload.value = true;
     getBuyers({
       pageNo: buyerCurrentPage.value,
       pageSize: buyerPageSize.value,
@@ -296,6 +302,9 @@
         })
         .catch(resp => {
           ElMessage.error("拉取关注用户列表失败！")
+        })
+        .finally(()=>{
+          isload.value = false;
         })
   }
 
