@@ -90,10 +90,12 @@
                   <el-table-column prop="goods" label="商品" width="250">
                     <template v-slot="{ row }">
                       <el-row class="img-container">
-                          <img :src="row.goods.image" alt="image" style="width: 50px; height: 50px;"/>
-                      </el-row>
-                      <el-row>
-                        {{ row.goods.description }}
+                          <el-col :span="8">
+                            <img :src="row.goods.image" alt="image" style="width: 50px; height: 50px;"/>
+                          </el-col>
+                          <el-col :span="16">
+                            {{ row.goods.description }}
+                          </el-col>
                       </el-row>
                     </template>
                   </el-table-column>
@@ -251,7 +253,7 @@ const fetchOrderInfo = () => {
       total: item.price*item.number,
       payment: item.price*item.number,
       goods: {
-        image: base64ToUrl(item.pickImage.fileContents, item.pickImage.contentType),
+        image: base64ToUrl(item.image, item.imageType),
         description: item.description,
       },
     }));

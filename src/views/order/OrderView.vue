@@ -103,7 +103,7 @@
 
     // 分页栏用到的数据
     const currentPage=ref(1); 
-    const pageSize= 3; 
+    const pageSize= 5; 
     let total = ref(1);//总数据
 
     // 获取订单列表
@@ -144,8 +144,8 @@
             console.log(resp);
             for (const order of orderList.value){
                 for(const pick of order.picks){
-                    const imageUrl = base64ToUrl(pick.pickImage.fileContents,pick.pickImage.contentType);
-                    console.log('fileContents',pick.pickImage.fileContents);
+                    const imageUrl = base64ToUrl(pick.image,pick.imageType);
+                    console.log('fileContents',pick.image);
                     Object.assign(pick, { picture: imageUrl }); 
                     console.log('imageUrl',pick.picture);
                 }
