@@ -3,17 +3,8 @@
         <template #header>
         <div class="orderState-card-header">
             <span style="font-weight: bold; font-size: 1.15em;">订单信息</span>
-            <!-- <el-button text @click="openAddressDialog">申请修改订单</el-button> -->
         </div>
         </template>
-        <!-- <div class="text item">订单编号：{{ OrderState.orderID }}</div>
-        <div class="text item">订单状态：{{ OrderState.state }}</div>
-        <div class="text item">用户编号：{{ OrderState.userID }}</div>
-        <div class="text item">用户名：{{ OrderState.username }}</div>
-        <div class="text item">手机号：{{ OrderState.phoneNumber }}</div>
-        <div class="text item">仓库地址：{{ OrderState.shipAddress }}</div>
-        <div class="text item">收货地址：{{ OrderState.pickAddress }}</div>
-        <div class="text item">快递公司：{{ OrderState.company }}</div> -->
         <el-descriptions
             class="margin-top"
             :column="2"
@@ -28,19 +19,6 @@
             <el-descriptions-item label="快递公司：" >{{ OrderState.company }}</el-descriptions-item>
         </el-descriptions>    
     </el-card>
-    
-
-    <!-- <el-dialog v-model="isAddressDialogVisible" title="修改收货地址">
-        <el-form label-width="120px">
-            <el-form-item label="新的收货地址">
-                <el-input v-model="editedPickAddress"></el-input>
-            </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="cancelEdit">取消</el-button>
-            <el-button type="primary" @click="saveEditedPickAddress">保存</el-button>
-        </span>
-    </el-dialog> -->
 </template>
 
 <script setup>
@@ -50,9 +28,6 @@ import { getUserInfo } from '@/api/userinfo'
 import { useRoute } from 'vue-router';
 
 const route = useRoute(); // 获取路由实例
-
-
-// const itemList = ref([])
 
 const OrderState = ref({
     orderID: '',
@@ -114,8 +89,7 @@ onMounted(() => {
             OrderState.value.phoneNumber = userInfoResponse.data.phoneNumber;
 
             // 获取物流信息
-            return getLogisticsInfo({ logisticsId: "27f18a02-656b-4450-b659-640ffb57a590" });
-            // return getLogisticsInfo({logisticsId:orderNumber})
+            return getLogisticsInfo({logisticsId:orderNumber})
         })
         .then(logisticsResponse => {
             OrderState.value.shipAddress = logisticsResponse.data.shipAddress;
@@ -123,7 +97,7 @@ onMounted(() => {
             OrderState.value.company = logisticsResponse.data.company;
         })
         .catch(error => {
-            console.error('Error fetching logistics information:', error);
+            ElMessage('获取物流信息失败，请刷新！')
         });
 });
 

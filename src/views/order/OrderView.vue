@@ -265,9 +265,6 @@
             ElMessage.error('确认收货失败！');
         })
     }
-
-
-
 </script>
   
 <style scoped>

@@ -34,8 +34,8 @@ const orderNumber = route.params.orderID;
 
 onMounted(() => {
 
-  getAllLogisticsInfo({ logisticsId: "341b25e2-8722-4113-82e1-5312d10663ea" })
-  // getAllLogisticsInfo({logisticsId:orderNumber})
+  // getAllLogisticsInfo({ logisticsId: "341b25e2-8722-4113-82e1-5312d10663ea" })
+  getAllLogisticsInfo({logisticsId:orderNumber})
     .then(resp => {
       const logisticsData = resp.data;
 

@@ -13,8 +13,6 @@
                 </el-col>
 
 
-
-
             </el-row>
             <el-row class="row-2" justify="space-between"><!--订单发货信息-->
                 <el-col :span="24" class="row-2-card"><!-- 订单状态 -->
@@ -43,8 +41,6 @@
             </el-row>
 
 
-
-
             <el-row class="row-3" justify="space-between"><!--订单发货信息-->
                 <el-col :span="12" class="row-3-card"><!--物流时间线-->
                   <el-card class="logistics-card"><!--物流时间线-->
@@ -71,12 +67,6 @@
                 </el-col>
 
 
-
-
-
-
-
-
                 <!-- <el-col :span="12" class="row-3-card"><timelineCard/></el-col> -->
                 <el-col :span="12" class="row-3-card">
                   <el-card class="row-4-card" :span="24">
@@ -88,42 +78,29 @@
                         :column="2"
                     >
                       <el-descriptions-item label="商品总价：" >￥{{ orderInfo.goodsTotalPrice }}元</el-descriptions-item>
-                      <el-descriptions-item label="优惠：" >￥{{ orderInfo.discount }}元</el-descriptions-item>
-                      <el-descriptions-item label="实付款：" >￥{{ orderInfo.totalPrice }}元</el-descriptions-item>
                     </el-descriptions>
                   </el-card>
                 </el-col>
-                
             </el-row>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             <el-row class="row-4">
               <el-card class="row-3-card-last">
                 <el-table :data="orderTableData" style="width: 100">
-                  <el-table-column prop="goodsID" label="商品编号" width="300"/>
+                  <el-table-column prop="goodsID" label="商品编号" width="320"/>
                   <el-table-column prop="goods" label="商品" width="250">
                     <template v-slot="{ row }">
-<!--                      <img :src="row.goods.image" alt="goods image" style="width: 50; height: 50;"/>-->
-<!--                      <img :src="base64ToUrl(row.goods.image,'image/png')" alt="goods image" style="width: 50px; height: 50px;"/>-->
-                      <div>{{ row.goods.description }}</div>
+                      <el-row class="img-container">
+                          <img :src="row.goods.image" alt="image" style="width: 50px; height: 50px;"/>
+                      </el-row>
+                      <el-row>
+                        {{ row.goods.description }}
+                      </el-row>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="unitprice" label="单价" width="160" :formatter="formatCurrency"/>
-                  <el-table-column prop="number" label="数量" width="160" :formatter="formatQuantity"/>
-                  <el-table-column prop="total" label="总额" width="160" :formatter="formatCurrency"/>
-                  <el-table-column prop="payment" label="实付" width="160" :formatter="formatCurrency"/>
+                  <el-table-column prop="unitprice" label="单价" width="140" :formatter="formatCurrency"/>
+                  <el-table-column prop="number" label="数量" width="140" :formatter="formatQuantity"/>
+                  <el-table-column prop="total" label="总额" width="140" :formatter="formatCurrency"/>
+                  <el-table-column prop="payment" label="实付" width="140" :formatter="formatCurrency"/>
                 </el-table>
               </el-card>
             </el-row>
@@ -144,9 +121,7 @@ import {base64ToUrl} from "@/utils/photo";
 const router = useRouter(); // 获取路由实例
 const route = useRoute(); // 获取路由实例
 
-// todo: 切换就ok   记得看一下你跳转的url是orderID还是orderId
-// const orderNumber = route.params.orderID;
-const orderNumber = 'f3ef0168-0142-4c6e-b3d1-82b353629c95';
+const orderNumber = route.params.orderID;
 
 const allResponse = ref();
 
@@ -385,6 +360,13 @@ const formatQuantity = (row, column, cellValue) => {
 .row-3-card-last:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.img-container{
+  display: flex;
+  justify-content: center;  
+  align-items: center;  
+  overflow: hidden;  
 }
 
 </style>
