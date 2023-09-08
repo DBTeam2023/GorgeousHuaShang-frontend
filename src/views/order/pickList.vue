@@ -51,7 +51,7 @@
   }
 
   .pick-container .pick-row{
-    background-color: rgb(237, 237, 237);
+    background-color: #faf7ef;
   }
   .img-col{
     display: flex;
