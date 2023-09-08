@@ -318,4 +318,18 @@ function turnToProduct(index, i) {
   background-image: url("../../assets/homePage/peishi.jpg");
   background-size: cover;
 }
+
+.item {
+  margin: 0 auto;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 </style>
