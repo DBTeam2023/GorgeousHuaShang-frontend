@@ -24,6 +24,7 @@
         <!-- 分页栏 -->
         <el-row class="pagination">
           <el-pagination
+              background
               v-model:currentPage="currentPage"
               v-model:pageSize="pageSize"
               :small="small"
@@ -189,7 +190,7 @@ import { utc2cn } from '@/utils/timeTransfer';
 
   .coupon-container{        
     padding: 3% 5% 3% 5%;
-    background-color: #fff;
+    background-color: white;
     margin:0 5% 5% 5%;
     border-radius: 20px;
   }

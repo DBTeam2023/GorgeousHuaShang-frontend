@@ -183,7 +183,7 @@ import { Star, House } from '@element-plus/icons-vue';
 
     .follow-container {
       padding: 3%;
-      background-color: #fff;
+      background-color: white;
       margin:0 5% 5% 5%;
       border-radius: 20px;
     }

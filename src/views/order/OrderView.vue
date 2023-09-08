@@ -103,7 +103,7 @@
 
     // 分页栏用到的数据
     const currentPage=ref(1); 
-    const pageSize= 4; 
+    const pageSize= 3; 
     let total = ref(1);//总数据
 
     // 获取订单列表
@@ -141,16 +141,19 @@
         .then(resp =>{
             orderList.value = resp.data.records;
             total.value = resp.data.total;
+            console.log(resp);
             for (const order of orderList.value){
                 for(const pick of order.picks){
-                    const imageUrl = base64ToUrl(pick.pickImage.fileContents,'image/png');
+                    const imageUrl = base64ToUrl(pick.pickImage.fileContents,pick.pickImage.contentType);
                     console.log('fileContents',pick.pickImage.fileContents);
                     Object.assign(pick, { picture: imageUrl }); 
+                    console.log('imageUrl',pick.picture);
                 }
             }
         })
         .catch(error =>{
             ElMessage('获取订单信息失败，请刷新重试！');
+            console.log(error)
         })
     }
     
@@ -315,5 +318,13 @@
     
     .detail-btn:hover{
         color:red !important;
+    }
+
+    .el-table thead{
+        font-size: 20px !important;
+    }
+
+    .el-table tr {
+        background-color: #fbe284 !important;
     }
 </style>
