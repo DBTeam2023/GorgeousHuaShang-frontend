@@ -1,208 +1,3 @@
-
-<script setup>
-import { computed, ref, onMounted } from 'vue';
-import router from "@/router";
-import { ElMessage } from 'element-plus' //消息框提示
-import { getCartList, deleteCartGoods, createOrder } from '@/api/cart'
-import { checkPermission } from '@/utils/auth';
-import { base64ToUrl } from "@/utils/photo";
-
-// 获取购物车的所有商品的列表
-const cartList = ref([]);
-
-onMounted(() => {
-    // 0.角色授权
-    checkPermission(["buyer"]);
-    // 1.获取购物车
-    getCart();
-})
-
-// 获取用户购物车列表
-const getCart = () => {
-    getCartList()
-        .then(resp => {
-            console.log('获取购物车列表成功');
-
-            for (let i = 0; i < resp.data.items.length; i++) {
-
-                console.log(resp.data.items[i])
-
-                // const pickInfo = resp.data.items[i].pick.commodityInfo[0];
-                // cartList.value.push({
-                //     productID: resp.data.items[i].pick.commodityId,
-                //     // productName: resp.data.items[i].pick.productName,
-                //     pickID: pickInfo.pickId,
-                //     picture: base64ToUrl(pickInfo.image.fileContents, pickInfo.image.contentType),
-                //     price: pickInfo.price,
-                //     pickProperty: pickInfo.property,
-                //     stock: pickInfo.stock,
-                //     description: pickInfo.description,
-                //     count: resp.data.items[i].count,
-                // })
-            }
-            console.log(cartList.value);
-
-        })
-        .catch((error) => {
-            console.log(error)
-            console.error('获取购物车列表失败', error);
-        });
-}
-
-// 下单结算————生成订单
-const generateOrder = () => {
-    // 提取pickID和count
-    const orderCreate = selectedItems.value.map((item) => ({
-        pickId: item.pickID,
-        number: item.count,
-    }));
-    // 调用生成订单的API，并]获取订单ID并跳转至支付页面
-    createOrder({ orderCreate })
-        .then(resp => {
-            console.log(resp)
-            ElMessage.success("订单创建成功，正在跳转支付页面")
-            //   跳转支付
-            router.push({
-                path: '/pay/',
-                query: {
-                    orderId: resp.data.orderId
-                }
-            })
-        })
-        .catch(resp => {
-            console.log(resp)
-            ElMessage.error("订单创建失败")
-        })
-};
-
-// 计算属性————有效商品列表
-const effectiveGoodsList = computed(() => {
-    return cartList.value.filter((item) => !item.isDeleted);
-})
-
-// 计算属性————无效商品列表
-const invalidGoodsList = computed(() => {
-    return cartList.value.filter((item) => item.isDeleted);
-})
-
-// 计算属性————已选择的商品列表
-const selectedItems = computed(() => {
-    return effectiveGoodsList.value.filter((item) => item.isSelected);
-})
-
-// 计算属性————已选择的商品数量
-const selectedCount = computed(() => {
-    return selectedItems.value.length;
-});
-
-// 计算属性————已选择的商品总价
-const selectedPrice = computed(() => {
-    return selectedItems.value.reduce((sum, item) => sum + item.price * item.count, 0);
-});
-
-// 获取商品的pick款式信息
-const getPropertyValues = (pickProperty) => {
-    return Object.values(pickProperty).join('; ');
-};
-
-// 单选
-const singleCheck = (item, checked) => {
-    item.isSelected = checked;
-};
-
-// 全选
-const selectAll = computed({
-    get: () => {
-        return effectiveGoodsList.value.every((item) => item.isSelected);
-    },
-    set: (value) => {
-        effectiveGoodsList.value.forEach((item) => {
-            item.isSelected = value;
-        });
-    },
-});
-
-// 单个删除商品
-function singleDelCart(item) {
-    const index = cartList.value.indexOf(item);
-    if (index !== -1) {
-        // 调用删除购物车商品的接口
-        deleteCartGoods(item.pickID)
-            .then(() => {
-                console.log("删除购物车商品成功！");
-                // 暂时后端还不能删除，所以这里暂时注释掉，用下面这句实现删除（测试）
-                cartList.value.splice(index, 1);
-                // 重新获取购物车列表数据
-                // getCartList()
-                //     .then((response) => {
-                //         cartList.value = response.data;
-                //         console.log("重新获取购物车商品列表数据成功！");
-                //     })
-                //     .catch((error) => {
-                //         console.error('重新获取购物车商品列表数据失败:', error);
-                //     });
-            })
-            .catch((error) => {
-                console.error('删除购物车商品失败！', error);
-            });
-    }
-}
-
-// 批量删除选中的商品
-function batchDelCart() {
-    // 获取已选择商品的ID数组
-    const ids = selectedItems.value.map((item) => item.pickID);
-
-    // 调用删除购物车商品的接口
-    deleteCartGoods(ids)
-        .then(() => {
-            console.log("删除购物车商品成功！");
-            // 暂时后端还不能删除，所以这里暂时注释掉，用下面这句实现删除（测试）
-            cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
-            // 重新获取购物车列表数据
-            // getCartList()
-            //     .then((response) => {
-            //         cartList.value = response.data;
-            //         console.log("重新获取购物车商品列表数据成功！");
-            //     })
-            //     .catch((error) => {
-            //         console.error('重新获取购物车商品列表数据失败:', error);
-            //     });
-        })
-        .catch((error) => {
-            console.error('删除购物车商品失败！', error);
-        });
-
-}
-
-// 批量删除失效商品
-function batchDelInvalidCart() {
-    // 获取失效商品的ID数组
-    const ids = invalidGoodsList.value.map((item) => item.pickID);
-
-    // 调用删除购物车商品的接口
-    deleteCartGoods(ids)
-        .then(() => {
-            console.log("删除购物车无效商品成功！");
-            // 暂时后端还不能删除，所以这里暂时注释掉，用下面这句实现删除（测试）
-            cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
-            // 重新获取购物车列表数据
-            // getCartList()
-            //     .then((response) => {
-            //         cartList.value = response.data;
-            //         console.log("重新获取购物车商品列表数据成功！");
-            //     })
-            //     .catch((error) => {
-            //         console.error('重新获取购物车商品列表数据失败:', error);
-            //     });
-        })
-        .catch((error) => {
-            console.error('删除购物车无效商品失败！', error);
-        });
-}
-
-</script>
-
 <template>
     <div class="hs-cart-page">
         <!-- 主体部分 -->
@@ -232,7 +27,7 @@ function batchDelInvalidCart() {
                             </thead>
 
                             <!-- 有效商品列表 -->
-                            <tbody>
+                            <tbody v-loading="loading">
                                 <!-- 购物车列表为空： -->
                                 <tr v-if="effectiveGoodsList.length === 0">
                                     <td colspan="7">
@@ -250,15 +45,17 @@ function batchDelInvalidCart() {
                                     </td>
 
                                     <td>
-                                        <div class="goods">
-                                            <!-- 记得修改： 根据商品的id跳转-->
-                                            <!-- <RouterLink :to="'/goodsdetail/' + item.id"> -->
-                                            <RouterLink :to="'/goodsdetail/'">
-                                                <img class="pictureOfGoods" :src="item.picture" :alt="item.name" />
-                                            </RouterLink>
-                                            <!-- <span class="product-name">{{ item.productName }}</span> -->
-                                            <span class="txt">{{ item.description }}</span>
-                                        </div>
+                                        <el-row class="goods" @click="turnToProduct(item)">
+                                            <el-col :span="8">
+                                                <div class="picture-container">
+                                                    <img class="pictureOfGoods" :src="item.picture" :alt="加载失败" />
+                                                </div>
+                                            </el-col>
+                                            <el-col class="text" :span="16">
+                                                <div class="product-name">{{ item.productName }}</div>
+                                                <div class="txt">{{ item.description }}</div>
+                                            </el-col>
+                                        </el-row>
                                     </td>
                                     <td>
                                         <span>{{ getPropertyValues(item.pickProperty) }}</span>
@@ -266,7 +63,9 @@ function batchDelInvalidCart() {
                                     <td>
                                         <p>&yen;{{ item.price }}</p>
                                     </td>
-                                    <td><el-input-number v-model="item.count"></el-input-number></td>
+                                    <td>
+                                        <el-input-number v-model="item.count" @change="modifyCount(item)"></el-input-number>
+                                    </td>
                                     <td>
                                         <p class="f16 red">&yen;{{ (item.price * item.count).toFixed(2) }}</p>
                                     </td>
@@ -290,15 +89,17 @@ function batchDelInvalidCart() {
                                 <tr v-for="item in invalidGoodsList" :key="item.id">
                                     <td></td>
                                     <td>
-                                        <div class="goods">
-                                            <!-- 记得修改： 根据商品的id跳转-->
-                                            <!-- <RouterLink :to="'/goodsdetail/' + item.id"> -->
-                                            <RouterLink :to="'/goodsdetail/'">
-                                                <img class="pictureOfGoods" :src="item.picture" :alt="item.name" />
-                                            </RouterLink>
-                                            <!-- <span class="product-name">{{ item.productName }}</span> -->
-                                            <span class="txt">{{ item.description }}</span>
-                                        </div>
+                                        <el-row class="goods" @click="turnToProduct(item)">
+                                            <el-col :span="8">
+                                                <div class="picture-container">
+                                                    <img class="pictureOfGoods" :src="item.picture" :alt="加载失败" />
+                                                </div>
+                                            </el-col>
+                                            <el-col class="text" :span="16">
+                                                <div class="product-name">{{ item.productName }}</div>
+                                                <div class="txt">{{ item.description }}</div>
+                                            </el-col>
+                                        </el-row>
                                     </td>
                                     <td>
                                         <span>{{ getPropertyValues(item.pickProperty) }}</span>
@@ -306,7 +107,9 @@ function batchDelInvalidCart() {
                                     <td>
                                         <p>&yen;{{ item.price }}</p>
                                     </td>
-                                    <td><el-input-number v-model="item.count"></el-input-number></td>
+                                    <td><el-input-number v-model="item.count" @change="modifyCount(item)"
+                                            @click="openFullScreen2"></el-input-number>
+                                    </td>
                                     <td>
                                         <p class="f16 red">&yen;{{ (item.price * item.count).toFixed(2) }}</p>
                                     </td>
@@ -363,6 +166,241 @@ function batchDelInvalidCart() {
     </div>
 </template>
 
+<script setup>
+import { computed, ref, onMounted, watch } from 'vue';
+import router from "@/router";
+import { ElMessage } from 'element-plus' //消息框提示
+import { getCartList, addCartByGoods, deleteCartGoods, createOrder } from '@/api/cart'
+import { checkPermission } from '@/utils/auth';
+import { base64ToUrl } from "@/utils/photo";
+import { ElLoading } from 'element-plus' //loading图标
+
+// 获取购物车的所有商品的列表
+const cartList = ref([]);
+// 每个商品的数量的集合（数组）
+let countArray;
+// 加载标识
+let loading = ref(true);
+
+// 提取 cartList 中的 count 值组成数组countArray
+function getCountArray() {
+    const countArray = cartList.value.map(item => ({
+        pickID: item.pickID,
+        count: item.count
+    }));
+    return countArray;
+}
+
+onMounted(() => {
+    // 0.角色授权
+    checkPermission(["buyer"]);
+    // 1.获取购物车
+    getCart();
+})
+
+// 获取用户购物车列表
+const getCart = () => {
+    loading = true;
+    getCartList()
+        .then(resp => {
+            for (let i = 0; i < resp.data.items.length; i++) {
+                const pickInfo = resp.data.items[i].pick.commodityInfo[0];
+                cartList.value.push({
+                    productID: resp.data.items[i].pick.commodityId,
+                    productName: resp.data.items[i].pick.productName,
+                    storeID: resp.data.items[i].pick.storeId,
+                    pickID: pickInfo.pickId,
+                    picture: base64ToUrl(pickInfo.image.fileContents, pickInfo.image.contentType),
+                    price: pickInfo.price,
+                    pickProperty: pickInfo.property,
+                    stock: pickInfo.stock,
+                    description: pickInfo.description,
+                    isDeleted: pickInfo.isDeleted,
+                    count: resp.data.items[i].count,
+                })
+            }
+            countArray = getCountArray();
+            loading = false;
+        })
+        .catch((error) => {
+            console.log(error)
+            if (error.response.data.code === 500) { }
+            else {
+                ElMessage.error("购物车列表获取失败！")
+            }
+        });
+}
+
+// 下单结算————生成订单
+const generateOrder = () => {
+    // 提取pickID和count
+    const orderCreate = selectedItems.value.map((item) => ({
+        pickId: item.pickID,
+        number: item.count,
+    }));
+    // 调用生成订单的API，并]获取订单ID并跳转至支付页面
+    createOrder({ orderCreate })
+        .then(resp => {
+            ElMessage.success("订单创建成功，正在跳转支付页面")
+            //   跳转支付
+            router.push({
+                path: '/pay/',
+                query: {
+                    orderId: resp.data.orderID
+                }
+            })
+        })
+        .catch(resp => {
+            ElMessage.error("订单创建失败")
+        })
+};
+
+// 计算属性————有效商品列表
+const effectiveGoodsList = computed(() => {
+    return cartList.value.filter((item) => !item.isDeleted && item.stock > 0);
+})
+
+// 计算属性————无效商品列表
+const invalidGoodsList = computed(() => {
+    return cartList.value.filter((item) => item.isDeleted || item.stock === 0);
+})
+
+// 计算属性————已选择的商品列表
+const selectedItems = computed(() => {
+    return effectiveGoodsList.value.filter((item) => item.isSelected);
+})
+
+// 计算属性————已选择的商品数量
+const selectedCount = computed(() => {
+    return selectedItems.value.length;
+});
+
+// 计算属性————已选择的商品总价
+const selectedPrice = computed(() => {
+    return selectedItems.value.reduce((sum, item) => sum + item.price * item.count, 0);
+});
+
+// 获取商品的pick款式信息
+const getPropertyValues = (pickProperty) => {
+    return Object.values(pickProperty).join('; ');
+};
+
+// 加载动画
+const openFullScreen2 = () => {
+
+}
+
+function modifyCount(item) {
+    // 加载中loading的动画
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+
+    const pickID = item.pickID
+    console.log(countArray)
+    const changedItem = countArray.find(item => item.pickID === pickID);
+    // value是+1或-1，作为number参数
+    const value = item.count - changedItem.count;
+    console.log(value)
+    //  添加购物车————修改数量
+    addCartByGoods({
+        pickId: changedItem.pickID,
+        number: value,
+    })
+        .then(resp => {
+            ElMessage.success("数量修改成功")
+        })
+        .catch(resp => {
+            ElMessage.error("数量修改失败")
+        })
+        .finally((resp) => {
+            loading.close()
+        })
+}
+
+// 单选
+const singleCheck = (item, checked) => {
+    item.isSelected = checked;
+};
+
+// 全选
+const selectAll = computed({
+    get: () => {
+        return effectiveGoodsList.value.every((item) => item.isSelected);
+    },
+    set: (value) => {
+        effectiveGoodsList.value.forEach((item) => {
+            item.isSelected = value;
+        });
+    },
+});
+
+// 单个删除商品
+function singleDelCart(item) {
+    const index = cartList.value.indexOf(item);
+    const ids = [item.pickID];
+    const pickIds = ids.map(item => ({ pickId: item }));
+    if (index !== -1) {
+        // 调用删除购物车商品的接口
+        deleteCartGoods(pickIds)
+            .then(() => {
+                // 前端列表实现删除即可
+                cartList.value.splice(index, 1);
+            })
+            .catch((error) => {
+                console.log(invalidGoodsList.value)
+                console.log(error)
+                ElMessage.error("删除购物车商品失败！")
+            });
+    }
+}
+
+// 批量删除选中的商品
+function batchDelCart() {
+    // 获取已选择商品的ID数组
+    const ids = selectedItems.value.map((item) => item.pickID);
+    const pickIds = ids.map(item => ({ pickId: item }));
+    // 调用删除购物车商品的接口
+    deleteCartGoods(pickIds)
+        .then(() => {
+            // 前端列表实现删除即可
+            cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
+        })
+        .catch((error) => {
+            ElMessage.error('删除购物车商品失败！');
+        });
+}
+
+// 批量删除失效商品
+function batchDelInvalidCart() {
+    // 获取失效商品的ID数组
+    const ids = invalidGoodsList.value.map((item) => item.pickID);
+    const pickIds = ids.map(item => ({ pickId: item }));
+    // 调用删除购物车商品的接口
+    deleteCartGoods(pickIds)
+        .then(() => {
+            // 前端列表实现删除即可
+            cartList.value = cartList.value.filter((item) => !ids.includes(item.pickID));
+        })
+        .catch((error) => {
+            ElMessage.error("删除购物车无效商品失败！")
+        });
+}
+
+// 跳转至对应商品详情页面面
+function turnToProduct(item) {
+    router.push({
+        path: '/goodsdetail/',
+        query: {
+            productName: item.productName,
+            goodsId: item.productID,
+            storeId: item.storeID
+        }
+    });
+}
+</script>
 
 
 <style scoped>
@@ -386,7 +424,6 @@ function batchDelInvalidCart() {
     width: 100%;
     margin-left: 50px;
     margin-right: 50px;
-    /* margin-bottom: 100px; */
 }
 
 .currentPath {
@@ -414,13 +451,12 @@ function batchDelInvalidCart() {
     color: #000;
 }
 
-td {
-    text-align: center;
+tbody tr {
+    height: 110px;
 }
 
-.pictureOfGoods {
-    width: 100px;
-    height: 100px;
+td {
+    text-align: center;
 }
 
 .cart-floatbar {
@@ -431,14 +467,12 @@ td {
     box-sizing: border-box;
     align-items: center;
     bottom: 0;
-    /* left: 0; */
     z-index: 999;
     background-color: #fff;
     padding: 10px;
     box-shadow: 0px -2px 4px rgba(0.1, 0.1, 0.1, 0.1), 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin-bottom: 10px;
-    /* background-color: #dfd3c5; */
     background-color: #D7EBFB;
 }
 
@@ -457,11 +491,12 @@ td {
     justify-content: center;
 }
 
-
+.selected-data {
+    margin-right: 20px;
+}
 
 .red {
     font-size: 18px;
-    margin-right: 20px;
     font-weight: bold;
     color: red;
 }
@@ -483,5 +518,47 @@ td {
     justify-content: center;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+.goods {
+    left: 0;
+    width: 90%;
+    height: 100%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.goods:hover {
+    box-shadow: 0px -2px 4px rgba(0.1, 0.1, 0.1, 0.1), 0px 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.picture-container {
+    margin: 0 auto;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    /* 隐藏超出容器的部分 */
+}
+
+.picture-container .pictureOfGoods {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.product-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.txt {
+    text-align: left;
+    color: #888;
+    font-size: 8px;
 }
 </style>
