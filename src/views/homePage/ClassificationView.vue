@@ -2,20 +2,18 @@
 <!--html模板-->
 <template>
   <el-container class="container">
-      <!--把搜索栏、购物车固定在顶部-->
-      <div>
-        <SearchBar @performSearch="receiveSearchVal" />
-      </div>
+
+    <el-main>
 
       <div style="margin-left: 10vw;">
-        <el-button @click="() => {router.push({path: 'classify', query: {class: 'peishi'}});
-                                  }" text bg>配饰</el-button>
-        <el-button @click="() => {router.push({path: 'classify', query: {class: 'nanzhuang'}})}" text bg>男装</el-button>
-        <el-button @click="() => {router.push({path: 'classify', query: {class: 'nvzhuang'}})}" text bg>女装</el-button>
+        <el-button @click="() => {
+          router.push({ path: 'classify', query: { class: 'peishi' } });
+        }" text bg>配饰</el-button>
+        <el-button @click="() => { router.push({ path: 'classify', query: { class: 'nanzhuang' } }) }" text
+          bg>男装</el-button>
+        <el-button @click="() => { router.push({ path: 'classify', query: { class: 'nvzhuang' } }) }" text
+          bg>女装</el-button>
       </div>
-
-
-
       <div class="my-classificaion-1" v-if="route.query.class === 'peishi'">
         <el-card class="top-card" shadow="always">
           <div class="custom-font">
@@ -59,7 +57,7 @@
               <span> / </span>
               <span class="classification-item" @click="toggleSelection('男装,上衣,长袍')">长袍</span>
             </li>
-            <el-divider border-style="dashed" class="small-divider"/>
+            <el-divider border-style="dashed" class="small-divider" />
             <li>
               <span class="my-classification-item-head" @click="toggleSelection('男装,下衣')">下衣</span>
               <span class="classification-item" @click="toggleSelection('男装,下衣,腰裙')">腰裙</span>
@@ -70,7 +68,7 @@
               <span> / </span>
               <span class="classification-item" @click="toggleSelection('男装,下衣,长裤')">长裤</span>
             </li>
-            <el-divider border-style="dashed" class="small-divider"/>
+            <el-divider border-style="dashed" class="small-divider" />
             <li>
               <span class="my-classification-item-head" @click="toggleSelection('男装,鞋')">鞋</span>
               <span class="classification-item" @click="toggleSelection('男装,鞋,长筒靴')">长筒靴</span>
@@ -81,80 +79,79 @@
               <span> / </span>
               <span class="classification-item" @click="toggleSelection('男装,鞋,草鞋')">草鞋</span>
             </li>
-            <el-divider border-style="dashed" class="small-divider"/>
+            <el-divider border-style="dashed" class="small-divider" />
             <li>
               <span class="my-classification-item-head" @click="toggleSelection('男装,民族')">民族</span>
-<!--              <span class="classification-item" @click="toggleSelection('男装,民族,汉族')">汉族</span>-->
-<!--              <span> / </span>-->
+              <!--              <span class="classification-item" @click="toggleSelection('男装,民族,汉族')">汉族</span>-->
+              <!--              <span> / </span>-->
               <span v-for="(ethnicity, index) in ethnicities" :key="index">
                 <span class="classification-item" @click="toggleSelection(`男装,民族,${ethnicity}`)">{{ ethnicity }}</span>
                 <span v-if="index < ethnicities.length - 1"> / </span>
               </span>
             </li>
           </ul>
-      </el-card>
+        </el-card>
       </div>
       <div class="my-classificaion-2" v-else-if="route.query.class === 'nvzhuang'">
 
 
-      <el-card class="top-card" shadow="always">
-        <div class="custom-font">
-          筛选类别
-        </div>
-        <ul>
-          <li>
-            <span class="my-classification-item-head" @click="toggleSelection('女装,上衣')">上衣</span>
-            <span class="classification-item" @click="toggleSelection('女装,上衣,坎肩')">坎肩</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,上衣,鱼皮衣')">鱼皮衣</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,上衣,羊皮大衣')">羊皮大衣</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,上衣,土布衣')">土布衣</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,上衣,长袍')">长袍</span>
-          </li>
-          <el-divider border-style="dashed" class="small-divider"/>
-          <li>
-            <span class="my-classification-item-head" @click="toggleSelection('女装,下衣')">下衣</span>
-            <span class="classification-item" @click="toggleSelection('女装,下衣,凤尾裙')">凤尾裙</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,下衣,裤裙')">裤裙</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,下衣,筒裙')">筒裙</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,下衣,长裤')">长裤</span>
-          </li>
-          <el-divider border-style="dashed" class="small-divider"/>
-          <li>
-            <span class="my-classification-item-head" @click="toggleSelection('女装,鞋')">鞋</span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,长筒靴')">长筒靴</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,牛皮靴')">牛皮靴</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,布鞋')">布鞋</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,草鞋')">草鞋</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,绣花鞋')">绣花鞋</span>
-            <span> / </span>
-            <span class="classification-item" @click="toggleSelection('女装,鞋,锦鞋')">锦鞋</span>
-          </li>
-          <el-divider border-style="dashed" class="small-divider"/>
-          <li>
-            <span class="my-classification-item-head" @click="toggleSelection('女装,民族')">民族</span>
-            <span v-for="(ethnicity, index) in ethnicities" :key="index">
+        <el-card class="top-card" shadow="always">
+          <div class="custom-font">
+            筛选类别
+          </div>
+          <ul>
+            <li>
+              <span class="my-classification-item-head" @click="toggleSelection('女装,上衣')">上衣</span>
+              <span class="classification-item" @click="toggleSelection('女装,上衣,坎肩')">坎肩</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,上衣,鱼皮衣')">鱼皮衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,上衣,羊皮大衣')">羊皮大衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,上衣,土布衣')">土布衣</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,上衣,长袍')">长袍</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider" />
+            <li>
+              <span class="my-classification-item-head" @click="toggleSelection('女装,下衣')">下衣</span>
+              <span class="classification-item" @click="toggleSelection('女装,下衣,凤尾裙')">凤尾裙</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,下衣,裤裙')">裤裙</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,下衣,筒裙')">筒裙</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,下衣,长裤')">长裤</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider" />
+            <li>
+              <span class="my-classification-item-head" @click="toggleSelection('女装,鞋')">鞋</span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,长筒靴')">长筒靴</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,牛皮靴')">牛皮靴</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,布鞋')">布鞋</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,草鞋')">草鞋</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,绣花鞋')">绣花鞋</span>
+              <span> / </span>
+              <span class="classification-item" @click="toggleSelection('女装,鞋,锦鞋')">锦鞋</span>
+            </li>
+            <el-divider border-style="dashed" class="small-divider" />
+            <li>
+              <span class="my-classification-item-head" @click="toggleSelection('女装,民族')">民族</span>
+              <span v-for="(ethnicity, index) in ethnicities" :key="index">
                 <span class="classification-item" @click="toggleSelection(`女装,民族,${ethnicity}`)">{{ ethnicity }}</span>
                 <span v-if="index < ethnicities.length - 1"> / </span>
               </span>
-          </li>
-        </ul>
-      </el-card>
-    </div>
-
+            </li>
+          </ul>
+        </el-card>
+      </div>
 
       <div class="classification-tag">
-      <!-- 已选筛选条件标签 -->
+        <!-- 已选筛选条件标签 -->
         <div v-if="selectedTags.length > 0" class="selected-tags">
           <el-tag v-for="(tag, index) in selectedTags" :key="index" class="tag" closable @close="removeTag(tag)"
             :type=getRandomColor()>
@@ -168,21 +165,20 @@
 
       <!--排序-->
       <div class="sort">
-        <SortRow @PriceChange="receivePriceVal"/>
+        <SortRow @PriceChange="receivePriceVal" />
       </div>
-
 
       <!--推荐商品-->
       <div style="width: 98%">
-<!--        <RecommendCol @pageOption="receivePageVal" :value="commodities"/>-->
+        <!--        <RecommendCol @pageOption="receivePageVal" :value="commodities"/>-->
         <div class="recommend">
           <!-- 行 -->
           <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow">
             <!-- 列 -->
             <el-col v-for="(item, i) in row" :key="i" class="itemcol" :xs="24" :sm="12" :md="8"
-                    :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
+              :lg="4"><!--响应式布局：超小屏幕、小屏幕、中等屏幕、大屏幕-->
               <Card class="card">
-<!--                query: {goodsId: itemList.value[index * rowSize + i].productId-->
+                <!--                query: {goodsId: itemList.value[index * rowSize + i].productId-->
                 <div class="router-link-active" @click="turnToProduct(index, i)">
                   <!-- 商品图片 -->
                   <div class="item">
@@ -201,14 +197,14 @@
           <el-row class="pagination">
             <!-- <div class="demonstration">Jump to</div> -->
             <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
-                           layout="prev, pager, next, jumper" :total="total"
-                           @current-change="handleCurrentChange" />
+              layout="prev, pager, next, jumper" :total="total" @current-change="handleCurrentChange" />
 
           </el-row>
 
         </div>
       </div>
 
+    </el-main>
 
     <el-footer class="my-footer">
       <img src="../../assets/homePage/footer.png">
@@ -220,11 +216,10 @@
 <!--js脚本函数-->
 <script setup>
 import store from "@/store";
-import {computed, nextTick, onMounted, ref, watch} from "vue";
-import SearchBar from "@/components/HomePage/SearchBar.vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import SortRow from "@/components/HomePage/SortRow.vue";
-import {useRoute} from "vue-router";
-import {getGoodsInPage} from '@/api/goods'
+import { useRoute } from "vue-router";
+import { getGoodsInPage } from '@/api/goods'
 import { ElMessage } from "element-plus";
 import Card from "@/components/common/Card.vue";
 import router from "@/router";
@@ -249,14 +244,14 @@ watch(selectedTags, (newValue) => {
 
 onMounted(() => {
   if (route.query.class === "peishi") {
-    filters.value.selectedTag = [{value: '配饰'}];
-    selectedTags.value.push({value: '配饰'})
-  } else if (route.query.class === 'nanzhuang'){
-    filters.value.selectedTag = [{value: '男装'}];
-    selectedTags.value.push({value: '男装'})
-  } else if (route.query.class === 'nvzhuang'){
-    filters.value.selectedTag = [{value: '女装'}];
-    selectedTags.value.push({value: '女装'})
+    filters.value.selectedTag = [{ value: '配饰' }];
+    selectedTags.value.push({ value: '配饰' })
+  } else if (route.query.class === 'nanzhuang') {
+    filters.value.selectedTag = [{ value: '男装' }];
+    selectedTags.value.push({ value: '男装' })
+  } else if (route.query.class === 'nvzhuang') {
+    filters.value.selectedTag = [{ value: '女装' }];
+    selectedTags.value.push({ value: '女装' })
   }
 
   if (route.query.search !== null) {
@@ -328,10 +323,10 @@ const itemList = ref([]);
 
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页
-const pageSize = 5  //每页的图片数量
+const pageSize = 15  //每页的图片数量
 const rowSize = 5  //每行rowSize个商品
 
-let total = ref(6);
+let total = ref(0);
 
 filters.value.pageSize = pageSize;
 filters.value.pageIndex = currentPage;
@@ -369,8 +364,8 @@ const getCommodities = () => {
       total = resp.data.total;
 
       for (const item of itemList.value) {
-          item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
-        }
+        item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
+      }
       // console.log(itemList.value);
     })
     .catch(resp => {
@@ -379,7 +374,8 @@ const getCommodities = () => {
 }
 
 function turnToProduct(index, i) {
-  router.push({path: '/goodsdetail',
+  router.push({
+    path: '/goodsdetail',
     query: {
       goodsId: itemList.value[index * rowSize + i].productId,
       storeId: itemList.value[index * rowSize + i].storeId,
@@ -426,7 +422,7 @@ function turnToProduct(index, i) {
   display: inline-block;
   width: 100px;
   cursor: pointer;
-  transition: all  .5s;
+  transition: all .5s;
 }
 
 .my-classification-item-head:hover {
@@ -486,8 +482,10 @@ function turnToProduct(index, i) {
 }
 
 .small-divider {
-  height: 1px; /* 设置分割线的高度 */
-  margin: 5px 0; /* 调整分割线的上下间距 */
+  height: 1px;
+  /* 设置分割线的高度 */
+  margin: 5px 0;
+  /* 调整分割线的上下间距 */
 }
 
 .card {
@@ -574,15 +572,16 @@ function turnToProduct(index, i) {
   text-align: center;
   margin-bottom: 20px;
 }
-
 </style>
 
 <style lang="scss" scoped>
-
 .custom-font {
-  font-family: 'Poppins', sans-serif; /* 应用 Poppins 字体 */
-  font-weight: 600; /* 加粗 */
-  font-size: 24px; /* 字号较大 */
+  font-family: 'Poppins', sans-serif;
+  /* 应用 Poppins 字体 */
+  font-weight: 600;
+  /* 加粗 */
+  font-size: 24px;
+  /* 字号较大 */
   margin-bottom: 20px;
 }
 
@@ -591,7 +590,4 @@ function turnToProduct(index, i) {
   justify-content: center;
   align-items: center;
 }
-
-
-
 </style>

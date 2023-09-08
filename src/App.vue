@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <div class="content">
-      <NavBar v-if="showNavBar" />
+      <div class="navBar">
+        <NavBar v-if="showNavBar" />
+      </div>
       <router-view />
-    </div>
-    <div id="footer-container">
-      <MyFooter />
+      <div id="footer-container">
+        <MyFooter />
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +21,14 @@
 
 .content {
   flex: 1;
+
+}
+
+.navBar {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 100;
 }
 
 #footer-container {
