@@ -258,12 +258,12 @@ onMounted(() => {
     filters.value.searchVal = route.query.search;
   }
 
-  nextTick(() => {
-    watch(filters.value, (newVal) => {
-      getCommodities();
-      console.log(filters.value)
-    })
-  })
+  // nextTick(() => {
+  //   watch(filters.value, (newVal) => {
+  //     getCommodities();
+  //     console.log(filters.value)
+  //   })
+  // })
   getCommodities();
 })
 
@@ -372,6 +372,13 @@ const getCommodities = () => {
       ElMessage("商品拉取失败")
     })
 }
+
+setTimeout(() => {
+  watch(filters.value, (newVal) => {
+    getCommodities();
+    console.log(filters.value)
+  })
+}, 2000)
 
 function turnToProduct(index, i) {
   router.push({
