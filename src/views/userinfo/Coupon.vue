@@ -197,8 +197,9 @@ import { utc2cn } from '@/utils/timeTransfer';
   .coupon-container{        
     padding: 3% 5% 3% 5%;
     background-color: white;
-    margin:0 5% 5% 5%;
+    margin:5px 5% 5% 5%;
     border-radius: 20px;
+    box-shadow: 1px 2px 20px rgb(93 89 89);
   }
 
   .main,
@@ -214,6 +215,7 @@ import { utc2cn } from '@/utils/timeTransfer';
       height:100%;
       padding:5px;
   }
+
 
   // 分页栏样式
   .pagination{
@@ -240,8 +242,6 @@ import { utc2cn } from '@/utils/timeTransfer';
 
   .c-container:hover .shadow{
     opacity: 1;
-  }
-
- 
+  } 
 
 </style>

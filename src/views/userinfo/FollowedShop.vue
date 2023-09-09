@@ -32,6 +32,7 @@
         <!-- 分页栏 -->
         <el-row class="pagination">
           <el-pagination
+              background
               v-model:currentPage="currentPage"
               v-model:pageSize="pageSize"
               :small="small"
@@ -186,10 +187,16 @@ import { Star, House } from '@element-plus/icons-vue';
 <style lang="scss" scoped>
 
     .follow-container {
-      padding: 3%;
+      padding:3%;
+      margin: 0 5% 5% 5%;
+      background-image: url('@/assets/buyerCenter/account01.jpg');
+      background-position: center center;
+      background-repeat: no-repeat;  
+      background-size: cover;
+      box-shadow: 20px 20px 23px rgb(0 0 0 / 83%);
+      border-radius:20px;
+      overflow:hidden;
       background-color: white;
-      margin:0 5% 5% 5%;
-      border-radius: 20px;
     }
 
     .shop-gallery {
@@ -274,7 +281,8 @@ import { Star, House } from '@element-plus/icons-vue';
     .card{
       transition: all 0.3s ease;
       border-radius: 10px;
-      box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 3px 3px 15px #ffcc00;
+      // box-shadow: 3px 3px 15px #1f1b0b;
       transition: all 0.3s ease;
     }
 

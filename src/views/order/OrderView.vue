@@ -292,6 +292,7 @@
     .order-container{
         padding:0;
         margin:0 5% 5% 5%;
+        box-shadow: 1px 2px 20px rgb(93 89 89);
     }
 
     .order-container .order-main{

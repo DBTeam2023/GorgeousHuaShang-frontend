@@ -48,13 +48,13 @@
                 <userInfoMenu :selectedMenu="selectedMenu" @MenuSelect="handleSelect"/>
             </el-aside>
             <!-- 主要内容 -->
-            <el-container style="background-color: gainsboro;">
+            <el-container style="background-color: white;">
                 <!-- 菜单项对应标题 -->
                 <el-header class="header" >
                     {{ title[selectedMenu] }}
                 </el-header>
                 <!-- main组件 -->
-                <el-main>
+                <el-main class="user-main">
                     <!-- 个人信息页 -->
                     <div v-if="selectedMenu === 'basicInfo'">
                         <BasicInfo />
@@ -109,6 +109,10 @@
         font-weight: bold;
         margin:0 auto;
         padding-top:20px;
+    }
+
+    .user-main{
+        margin-bottom:10%;
     }
 
 </style>
