@@ -180,7 +180,7 @@ const cartList = ref([]);
 // 每个商品的数量的集合（数组）
 let countArray;
 // 加载标识
-let loading = ref(true);
+const loading = ref(true);
 
 // 提取 cartList 中的 count 值组成数组countArray
 function getCountArray() {
@@ -200,7 +200,7 @@ onMounted(() => {
 
 // 获取用户购物车列表
 const getCart = () => {
-    loading = true;
+    loading.value = true;
     getCartList()
         .then(resp => {
             for (let i = 0; i < resp.data.items.length; i++) {
@@ -220,14 +220,17 @@ const getCart = () => {
                 })
             }
             countArray = getCountArray();
-            loading = false;
         })
         .catch((error) => {
             console.log(error)
-            if (error.response.data.code === 500) { }
+            if (error.response.data.code === 500) {
+            }
             else {
                 ElMessage.error("购物车列表获取失败！")
             }
+        })
+        .finally(() => {
+            loading.value = false;
         });
 }
 
