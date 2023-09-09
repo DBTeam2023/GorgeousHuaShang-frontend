@@ -72,6 +72,7 @@ const login = () => {
           message: '登录成功',
           type: 'success',
         })
+        console.log(resp)
         localStorage.setItem("jwtToken", resp.data.token);
         store.commit("setToken", resp.data.token);
         // todo: resolve怎么用
@@ -88,7 +89,7 @@ const login = () => {
           store.commit("setUsername", resp.data.nickName);
           store.commit("setRole", resp.data.type);
           // store.commit("setUserPhoto", resp.data.userPhoto);
-
+          console.log(resp)
           localStorage.setItem("role", resp.data.type);
         })
         .catch(resp => {
