@@ -15,27 +15,27 @@
               <div class="shop-stat-label">收藏用户</div>
             </div>
           </div>
-          <div class="shop-stat">
-            <el-icon style="font-size: 25px;"><DocumentAdd /></el-icon>
-            <div class="shop-stat-info">
-              <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>
-              <div class="shop-stat-label">待发货订单</div>
-            </div>
-          </div>
-          <div class="shop-stat">
-            <el-icon style="font-size: 25px;"><Document/></el-icon>
-            <div class="shop-stat-info">
-              <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>
-              <div class="shop-stat-label">待收货订单</div>
-            </div>
-          </div>
-          <div class="shop-stat">
-            <el-icon style="font-size: 25px;"><Collection/></el-icon>
-            <div class="shop-stat-info">
-              <div class="shop-stat-value">{{ completedOrderCount }}</div>
-              <div class="shop-stat-label">已完成订单</div>
-            </div>
-          </div>
+<!--          <div class="shop-stat">-->
+<!--            <el-icon style="font-size: 25px;"><DocumentAdd /></el-icon>-->
+<!--            <div class="shop-stat-info">-->
+<!--              <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>-->
+<!--              <div class="shop-stat-label">待发货订单</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="shop-stat">-->
+<!--            <el-icon style="font-size: 25px;"><Document/></el-icon>-->
+<!--            <div class="shop-stat-info">-->
+<!--              <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>-->
+<!--              <div class="shop-stat-label">待收货订单</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="shop-stat">-->
+<!--            <el-icon style="font-size: 25px;"><Collection/></el-icon>-->
+<!--            <div class="shop-stat-info">-->
+<!--              <div class="shop-stat-value">{{ completedOrderCount }}</div>-->
+<!--              <div class="shop-stat-label">已完成订单</div>-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
       </div>
       <!-- 侧边栏 -->
@@ -116,10 +116,6 @@
 import {
   House,
   Star,
-  Document,
-  DocumentAdd,
-  Collection,
-  Menu as IconMenu,
   InfoFilled,
   UserFilled,
   Discount,
@@ -128,38 +124,74 @@ import {
   Menu,
   Tools,
 } from '@element-plus/icons-vue'
-  import { ref } from 'vue'
-  import ShopInfo from '@/views/shop/ShopInfoView.vue'
-  import OrderManage from '@/views/shop/OrderManageView.vue'
-  import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
-  import ProductManagement from '@/views/shop/ProductManagementView.vue';
-  import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
-  import StoreSellers from '@/views/shop/StoreSellersView.vue';
-  import CouponManage from '@/views/shop/CouponManageView.vue';
-  import { ElIcon } from 'element-plus';
+import {onMounted, ref} from 'vue'
+import ShopInfo from '@/views/shop/ShopInfoView.vue'
+import OrderManage from '@/views/shop/OrderManageView.vue'
+import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
+import ProductManagement from '@/views/shop/ProductManagementView.vue';
+import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
+import StoreSellers from '@/views/shop/StoreSellersView.vue';
+import CouponManage from '@/views/shop/CouponManageView.vue';
+import {ElIcon, ElMessage} from 'element-plus';
+import {getFollowedStore} from "@/api/userinfo";
+import {getBuyers, getStoreInfo} from "@/api/store";
+import {useRoute} from "vue-router";
+
+const route = useRoute();
+
+const storeName = ref("");
+
+const getStore = () => {
+  getStoreInfo({
+    storeId: route.query.storeid
+  })
+      .then(resp => {
+        storeName.value = resp.data.storeName
+
+        getBuyers({
+          pageNo: 1,
+          pageSize: 1,
+          storeId: route.query.storeid
+        })
+            .then(resp => {
+              favoriteUserCount.value = resp.data.total;
+            })
+            .catch(resp => {
+              ElMessage.error("获取商家信息错误")
+            })
+      })
+      .catch(resp => {
+        ElMessage.error("获取商家信息失败")
+      })
+}
+
+
+onMounted(() => {
+  getStore()
+})
 
 const selectedMenu = ref('ShopInfo');
 
-  // 商店名字
-  const shopName = ref('我的店铺')
+// 商店名字
+const shopName = ref('我的店铺')
 
-  // 收藏用户数
-  const favoriteUserCount = ref(123)
+// 收藏用户数
+const favoriteUserCount = ref(0)
 
-  // 待发货订单数
-  const toBeShippedOrderCount = ref(10)
+// // 待发货订单数
+// const toBeShippedOrderCount = ref(10)
+//
+// // 待收货订单数
+// const toBeReceivedOrderCount = ref(5)
+//
+// // 已完成订单数
+// const completedOrderCount = ref(100)
 
-  // 待收货订单数
-  const toBeReceivedOrderCount = ref(5)
+function selectMenu(menu) {
+    selectedMenu.value = menu;
+}
 
-  // 已完成订单数
-  const completedOrderCount = ref(100)
-
-  function selectMenu(menu) {
-      selectedMenu.value = menu;
-  }
-
-  </script>
+</script>
 
   <style scoped>
   .info {
