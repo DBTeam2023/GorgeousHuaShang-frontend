@@ -14,6 +14,7 @@ import UserInfoView from "@/views/userinfo/UserInfoView.vue"
 import store from "@/store";
 import { ElMessage } from "element-plus";
 import NotFound from "@/views/NotFoundView.vue";
+import PayView from '@/views/pay/PayView.vue';
 
 /// requestAuth 代表是否需要登录才能访问界面
 
@@ -28,61 +29,61 @@ const routes =
         requestAuth: false,
       }
     },
-    {
-      path: '/homepage/',
-      name: "Homepage",
-      component: HomePageView,
-      meta: {
-        requestAuth: false,
-      }
+        {
+          path : '/homepage/',
+          name : "Homepage",
+          component : HomePageView,
+          meta: {
+              requestAuth: false,
+          }
     },
     {
-      path: '/classify/',
+      path: '/classify',
       name: "Classify",
       component: ClassificationView,
       meta: {
         requestAuth: false,
       }
     },
-    {
-      path: '/login/',
-      name: 'Login',
-      component: LoginView,
-      meta: {
-        requestAuth: false,
-      }
-    },
-    {
-      path: '/register/',
-      name: 'Register',
-      component: RegisterView,
-      meta: {
-        requestAuth: false,
-      }
-    },
-    {
-      path: '/shopselect/',
-      name: 'ShopSelect',
-      component: ShopSelectView,
-      meta: {
-        requestAuth: true,
-      }
-    },
-    {
-      path: '/shopmanage/',
-      name: 'ShopManage',
-      component: ShopManageView,
-      meta: {
-        requestAuth: true,
-      }
-    },
-    {
-      path: '/shop/',
-      name: 'Shop',
-      component: ShopView,
-      meta: {
-        requestAuth: true,
-      }
+        {
+          path : '/login/',
+          name : 'Login',
+          component : LoginView,
+          meta: {
+              requestAuth: false,
+          }
+        },
+        {
+          path : '/register/',
+          name : 'Register',
+          component : RegisterView,
+          meta: {
+              requestAuth: false,
+          }
+        },
+        {
+          path : '/shopselect/',
+          name : 'ShopSelect',
+          component : ShopSelectView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/shopmanage/',
+          name : 'ShopManage',
+          component : ShopManageView,
+          meta: {
+              requestAuth: true,
+          }
+        },
+        {
+          path : '/shop/',
+          name : 'Shop',
+            component : ShopView,
+          meta: {
+              requestAuth: true,
+          }
     },
     {
       path: '/cart/',
@@ -101,7 +102,7 @@ const routes =
       }
     },
     {
-      path: '/orderdetail/',
+      path: '/orderdetail/:orderID',
       name: 'OrderDetail',
       component: OrderDetailView,
       meta: {
@@ -141,13 +142,19 @@ const routes =
         requestAuth: false,
       }
     },
+    {
+      path: '/pay/',
+      name: 'Pay',
+      component: PayView,
+      meta: {
+        requestAuth: true,
+      }
+    },
   ]
 
 const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach(async (to, from, next) => {
-  console.log("当前页面url: " + to.path);
-
   let flag = 1;
   const token = localStorage.getItem("jwtToken");
   let isLogin = false;
@@ -156,8 +163,6 @@ router.beforeEach(async (to, from, next) => {
     try {
       // 如果有token且没过期能获取到user信息，则设置为当前状态为登录
       isLogin = await store.dispatch("getUserInfoForRouter");
-      console.log("当前页面拥有的信息如下：");
-      console.log(store.state.user);
       // isLogin = false;
       if (isLogin === false) {
         ElMessage({

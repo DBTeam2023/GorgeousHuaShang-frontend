@@ -1,38 +1,34 @@
 <template>
-  <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      :ellipsis="false"
-      @select="handleSelect"
-      style="background-color: transparent;"
-  >
+  <el-menu :default-active="activeIndex" mode="horizontal" :ellipsis="false" @select="handleSelect"
+    style="background-color: transparent;">
     <el-menu-item index="0" style="height: 4em;">
       首页
     </el-menu-item>
 
-    <!--  添加其他导航  -->
+    <!--把搜索栏、购物车固定在顶部-->
+    <div class="searchBar">
+      <SearchBar @performSearch="receiveSearchVal" />
+    </div>
 
     <div class="flex-grow" />
-<!--    <el-menu-item index="1">购物车（测试）</el-menu-item>-->
-
+    <el-menu-item index="2" v-if="store.state.user.role === 'seller'">我的店铺</el-menu-item>
     <!--  添加其他导航  -->
 
     <el-sub-menu index="2" v-if="store.state.user.isLogin">
-      <template #title >
+      <template #title>
         <div class="demo-fit">
           <el-avatar shape="square" :size="55" :fit="fit" :src="store.state.user.userPhoto" />
           <el-text tag="b" style="margin-left: 10px">{{ store.state.user.username }}</el-text>
         </div>
       </template>
 
-    <!--   这里添加登录状态的路由跳转，如个人信息跳转   -->
-      <el-menu-item :index="'2-4'" v-if="store.state.user.isLogin">个人信息</el-menu-item>
+      <!--   这里添加登录状态的路由跳转，如个人信息跳转   -->
+      <el-menu-item :index="'2-4'" v-if="store.state.user.isLogin">个人中心</el-menu-item>
       <el-menu-item :index="'2-3'" v-if="store.state.user.isLogin">退出登录</el-menu-item>
 
     </el-sub-menu>
     <el-sub-menu index="2" v-else>
-      <template #title >请登录</template>
+      <template #title>请登录</template>
       <el-menu-item :index="!store.state.user.isLogin ? '2-1' : '2-0'" v-if="!store.state.user.isLogin">注册</el-menu-item>
       <el-menu-item :index="!store.state.user.isLogin ? '2-2' : '2-0'" v-if="!store.state.user.isLogin">登录</el-menu-item>
 
@@ -46,11 +42,12 @@
 import { ref } from 'vue'
 import router from "@/router";
 import store from "@/store";
+import SearchBar from "@/components/HomePage/SearchBar.vue"
 
-const activeIndex = ref('1')
+// let activeIndex = ref('0')
 const handleSelect = (key, keyPath) => {
   keyPath; // 用不到但是要写
-  if (key === '0'){
+  if (key === '0') {
     router.push('/');
   } else if (key === '2-1') {
     router.push('/register/');
@@ -60,11 +57,9 @@ const handleSelect = (key, keyPath) => {
     store.commit("logout");
   } else if (key === '2-4') {
     router.push('/userinfo/');
-  } else if (key === '1') {
-    router.push('/cart/');
+  } else if (key === '2') {
+    router.push('/shopselect/')
   }
-
-
 }
 
 </script>
@@ -79,6 +74,7 @@ const handleSelect = (key, keyPath) => {
   text-align: center;
   justify-content: space-between;
 }
+
 .demo-fit .block {
   flex: 1;
   display: flex;
@@ -90,5 +86,19 @@ const handleSelect = (key, keyPath) => {
   margin-bottom: 10px;
   font-size: 14px;
   color: var(--el-text-color-secondary);
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8vh;
+}
+
+.searchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 </style>

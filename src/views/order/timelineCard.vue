@@ -62,8 +62,8 @@ const activities = [
 .timeline-card {
   margin-top: 30px;
   margin-left: 40px;
-  margin-right: 30px;
-  width: 580px;
+  margin-right: 60px;
+  width: 610px;
 }
 .timelineText {
     margin-top: 5px;

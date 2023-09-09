@@ -1,62 +1,91 @@
+@@ -0,0 +1,222 @@
 <template>
     <div>
       <!-- 顶栏 -->
       <div class="shop-header">
-        <div class="shop-name">{{ shopName }}</div>
+        <div style=" display: flex;align-items: center;justify-content: space-between;">
+          <el-icon style="font-size: 25px;"><house /></el-icon>
+          <div class="shop-name">{{ shopName }}</div>
+        </div>
         <div class="shop-stats">
           <div class="shop-stat">
-            <div class="shop-stat-value">{{ favoriteUserCount }}</div>
-            <div class="shop-stat-label">收藏用户</div>
+            <el-icon style="font-size: 25px;"><star /></el-icon>
+            <div class="shop-stat-info">
+              <div class="shop-stat-value">{{ favoriteUserCount }}</div>
+              <div class="shop-stat-label">收藏用户</div>
+            </div>
           </div>
           <div class="shop-stat">
-            <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>
-            <div class="shop-stat-label">待发货订单</div>
+            <el-icon style="font-size: 25px;"><DocumentAdd /></el-icon>
+            <div class="shop-stat-info">
+              <div class="shop-stat-value">{{ toBeShippedOrderCount }}</div>
+              <div class="shop-stat-label">待发货订单</div>
+            </div>
           </div>
           <div class="shop-stat">
-            <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>
-            <div class="shop-stat-label">待收货订单</div>
+            <el-icon style="font-size: 25px;"><Document/></el-icon>
+            <div class="shop-stat-info">
+              <div class="shop-stat-value">{{ toBeReceivedOrderCount }}</div>
+              <div class="shop-stat-label">待收货订单</div>
+            </div>
           </div>
           <div class="shop-stat">
-            <div class="shop-stat-value">{{ completedOrderCount }}</div>
-            <div class="shop-stat-label">已完成订单</div>
+            <el-icon style="font-size: 25px;"><Collection/></el-icon>
+            <div class="shop-stat-info">
+              <div class="shop-stat-value">{{ completedOrderCount }}</div>
+              <div class="shop-stat-label">已完成订单</div>
+            </div>
           </div>
         </div>
       </div>
       <!-- 侧边栏 -->
       <el-row class="tac">
         <el-col :span="4">
-          <h5 class="mb-2">店铺管理选项</h5>
+          <div style="display: flex; align-items: center;">
+          <el-icon><Tools /></el-icon>
+          <h5 class="mb-2" style="margin-left: 10px;">店铺管理选项</h5>
+        </div>
           <el-menu default-active="1" class="el-menu-vertical-demo">
             <el-menu-item index="1" @click="selectMenu('ShopInfo')">
-                <el-icon><location /></el-icon>
+                <el-icon><InfoFilled /></el-icon>
                 店铺信息
             </el-menu-item>
-            <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">
-                <el-icon><setting /></el-icon>
-                店铺分析
-            </el-menu-item>
+<!--            <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">-->
+<!--                <el-icon><Histogram /></el-icon>-->
+<!--                店铺分析-->
+<!--            </el-menu-item>-->
             <el-sub-menu index="3">
               <template #title>
-                <el-icon><document /></el-icon>
+                <el-icon><Menu /></el-icon>
                 <span>店铺管理</span>
               </template>
               <el-menu-item index="3-1" @click="selectMenu('ProductManagement')">
-                <el-icon><setting /></el-icon>
+                <el-icon><Goods /></el-icon>
                 已上架商品管理
-            </el-menu-item>
-            <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
-                <el-icon><setting /></el-icon>
-                新增商品
-            </el-menu-item>
+              </el-menu-item>
+              <el-menu-item index="3-2" @click="selectMenu('ProductIncrease')">
+                <el-icon><Sell /></el-icon>
+                  新增商品
+              </el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="4" @click="selectMenu('OrderManage')">
-                <el-icon><setting /></el-icon>
-                订单管理
+<!--            <el-menu-item index="4" @click="selectMenu('OrderManage')">-->
+<!--                <el-icon><MoreFilled /></el-icon>-->
+<!--                订单管理-->
+<!--            </el-menu-item>-->
+            <el-menu-item index="5" @click="selectMenu('storeSellers')">
+              <el-icon><UserFilled /></el-icon>
+                卖家管理
             </el-menu-item>
+            <el-menu-item index="6" @click="selectMenu('CouponManage')">
+              <el-icon><Discount /></el-icon>
+                优惠券管理
+            </el-menu-item>
+            
           </el-menu>
         </el-col>
-        <el-col :span="20">
-            <template v-if="selectedMenu === 'ShopInfo'">
+    <el-col :span="20">
+      <div class="info">
+      <template v-if="selectedMenu === 'ShopInfo'">
         <ShopInfo></ShopInfo>
       </template>
       <template v-else-if="selectedMenu === 'OrderManage'">
@@ -71,31 +100,44 @@
       <template v-else-if="selectedMenu === 'ShopAnalysis'">
         <ShopAnalysis></ShopAnalysis>
       </template>
-        </el-col>
+      <template v-else-if="selectedMenu === 'storeSellers'">
+        <StoreSellers></StoreSellers>
+      </template>
+      <template v-else-if="selectedMenu === 'CouponManage'">
+        <CouponManage></CouponManage>
+      </template>
+    </div>
+    </el-col>
       </el-row>
     </div>
   </template>
 
   <script setup>
-  import {
-    // Location,
-    Setting,
-  } from '@element-plus/icons-vue'
+import {
+  House,
+  Star,
+  Document,
+  DocumentAdd,
+  Collection,
+  Menu as IconMenu,
+  InfoFilled,
+  UserFilled,
+  Discount,
+  Sell,
+  Goods,
+  Menu,
+  Tools,
+} from '@element-plus/icons-vue'
   import { ref } from 'vue'
   import ShopInfo from '@/views/shop/ShopInfoView.vue'
   import OrderManage from '@/views/shop/OrderManageView.vue'
-  import ProductIncrease from '@/views/shop/ProductIncreaseView.vue';
+  import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
   import ProductManagement from '@/views/shop/ProductManagementView.vue';
   import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
+  import StoreSellers from '@/views/shop/StoreSellersView.vue';
+  import CouponManage from '@/views/shop/CouponManageView.vue';
+  import { ElIcon } from 'element-plus';
 
-
-//   const handleOpen = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
-
-//   const handleClose = (key, keyPath) => {
-//     console.log(key, keyPath)
-//   }
 const selectedMenu = ref('ShopInfo');
 
   // 商店名字
@@ -115,15 +157,21 @@ const selectedMenu = ref('ShopInfo');
 
   function selectMenu(menu) {
       selectedMenu.value = menu;
-    }
+  }
 
-//   // 计算总订单数
-//   const totalOrderCount = computed(() => {
-//     return toBeShippedOrderCount.value + toBeReceivedOrderCount.value + completedOrderCount.value
-//   })
   </script>
 
   <style scoped>
+  .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+}
   .shop-header {
     display: flex;
     justify-content: space-between;
@@ -131,12 +179,14 @@ const selectedMenu = ref('ShopInfo');
     height: 60px;
     background-color: #fff;
     padding: 0 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
   }
 
   .shop-name {
     font-size: 24px;
     font-weight: bold;
+    margin-left: 10px;
   }
 
   .shop-stats {
@@ -145,9 +195,16 @@ const selectedMenu = ref('ShopInfo');
   }
 
   .shop-stat {
-    margin-left: 20px;
-    line-height: 1.5;
-  }
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.shop-stat-info {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px; /* 调整适当的数值来增加左侧空隙 */
+}
 
   .shop-stat-value {
     font-size: 20px;

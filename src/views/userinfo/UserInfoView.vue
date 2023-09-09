@@ -1,202 +1,114 @@
 <script setup>
     import BasicInfo from '@/views/userinfo/BasicInfo.vue';
-    import ImgUpload from '@/views/userinfo/ImgUpload.vue';
     import FollowedShop from '@/views/userinfo/FollowedShop.vue';
     import CollectedItem from '@/views/userinfo/CollectedItem.vue';
     import AccountSetting from '@/views/userinfo/AccountSetting.vue';
     import OrderViewVue from '@/views/order/OrderView.vue';
-   
+    import myWallet from '@/views/userinfo/myWallet.vue';
+    import myCoupon from '@/views/userinfo/Coupon.vue';
+    import userInfoMenu from '@/components/common/userInfoMenu.vue';
+    import router from '@/router';
 
-    // 左侧菜单栏用到的
-    import { reactive} from 'vue'
-    import {ref} from 'vue'
-    import {
-        Setting,User,Tickets,CollectionTag,Goods,Wallet,Position,
-    } from '@element-plus/icons-vue'
+    import { watchEffect } from 'vue';
+    import { useRoute } from 'vue-router';
+    import { reactive, ref, computed} from 'vue'
 
-    const info=reactive({
-        avatarUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-        userName:'userName',
+
+    const route = useRoute(); // 获取路由对象
+    // 使用路由参数作为初始值，如果未传递参数，则默认为 'basicinfo'
+    const selectedMenu = ref(route.params.selected || 'basicInfo' );
+    // 监听路由参数的变化
+    // watchEffect(() => {
+    //     router.replace({ params: { selected: selectedMenu.value } });//修改路由参数
+    // });
+
+    // 点击菜单项事件：
+    const handleSelect = (val) =>{
+        selectedMenu.value = val.item;
+    }
+
+    const title = ref({
+        'basicInfo':'个人信息',
+        'followedShop':'关注店铺',
+        // 'collectedItem':'我的收藏',
+        'accountSetting':'账号设置',
+        'myOrder':'我的订单',
+        'myWallet':'我的钱包',
+        'myCoupon':'我的优惠券'
     })
-
-    const handleOpen = (key, keyPath) => {
-        console.log(key, keyPath)
-    }
-
-    const handleClose = (key, keyPath) => {
-        console.log(key, keyPath)
-    }
-
-    // 选择的菜单项
-    const selectedMenu=ref('basicInfo');
-
-    // 菜单项选择响应函数
-    const MenuSelect=(menuItem)=>{
-        selectedMenu.value=menuItem;
-        console.log(selectedMenu);
-    }
 
 </script>
 
 
 <template>
-    <el-row>
-        <el-col span="4">
-            <!-- 侧边菜单栏 -->
-            <div class="aside" >
-                <!-- <div class="container"> -->
-                    <el-header class="header" >
-                        <!--用户头像-->
-                        <el-row class="avatar-row">
-                            <el-avatar :size="100" :src="info.avatarUrl" />            
-                        </el-row>
-                        <!--用户姓名-->
-                        <el-row class="name-row">{{ info.userName }}</el-row>
-                    </el-header>
-                <!--个人中心菜单栏-->
-                    <el-row class="menu-row" style="height:100%">
-                        <el-col :span="24" style="height:100%">
-                            <el-menu
-                                style="height:100%"
-                                active-text-color="#ffd04b"
-                                background-color="#545c64"
-                                class="el-menu-vertical-demo"
-                                text-color="#fff"
-                                default-active="basicInfo"
-                                @selected="handleMenuSelect"
-                                @open="handleOpen"
-                                @close="handleClose"
-                            >
-                                <el-menu-item index="basciInfo" class="menu-item" @click="MenuSelect('basicInfo')">
-                                    <span>
-                                        <el-icon><User /></el-icon>
-                                        <span style="margin-left:10px">个人信息</span>
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="collectedItem" class="menu-item" @click="MenuSelect('collectedItem')">
-                                    <span>
-                                        <el-icon><Goods /></el-icon>
-                                        <span style="margin-left:10px">我的收藏</span>
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="followedShop" class="menu-item" @click="MenuSelect('followedShop')">
-                                    <span>
-                                        <el-icon><CollectionTag /></el-icon>
-                                        <span style="margin-left:10px">关注店铺</span>
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="myOrder" class="menu-item" @click="MenuSelect('myOrder')">
-                                    <span>
-                                        <el-icon><Tickets /></el-icon>
-                                        <span style="margin-left:10px">我的订单</span>
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="footprint" class="menu-item" @click="MenuSelect('footprint')">
-                                    <span>
-                                        <el-icon><Position /></el-icon>
-                                        <span style="margin-left:10px">我的足迹</span>
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="myWallet" class="menu-item" @click="MenuSelect('myWallet')">
-                                    <span>
-                                        <el-icon><Wallet /></el-icon>
-                                        <span style="margin-left:10px">我的钱包</span>
-                                        
-                                    </span>
-                                </el-menu-item>
-                                <el-menu-item index="accountSetting" class="menu-item" @click="MenuSelect('accountSetting')">
-                                    <span>
-                                        <el-icon><setting /></el-icon>
-                                        <span style="margin-left:10px">账号设置</span>                                        
-                                    </span>
-                                </el-menu-item>
-                            </el-menu>
-                        </el-col>
-                    </el-row>
-                <!-- </div> -->
-            </div>
-        </el-col>
-        
-        <el-col span="20" >
-            <!-- 个人信息页 -->
-            <div v-if="selectedMenu === 'basicInfo'">
-                <ImgUpload />
-                <BasicInfo />
-            </div>
+    <div class="common-layout">
+        <el-container>
+            <!-- 侧边导航栏 -->
+            <el-aside width="15%" class="aside">
+                <userInfoMenu :selectedMenu="selectedMenu" @MenuSelect="handleSelect"/>
+            </el-aside>
+            <!-- 主要内容 -->
+            <el-container style="background-color: gainsboro;">
+                <!-- 菜单项对应标题 -->
+                <el-header class="header" >
+                    {{ title[selectedMenu] }}
+                </el-header>
+                <!-- main组件 -->
+                <el-main>
+                    <!-- 个人信息页 -->
+                    <div v-if="selectedMenu === 'basicInfo'">
+                        <BasicInfo />
+                    </div>
 
-            <!-- 关注店铺页 -->
-            <div v-else-if="selectedMenu === 'followedShop'">
-                <FollowedShop />
-            </div>
+                    <!-- 关注店铺页 -->
+                    <div v-else-if="selectedMenu === 'followedShop'">
+                        <FollowedShop />
+                    </div>
 
-            <!-- 商品收藏 -->
-            <div v-else-if="selectedMenu === 'collectedItem'">
-                <CollectedItem />
-            </div>
+                    <!-- 商品收藏 -->
+                    <!-- <div v-else-if="selectedMenu === 'collectedItem'"> -->
+                        <!-- <CollectedItem /> -->
+                    <!-- </div> -->
 
-            <!-- 账号设置 -->
-            <div v-else-if="selectedMenu === 'accountSetting'">
-                <AccountSetting /> 
-            </div>
-            <!--我的订单-->
-            <div v-else-if="selectedMenu === 'myOrder'">
-                <OrderViewVue/>
-            </div>
+                    <!-- 账号设置 -->
+                    <div v-else-if="selectedMenu === 'accountSetting'">
+                        <AccountSetting /> 
+                    </div>
+                    <!--我的订单-->
+                    <div v-else-if="selectedMenu === 'myOrder'">
+                        <OrderViewVue/>
+                    </div>
+                    <!-- 我的钱包 -->
+                    <div v-else-if="selectedMenu === 'myWallet'">
+                        <myWallet/>
+                    </div>
 
-        </el-col>
+                    <!-- 我的优惠券 -->
+                    <div v-else-if="selectedMenu === 'myCoupon'">
+                        <myCoupon/>
+                    </div>
 
-    </el-row>
-  
-  </template>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+</template>
 
 
 
 <!-- 样式表 -->
 <style lang="scss" scoped>
+    .aside{
+        min-height:80vh;
+        background-color: #545c64;
+    }
 
     // 左侧菜单栏样式
-    .aside{
-        width:250px;
-        height:100%;
-    }
-
-    .container{
-        // background-color:#545c64;
-        width:250px;
-        /* height:100%; */
-    }
     .header {
-        background-color: #393f44;
+        font-size: 30px;
+        font-weight: bold;
+        margin:0 auto;
         padding-top:20px;
-        height:180px;
-        display: flex;
-        flex-direction:column;
-        align-items: center;
     }
-
-    // .menu-row {
-    //     // margin-left:0;
-    // }
-
-    .menu-item{
-        display: flex;
-        align-items: center;
-    }
-
-    .menu-item span{
-        margin:0 25%;
-    }
-    
-    /* 头像和用户名上下居中显示 */
-    .header .avartar-row,
-    .header .name-row{
-        align-self: center;
-        padding-top: 10px;
-    }
-
-    .header .name-row{
-        color:white;
-    }
-
 
 </style>

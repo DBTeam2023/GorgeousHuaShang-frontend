@@ -1,160 +1,174 @@
-<template>
-    <div class="item-gallery">
-        <h2>商品收藏</h2>
-        <!-- 行 -->
-      <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="55">
-        <!-- 列 -->
-        <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
-          <Card :style="{ width: '210px', height: '300px'}" shadow="hover">
-            <!-- 商品图片 -->
-            <div class="item">
-                <img :src="item.url" class="image" />
+<template>    
+    <el-container class="collections-container">
+        <div class="item-gallery" v-if="CollectedExit === false">
+            <el-empty description="您还没有收藏任何商品哦~"/>
+        </div>
+
+        <div v-if="CollectedExit === true">
+            <div class="item-gallery">
+                <!-- 行 -->
+                <el-row v-for="(row, index) in itemRows" :key="index" class="itemrow" :gutter="40">
+                    <!-- 列 -->
+                    <el-col v-for="(item, i) in row" :key="i" :span="6" class="itemcol">
+                    <Card style="margin:auto" :body-style="{ padding: '0' }"  :style="{ width: '210px', height: '300px'}" shadow="hover">
+                        <!-- 商品图片 -->
+                        <div class="item">
+                            <img :src="item.picture" class="image" />
+                        </div>
+                        <div style="padding:14px">
+                        <!-- 商品描述 -->
+                        <div class="description">{{ item.commodityDescription }}</div>
+                        <!-- 商品价格 -->
+                        <div class="price">￥{{ item.commodityPrice }}</div>
+                        <div class="bottom">
+                            <el-button type="primary" class="details-btn" @click="goDetails(item.commodityId)">查看详情</el-button>
+                            <el-button type="info" class="cancel-btn" @click="cancelCollected(item.commodityId)">取消收藏</el-button>
+                        </div>
+                        </div>
+                    </Card>
+                    </el-col>
+                </el-row>
             </div>
-            <div class="info">
-              <!-- 商品描述 -->
-              <div class="description">{{ item.itemDescription }}</div>
-              <!-- 商品价格 -->
-              <div class="price">￥{{ item.itemPrice }}</div>
-              <div class="bottom">
-                <el-button class="details-btn" @click="handleDetailsClick">查看详情</el-button>
-                <el-button class="cancel-btn" @click="handleCancelClick">取消收藏</el-button>
-              </div>
-            </div>
-          </Card>
-        </el-col>
-      </el-row>
-    </div>
-    <!-- 分页栏 -->
-    <el-row class="pagination">
-        <el-pagination
-            v-model:currentPage="currentPage"
-            v-model:pageSize="pageSize"
-            :small="small"
-            :disabled="disabled"
-            :background="background"
-            layout="prev, pager, next, jumper"
-            :total="itemList.length"
-            @current-change="handleCurrentChange"
-            />
-    </el-row>
+            <!-- 分页栏 -->
+            <el-row class="pagination">
+                <el-pagination
+                    v-model:currentPage="currentPage"
+                    v-model:pageSize="pageSize"
+                    :small="small"
+                    :disabled="disabled"
+                    :background="background"
+                    layout="prev, pager, next, jumper"
+                    :total="total"
+                    @current-change="handleCurrentChange"
+                    />
+            </el-row>
+        </div>
+    </el-container>
 
 
   </template>
   
   <script setup>
-  import {computed} from 'vue'
-  import {ref} from 'vue'
+  import { computed, ref, onMounted } from 'vue'
   import Card from '@/components/common/Card.vue'
-    const itemList = [
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'199.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'299.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'399.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'499.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'599.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'699.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'799.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'899.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'999.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'999.99'
-    },
-    {
-        url: 'https://www.zhongguofeng.com/uploads/allimg/170905/13-1FZ5155101.jpg',
-        itemDescription: '售卖猫和老鼠联名出版服饰；包含帽子、鞋子、衬衫、羽绒服，走过路过不要错过诶',
-        itemPrice:'999.99'
-    }
-    ]
+  import { getCollectedCommodity, uncollectCommodity } from '@/api/userinfo'
+  import { ElMessage,ElMessageBox } from 'element-plus';
+  import router from '@/router'
+  import { base64ToString } from '@/utils/photo';
+
+    const CollectedExit=ref(true);//是否有优惠券
+
+    const itemList = ref([]);
 
     // 分页栏用到的数据
     const currentPage=ref(1)  //当前页数，默认为第1页
-    const pageSize=8  //每页的图片数量，设置为8
+    const pageSize= 8  //每页的图片数量，设置为8
+    const rowSize = 4; //每行优惠券数量：4
+    let total = ref(9);//总数据
 
     // 计算属性，计算imageList中图片对应的行；每行4列
     const itemRows = computed(() => {
-        const start=(currentPage.value-1)*pageSize; //当前页的起始数据编号
-        const end=start+pageSize;  //当前页的最后数据号
-        const paginatedItemRows=itemList.slice(start,end);//currentPage.value当前页需要显示的所有商品卡片（8个）
+        const start = 0; //当前页的起始数据编号
+        const end = start + pageSize;  //当前页的最后数据号
+        const paginatedItemRows = itemList.value.slice(start,end);//currentPage.value当前页需要显示的所有商品卡片（8个）
         const rows = [] //二维数组，rows[i]存储第i行的商品卡片（4个）
-        const rowSize = 4;  //每行rowSize个商品
         const rowCount = pageSize/rowSize; //行数
         for (let i = 0; i < rowCount; i++) {
             rows.push(paginatedItemRows.slice(i * rowSize, (i + 1) * rowSize))
         }
-        return rows
+        return rows;
+    })
+
+    // 调用api获取关注商品列表
+    const getCollections = () => {
+        getCollectedCommodity({
+            pageNo: currentPage.value,
+            pageSize: pageSize,
+        })
+        .then(resp => {
+            itemList.value = resp.data.records;
+            total = resp.data.total;     
+            if(total === 0){
+                CollectedExit.value = false;
+            }       
+            else{
+                CollectedExit.value = true;
+            }
+            // 暂时图片写死
+            // for (const commodity of itemList.value) {
+            //     const imageSrc = base64ToString(commodity.picture,'image/png');
+            //     commodity.picture = imageSrc.value;
+            // }
+            console.log('获取收藏商品成功');
+        })
+        .catch(err =>{
+            ElMessage('获取收藏失败，请刷新重试');
+        })
+    }
+
+    onMounted(()=>{
+        getCollections();
     })
 
     function handleCurrentChange(){
         console.log("handleCurrentChange");
+        getCollections();
     }
 
-
-    function handleCancelClick(){
-        //将该店铺从关注页删除
-        console.log("handleCancelButton");
+    function goDetails(id){
+        //跳转到指定商品详情页
+        console.log("godetail",id);
+        router.push({path: '/goodsdetail',
+        query: {
+          goodsId: id,
+        }
+      });
     }
 
-    function handleDetailsClick(){
-        //跳转到指定店铺详情页
-        console.log("handleDetailsButton");
+    function cancelCollected(id){
+        //将该商品从关注页删除
+        console.log("remove",id);
+        ElMessageBox.confirm(
+            '是否取消收藏该商品?',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        ).then(()=>{
+            // 调用后端api取消收藏
+            uncollectCommodity({
+                commodityId:id,
+            })
+            .then(resp =>{
+                ElMessage.success('取消收藏成功');
+            })
+            .catch(err =>{
+                ElMessage.error('取消收藏失败，请重试');
+            })
+            // 重新获取收藏商品列表
+            getCollections();
+
+        })
+        .catch(()=>{
+            ElMessage.info('取消操作');
+        })
     }
   </script>
 
   <style lang="scss" scoped>
 
-    h2{
-        text-align: center;
+    .collections-container{
+        padding:0 10% 0 10%;
     }
 
     .item-gallery {
-        margin-left:10%;
         position:relative;
-        width:100%;
     }
 
     .itemrow{
-        margin-left:10%;
-        margin-right:5%;
-        margin-top:30px;
+        margin-bottom:30px;
     }
-
 
     .item{
         width:210px;
@@ -164,18 +178,13 @@
     }
 
     .item-gallery .item .image{
-        width:85%;
-        height:85%;
+        width:80%;
+        height:100%;
         object-fit:cover;
         object-position: center;
         margin-bottom: 0;
     }
 
-    .item-gallery .info{
-        padding-top:0;
-        padding-left:14px;
-        padding-right:14px;
-    }
     .description {
         margin-bottom: 20px;
         // padding-top:10px;
@@ -205,17 +214,9 @@
 
     // 分页块样式
     .pagination{
-        margin-left:10%;
-        width:900px;
         margin-top:20px;
-        margin-bottom:20px;
         justify-content: center;
         text-align:center;
-        // position: absolute;
-        // bottom: 0;
-        // left: 50%;
-        // transform: translateX(-50%);
-
     }
 
   </style>
