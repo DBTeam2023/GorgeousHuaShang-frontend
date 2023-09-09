@@ -4,10 +4,13 @@
     <el-row :gutter="20" class="product-list">
       <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
         <Card class="card">
-          <RouterLink :to="{path: '/goodsdetail', query: {productName: product.productName, goodsId: product.productId, storeId: route.query.storeid} }"
-          class="router-link-active">
+          <RouterLink
+            :to="{ path: '/goodsdetail', query: { productName: product.productName, goodsId: product.productId, storeId: route.query.storeid } }"
+            class="router-link-active">
             <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
-              <img class="product-image" :src="product.imageurl" alt="Product Image" />
+              <div class="picture-container">
+                <img class="product-picture" :src="product.imageurl" alt="Product Image" />
+              </div>
               <h3 class="product-name">{{ product.productName }}</h3>
               <div class="button-group">
                 <p style="color: orange;">￥{{ product.price }}</p>
@@ -17,23 +20,20 @@
         </Card>
       </el-col>
     </el-row>
-    <el-pagination background
-                   :current-page="currentPage"
-                   :page-size="pageSize"
-                   :total="total"
-                   @current-change="handlePageChange"></el-pagination>
+    <el-pagination background :current-page="currentPage" :page-size="pageSize" :total="total"
+      @current-change="handlePageChange"></el-pagination>
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref, watch} from 'vue';
-import {ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination, ElMessage} from 'element-plus';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { ElButton, ElCol, ElInput, ElRow, ElIcon, ElPagination, ElMessage } from 'element-plus';
 import Card from "@/components/common/Card.vue";
-import { Search,Filter } from '@element-plus/icons-vue';
-import {getGoodsInPage} from "@/api/goods";
-import {useRoute} from "vue-router";
-import {base64ToUrl} from "@/utils/photo";
-import {getStoreInfo} from "@/api/store";
+import { Search, Filter } from '@element-plus/icons-vue';
+import { getGoodsInPage } from "@/api/goods";
+import { useRoute } from "vue-router";
+import { base64ToUrl } from "@/utils/photo";
+import { getStoreInfo } from "@/api/store";
 
 const route = useRoute()
 
@@ -74,32 +74,31 @@ const getCommodities = () => {
     name: null,
     description: ""
   })
-      .then(resp => {
-        products.value = []
-        for (let i = 0; i < resp.data.records.length; i ++) {
-          products.value.push({
-            productId: resp.data.records[i].productId,
-            productName: resp.data.records[i].productName,
-            description: resp.data.records[i].description,
-            price: resp.data.records[i].price,
-            imageurl: base64ToUrl(resp.data.records[i].image.fileContents, resp.data.records[i].image.contentType),
-          })
-        }
-        total.value = resp.data.total;
-      })
-      .catch(resp => {
-        ElMessage({
-          message: '删除失败',
-          type: 'warning',
+    .then(resp => {
+      products.value = []
+      for (let i = 0; i < resp.data.records.length; i++) {
+        products.value.push({
+          productId: resp.data.records[i].productId,
+          productName: resp.data.records[i].productName,
+          description: resp.data.records[i].description,
+          price: resp.data.records[i].price,
+          imageurl: base64ToUrl(resp.data.records[i].image.fileContents, resp.data.records[i].image.contentType),
         })
+      }
+      total.value = resp.data.total;
+    })
+    .catch(resp => {
+      ElMessage({
+        message: '删除失败',
+        type: 'warning',
       })
+    })
 }
 
 </script>
 
 <style scoped>
-
-.card{
+.card {
   width: 240px;
   height: 325px;
   margin-top: 20px
@@ -152,13 +151,15 @@ const getCommodities = () => {
   display: flex;
   justify-content: space-between;
 }
+
 .search-box {
   display: flex;
   align-items: center;
 }
 
 .search-box .el-input {
-  margin-left: 10px; /* 修改 icon 和 input 之间的间距 */
+  margin-left: 10px;
+  /* 修改 icon 和 input 之间的间距 */
 }
 
 .sort-box {
@@ -170,5 +171,19 @@ const getCommodities = () => {
 .router-link-active {
   text-decoration: none;
   cursor: pointer;
+}
+
+.picture-container {
+  margin: 0 auto;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.picture-container .product-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 </style>

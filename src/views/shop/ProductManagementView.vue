@@ -18,8 +18,8 @@
         <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
           <Card class="card">
             <div :style="{ color: isHovered[index] ? '#69c0ff' : '' }">
-              <div class="image-container">
-                <img class="product-image" :src="product.imageurl" alt="Product Image" />
+              <div class="picture-container">
+                <img class="product-picture" :src="product.imageurl" alt="Product Image" />
               </div>
               <h3 class="product-name">{{ product.productName }}</h3>
               <div class="button-group">
@@ -1294,14 +1294,14 @@ const options = [
   flex-direction: column;
 }
 
-.image-container {
+.picture-container {
   margin: 0 auto;
   width: 200px;
   height: 200px;
   overflow: hidden;
 }
 
-.image-container .product-image {
+.picture-container .product-picture {
   width: 100%;
   height: 100%;
   object-fit: cover;
