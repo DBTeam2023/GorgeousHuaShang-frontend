@@ -38,7 +38,6 @@ const performSearch = () => {
 
   if (route.path === "/homepage/") {
     router.push({ path: '/classify', query: { search: searchKeyword.value } })
-
   }
 };
 </script>

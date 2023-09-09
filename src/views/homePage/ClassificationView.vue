@@ -2,9 +2,12 @@
 <!--html模板-->
 <template>
   <el-container class="container">
+    <!--把搜索栏、购物车固定在顶部-->
+    <div class="searchBar">
+      <SearchBar @performSearch="receiveSearchVal" />
+    </div>
 
     <el-main>
-
       <div style="margin-left: 10vw;">
         <el-button @click="() => {
           router.push({ path: 'classify', query: { class: 'peishi' } });
@@ -224,6 +227,7 @@ import { ElMessage } from "element-plus";
 import Card from "@/components/common/Card.vue";
 import router from "@/router";
 import { base64ToUrl } from '@/utils/photo'
+import SearchBar from "@/components/HomePage/SearchBar.vue"
 
 const route = useRoute()
 
@@ -528,10 +532,7 @@ function turnToProduct(index, i) {
 }
 
 .itemrow {
-  margin-left: 2%;
-  margin-right: -16%;
-  margin-top: 30px;
-
+  width: 100%;
 }
 
 .itemcol {
@@ -542,6 +543,8 @@ function turnToProduct(index, i) {
   padding: 1px;
   /*元素内部内容与边框之间的距离 */
   text-align: center;
+  margin-left: 30px;
+  margin-top: 10px;
 }
 
 .item img {
@@ -610,5 +613,14 @@ function turnToProduct(index, i) {
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.searchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 98%;
+  margin: 15px;
 }
 </style>

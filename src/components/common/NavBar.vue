@@ -5,12 +5,8 @@
       首页
     </el-menu-item>
 
-    <!--把搜索栏、购物车固定在顶部-->
-    <div class="searchBar">
-      <SearchBar @performSearch="receiveSearchVal" />
-    </div>
-
     <div class="flex-grow" />
+    <el-menu-item index="1" v-if="store.state.user.role === 'buyer'">我的购物车</el-menu-item>
     <el-menu-item index="2" v-if="store.state.user.role === 'seller'">我的店铺</el-menu-item>
     <!--  添加其他导航  -->
 
@@ -42,7 +38,6 @@
 import { ref } from 'vue'
 import router from "@/router";
 import store from "@/store";
-import SearchBar from "@/components/HomePage/SearchBar.vue"
 
 // let activeIndex = ref('0')
 const handleSelect = (key, keyPath) => {
@@ -57,6 +52,8 @@ const handleSelect = (key, keyPath) => {
     store.commit("logout");
   } else if (key === '2-4') {
     router.push('/userinfo/');
+  } else if (key === '1') {
+    router.push('/cart/')
   } else if (key === '2') {
     router.push('/shopselect/')
   }
@@ -86,19 +83,5 @@ const handleSelect = (key, keyPath) => {
   margin-bottom: 10px;
   font-size: 14px;
   color: var(--el-text-color-secondary);
-}
-
-.search-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 8vh;
-}
-
-.searchBar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
 }
 </style>

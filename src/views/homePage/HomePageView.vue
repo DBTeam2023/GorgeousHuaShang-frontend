@@ -1,22 +1,44 @@
 <template>
   <el-container class="container">
 
+    <!--把搜索栏、购物车固定在顶部-->
+    <div class="searchBar">
+      <SearchBar @performSearch="receiveSearchVal" />
+    </div>
+
     <!-- 装饰图 -->
     <div class="long">
       <img src="../../assets/homePage/long-logo.gif" class="long-logo">
     </div>
+
     <!-- 分类大卡片 -->
     <div class="card-container">
-      <el-card class="box-card" id="male" shadow="always">
-        <h1>男款</h1>
-      </el-card>
-      <el-card class="box-card" id="peishi" shadow="always">
-        <h1>配饰</h1>
-      </el-card>
-      <el-card class="box-card" id="female" shadow="always">
-        <h1>女款</h1>
-      </el-card>
+      <div class="view view-first" id="male">
+        <div class="mask">
+          <h1>男款</h1>
+          <p>体验古老文化的魅力，穿上男装感受传统的力量！</p>
+          <p>独特的剪裁与细节，让你在任何场合都与众不同！</p>
+          <a href="#/classify?class=nanzhuang" class="info">查看更多</a>
+        </div>
+      </div>
+      <div class="view view-first" id="peishi">
+        <div class="mask">
+          <h1>配饰</h1>
+          <p>独特配饰，点亮你的造型，彰显你的个性！</p>
+          <p>细节诠释华美，体验传统与现代的完美交融！</p>
+          <a href="#/classify?class=peishi" class="info">查看更多</a>
+        </div>
+      </div>
+      <div class="view view-first" id="female">
+        <div class="mask">
+          <h1>女款</h1>
+          <p>穿上民族服饰女装，展现你独特的个性与风情！</p>
+          <p>展现你的优雅，成为华丽民族风的代言人！</p>
+          <a href="#/classify?class=nvzhuang" class="info">查看更多</a>
+        </div>
+      </div>
     </div>
+
     <el-main>
       <!--分类和轮播图、个人信息-->
       <div class="homeBanner">
@@ -83,7 +105,8 @@
 import SearchBar from "@/components/HomePage/SearchBar.vue"
 import HomeBanner from "@/components/HomePage/HomeBanner.vue"
 import RecommendCol from "@/components/HomePage/RecommendCol.vue"
-
+import { defineEmits } from 'vue';
+import { useRoute } from "vue-router";
 import { computed, onMounted, ref } from 'vue'
 import Card from "@/components/common/Card.vue";
 import { getGoodsInPage } from "@/api/goods";
@@ -91,6 +114,20 @@ import { ElMessage } from "element-plus";
 import router from "@/router";
 import { base64ToUrl } from '@/utils/photo'
 
+
+const route = useRoute()
+const emit = defineEmits(['performSearch'])
+// 绑定搜索关键词
+let searchKeyword = ref('');
+
+// 执行搜索的函数
+const performSearch = () => {
+  emit('performSearch', searchKeyword.value)
+
+  if (route.path === "/homepage/") {
+    router.push({ path: '/classify', query: { search: searchKeyword.value } })
+  }
+};
 
 const itemList = ref([]);
 
@@ -166,7 +203,7 @@ function turnToProduct(index, i) {
 
 .container {
   padding: 0px;
-  background-color: #fff;
+  background-color: #F4F4F4;
   height: 100%;
 }
 
@@ -232,10 +269,7 @@ function turnToProduct(index, i) {
 }
 
 .itemrow {
-  margin-left: 2%;
-  margin-right: -16%;
-  margin-top: 30px;
-
+  width: 100%;
 }
 
 .itemcol {
@@ -246,6 +280,8 @@ function turnToProduct(index, i) {
   padding: 1px;
   /*元素内部内容与边框之间的距离 */
   text-align: center;
+  margin-left: 30px;
+  margin-top: 10px;
 }
 
 .item img {
@@ -278,10 +314,18 @@ function turnToProduct(index, i) {
 /*分页栏样式 */
 .pagination {
   margin-top: 10px;
-
   justify-content: center;
   text-align: center;
   margin-bottom: 20px;
+}
+
+.searchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+  width: 98%;
+  box-sizing: border-box;
 }
 
 .long-logo {
@@ -297,11 +341,16 @@ function turnToProduct(index, i) {
   margin-right: 150px;
 }
 
-.box-card {
-  display: flex;
-  justify-content: center;
-  width: 350px;
-  height: 350px;
+.card-container .view {
+  position: relative;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.card-container:hover .view {
+  opacity: 1;
+  transform: translateY(0px);
 }
 
 #male {
@@ -331,5 +380,119 @@ function turnToProduct(index, i) {
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.view {
+  width: 350px;
+  height: 350px;
+  margin: 10px;
+  float: left;
+  border: 10px solid #fff;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  box-shadow: 1px 1px 2px #e6e6e6;
+  cursor: default;
+}
+
+.view .mask,
+.view .content {
+  width: 350px;
+  height: 350px;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0
+}
+
+.view img {
+  display: block;
+  position: relative
+}
+
+.view h1 {
+  text-transform: uppercase;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  font-size: 17px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  margin: 20px 0 0 0
+}
+
+.view p {
+  color: #fff;
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 800px;
+  position: relative;
+  margin: 40px auto;
+  text-align: center
+}
+
+.view a.info {
+  display: inline-block;
+  text-decoration: none;
+  padding: 7px 14px;
+  background: #000;
+  color: #fff;
+  text-transform: uppercase;
+  box-shadow: 0 0 1px #000
+}
+
+.view a.info:hover {
+  box-shadow: 0 0 5px #000
+}
+
+.view-first img {
+  transition: all 0.2s linear;
+}
+
+.view-first .mask {
+  opacity: 0;
+  background-color: rgba(74, 71, 70, 0.7);
+  // background-color: rgba(234, 174, 162, 0.7);
+  transition: all 0.4s ease-in-out;
+}
+
+.view-first h1 {
+  transform: translateY(-100px);
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.view-first p {
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.2s linear;
+}
+
+.view-first a.info {
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.view-first:hover img {
+  transform: scale(1.1);
+}
+
+.view-first:hover .mask {
+  opacity: 1;
+}
+
+.view-first:hover h1,
+.view-first:hover p,
+.view-first:hover a.info {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.view-first:hover p {
+  transition-delay: 0.1s;
+}
+
+.view-first:hover a.info {
+  transition-delay: 0.2s;
 }
 </style>
