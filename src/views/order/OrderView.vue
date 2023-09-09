@@ -93,7 +93,7 @@ const activeIndex = ref('all');
 
 // 分页栏用到的数据
 const currentPage = ref(1);
-const pageSize = 5;
+const pageSize = 3;
 let total = ref(1);//总数据
 
 // 获取订单列表
