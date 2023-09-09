@@ -2,18 +2,6 @@
   <div>
     <div class="product-management">
       <h1 class="title">已上架商品管理</h1>
-      <!--    <el-row :gutter="20" class="filters">-->
-      <!--      <el-col :span="6">-->
-      <!--        <div class="search-box">-->
-      <!--          <el-icon><Search /></el-icon>-->
-      <!--          <el-input v-model="searchProductName" placeholder="商品名称"></el-input>-->
-      <!--        </div>-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="6">-->
-      <!--        <el-button type="primary" @click="searchProducts">查询</el-button>-->
-      <!--        <el-button @click="resetFilters">重置</el-button>-->
-      <!--      </el-col>-->
-      <!--    </el-row>-->
       <el-row :gutter="20" class="product-list">
         <el-col :span="5.5" v-for="(product, index) in currentProducts" :key="index" :gutter="20">
           <Card class="card">
@@ -63,6 +51,12 @@
                   <Picture />
                 </el-icon>
               </el-upload>
+              <!-- 查看放大图片插槽 -->
+              <el-dialog v-model="dialogVisible" height="705px">
+                <div class="preview-container">
+                  <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture" />
+                </div>
+              </el-dialog>
             </div>
           </div>
           <div class="el-upload__tip" style="margin-left: 100px">
@@ -130,11 +124,17 @@
               <span>更新后：</span>
               <el-upload ref="uploadRef" :class="uploadClass" action="' '" :headers="token" list-type="picture-card"
                 :auto-upload="false" :on-remove="handleRemove" :on-preview="handlePreview" :on-change="handleImageChange"
-                :show-file-list="isSelectedShow">
+                :show-file-list="isSelectedShow" :clearFiles="clearUpload">
                 <el-icon>
                   <Picture />
                 </el-icon>
               </el-upload>
+              <!-- 查看放大图片插槽 -->
+              <el-dialog v-model="dialogVisible" height="705px">
+                <div class="preview-container">
+                  <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture" />
+                </div>
+              </el-dialog>
             </div>
           </div>
           <div class="el-upload__tip" style="margin-left: 250px">
@@ -223,6 +223,7 @@ onMounted(() => {
 watch(currentPage, () => {
   getCommodities()
 })
+
 
 const getCommodities = () => {
   getGoodsInPage({
@@ -345,6 +346,8 @@ function confirmModify() {
   formdata.append("ClassficationType", modifyForm.classificationType)
   formdata.append("IsDeleted", modifyForm.radio1)
   formdata.append("ProductId", modifyForm.productId)
+
+  console.log('商品图片上传');
   fileList.forEach(file => {
     formdata.append('image', file.raw);//将文件添加到formData
   })
@@ -436,14 +439,12 @@ function selectGoodsConcrete() {
         mergedProperties.value = mergeSimilarProperties(respCommodityInfo);
         selectProperties.value = handleSelectProperties(_.cloneDeep(mergedProperties.value));
         selectIndex.value = findIndicesWithProperties(respCommodityInfo, selectProperties.value);
-        console.log(selectIndex.value);
         selectedcommodity.value = {
           ...respCommodityInfo[selectIndex.value],
           commodityId: modifyForm.productId,
           imageurl: base64ToUrl(respCommodityInfo[selectIndex.value].image.fileContents, respCommodityInfo[selectIndex.value].image.contentType)
         }
         console.log("成功获取商品具体款式信息");
-        // console.log(selectedcommodity.value);
       }
     })
     .catch(resp => {
@@ -462,7 +463,6 @@ const dialogVisible = ref(false) //缩略图是否可见
 const uploadRef = ref(null) //对el-upload的引用
 const fileList = reactive([]) //选择的图片列表
 const isSelectedShow = ref(true) //是否显示上传的图片列表
-const showProgress = ref(false) //是否显示进度条
 
 //el-upload类，根据fileList的大小选择是否显示上传框
 const uploadClass = computed(() => {
@@ -472,10 +472,7 @@ const uploadClass = computed(() => {
 // 选择图片后操作：
 const handleImageChange = (File, FileList) => {
   console.log('Change');
-
-  // const isJPG = File.raw.type === 'image/jpeg';  //文件类型jpg
   const isPNG = File.raw.type === 'image/png';  //文件类型png
-
   const isLt500K = File.raw.size / 1024 / 1024 < 0.5;// 文件大小转换为MB单位,判断是否小于5MB
 
   // 文件格式错误
@@ -499,16 +496,14 @@ const handleImageChange = (File, FileList) => {
   }
 }
 
-// 图片预览
+// 放大查看图片
 const handlePreview = (uploadFile) => {
-  console.log('Preview');
-  dialogImageUrl.value = uploadFile.url;//图片链接
-  dialogVisible.value = true;//el-dialog插槽可见
+  dialogImageUrl.value = uploadFile.url; //图片链接
+  dialogVisible.value = true; //el-dialog插槽可见
 }
 
-// 取消选择
+// 删除选择图片
 const handleRemove = (uploadFile, uploadFiles) => {
-  console.log('Remove');
   fileList.splice(0, 1);//删除fileList的第一个元素
 }
 
@@ -1232,7 +1227,6 @@ const options = [
   height: 100%;
 }
 
-
 .product-info {
   flex-grow: 1;
   display: flex;
@@ -1259,8 +1253,6 @@ const options = [
   margin-left: 10px;
   /* 修改 icon 和 input 之间的间距 */
 }
-
-
 
 .picture-block {
   width: 100%;
@@ -1302,6 +1294,20 @@ const options = [
 }
 
 .picture-container .product-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.preview-container {
+  margin: 0 auto;
+  width: 500px;
+  height: 500px;
+  overflow: hidden;
+}
+
+.preview-container .picture {
   width: 100%;
   height: 100%;
   object-fit: cover;
