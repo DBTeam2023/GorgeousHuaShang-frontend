@@ -128,6 +128,7 @@
   import { checkPermission } from '@/utils/auth';
   import { getOrderInfo, getValidCoupon, payOrder } from '@/api/pay';
   import { utc2cn } from '@/utils/timeTransfer';
+  import store from '@/store';
 
 
     const route = useRoute(); // 来自：获取路由对象
@@ -267,23 +268,52 @@
         payOrder({
             pickIds:queryParams.value.pickIds,
             couponId: selectedCouponID.value,
+            orderId:orderID.value,
         })
         .then(resp =>{
-            // ElMessage.success('支付成功！');
-            jumpToOrder('支付成功！');
+            ElMessage.success('支付成功！');
             console.log(resp);
+            // 存储支付信息
+            const ordersJSON = localStorage.getItem('orders');
+            const orders = ordersJSON ? JSON.parse(ordersJSON) : [];
+            const isOrderIdExists = orders.some(order => order.orderId === orderID.value);
+            if(isOrderIdExists === false){
+                const order = {
+                    orderId: orderID.value,
+                    actualAmount: orderAmount.value - discountAmount.value,
+                    discount:discountAmount.value,
+                }
+                orders.push(order);
+                const updatedOrdersJSON = JSON.stringify(orders);
+                localStorage.setItem('orders', updatedOrdersJSON);
+            }
+            
+
+            // 存储对应优惠信息
+            // if(store.getters.getOrderAmount(orderID.value) === null){
+            //     console.log('111');
+            //     const order = {
+            //         orderId: orderID.value,
+            //         actualAmount: orderAmount.value,
+            //         discount:discountAmount.value,
+            //     }
+            //     store.commit("addOrder",order);//新增优惠券信息
+            // }
+            jumpToOrder('支付成功！');
+
         })
         .catch(err =>{
-            if(err.response.data.msg === "This seller is not a manager.")
-                jumpToOrder('卖家不是管理员,支付失败！');
-            else if(err.response.data.msg === "This wallet does not exist.")
-                jumpToOrder('您的钱包不存在，支付失败！')
-            else if(err.response.data.msg === "The wallet is frozen.")
-                jumpToOrder('您的钱包已被冻结，支付失败！')
-            else if(err.response.data.msg === "Your balance is not enough.")
-                jumpToOrder('钱包余额不足，支付失败！')
-            else
-                jumpToOrder('支付失败，请重试！');
+            console.log(err);
+            // if(err.response.data.msg === "This seller is not a manager.")
+            //     jumpToOrder('卖家不是管理员,支付失败！');
+            // else if(err.response.data.msg === "This wallet does not exist.")
+            //     jumpToOrder('您的钱包不存在，支付失败！')
+            // else if(err.response.data.msg === "The wallet is frozen.")
+            //     jumpToOrder('您的钱包已被冻结，支付失败！')
+            // else if(err.response.data.msg === "Your balance is not enough.")
+            //     jumpToOrder('钱包余额不足，支付失败！')
+            // else
+            //     jumpToOrder('支付失败，请重试！');
         })
     };
 

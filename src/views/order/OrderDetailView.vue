@@ -77,7 +77,10 @@
                         class="margin-top"
                         :column="2"
                     >
-                      <el-descriptions-item label="商品总价：" >￥{{ orderInfo.goodsTotalPrice }}元</el-descriptions-item>
+                    <el-descriptions-item label="支付状态：" >{{ showStatus[state] }}</el-descriptions-item>
+                    <el-descriptions-item label="订单金额：" >￥{{ orderInfo.goodsTotalPrice }}元</el-descriptions-item>
+                    <el-descriptions-item v-if="actualOrder != null" label="优惠信息：" >￥{{ actualOrder.discount }}元</el-descriptions-item>
+                    <el-descriptions-item v-if="actualOrder != null" label="实际付款：" >￥{{ actualOrder.actualAmount }}元</el-descriptions-item>
                     </el-descriptions>
                   </el-card>
                 </el-col>
@@ -86,8 +89,8 @@
             <el-row class="row-4">
               <el-card class="row-3-card-last">
                 <el-table :data="orderTableData" style="width: 100">
-                  <el-table-column prop="goodsID" label="商品编号" width="320"/>
-                  <el-table-column prop="goods" label="商品" width="250">
+                  <el-table-column prop="goodsID" label="商品编号" width="350"/>
+                  <el-table-column prop="goods" label="商品" width="300">
                     <template v-slot="{ row }">
                       <el-row class="img-container">
                           <el-col :span="8">
@@ -99,10 +102,9 @@
                       </el-row>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="unitprice" label="单价" width="140" :formatter="formatCurrency"/>
-                  <el-table-column prop="number" label="数量" width="140" :formatter="formatQuantity"/>
-                  <el-table-column prop="total" label="总额" width="140" :formatter="formatCurrency"/>
-                  <el-table-column prop="payment" label="实付" width="140" :formatter="formatCurrency"/>
+                  <el-table-column prop="unitprice" label="单价" width="160" :formatter="formatCurrency"/>
+                  <el-table-column prop="number" label="数量" width="160" :formatter="formatQuantity"/>
+                  <el-table-column prop="total" label="总额" width="160" :formatter="formatCurrency"/>
                 </el-table>
               </el-card>
             </el-row>
@@ -119,6 +121,22 @@ import {getUserInfo} from "@/api/userinfo";
 import {getOrderDetails, getOrderInfo} from "@/api/order";
 import {ElMessage} from "element-plus";
 import {base64ToUrl} from "@/utils/photo";
+import store from "@/store";
+
+// 实际支付信息
+const actualOrder = ref({
+  actualAmount:0,
+  discount:0,
+});
+
+const state = ref('');//订单状态
+
+const showStatus = ref({
+    'paid': '已支付',
+    'cancelled': '已取消',
+    'order complete': '已完成',
+    'wait to pay': '待支付',
+})
 
 const router = useRouter(); // 获取路由实例
 const route = useRoute(); // 获取路由实例
@@ -163,11 +181,28 @@ onMounted(() => {
 
   OrderState.value.orderID = orderNumber;
 
+  // 从 localStorage 中检索订单数组
+  const ordersJSON = localStorage.getItem('orders');
+  const orders = ordersJSON ? JSON.parse(ordersJSON) : [];
+
+  // 通过遍历订单数组来查找匹配的订单
+  const matchedOrder = orders.find(order => order.orderId === orderNumber);
+
+  if (matchedOrder) {
+    // 找到匹配的订单，读取 amount 和 discount 值
+    actualOrder.value.actualAmount = matchedOrder.actualAmount;
+    actualOrder.value.discount = matchedOrder.discount;
+  } 
+  else{
+    actualOrder.value = null;
+  }
+
   getOrderDetails({
     orderId: orderNumber
   })
       .then(resp => {
         allResponse.value = resp.data;
+        state.value = resp.data.state;
         getUserInfoInOrder();
         getAllLogisticsInfoInOrder();
         getOrderInfoInOrder();

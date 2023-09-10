@@ -327,7 +327,7 @@ const itemList = ref([]);
 
 // 分页栏用到的数据
 const currentPage = ref(1)  //当前页数，默认为第1页
-const pageSize = 15  //每页的图片数量
+const pageSize = 10  //每页的图片数量
 const rowSize = 5  //每行rowSize个商品
 
 let total = ref(0);
@@ -365,7 +365,7 @@ const getCommodities = () => {
   })
     .then(resp => {
       itemList.value = resp.data.records;
-      total = resp.data.total;
+      total.value = resp.data.total;
 
       for (const item of itemList.value) {
         item.url = base64ToUrl(item.image.fileContents, item.image.contentType);
@@ -376,6 +376,11 @@ const getCommodities = () => {
       ElMessage("商品拉取失败")
     })
 }
+
+setInterval(() => {
+  console.log(total.value)
+}, 1000)
+
 
 setTimeout(() => {
   watch(filters.value, (newVal) => {

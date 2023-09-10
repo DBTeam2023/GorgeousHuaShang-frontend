@@ -115,7 +115,7 @@ import ProductIncrease from '@/views/shop/ProductIncreateView.vue';
 import ALLItems from '@/views/shop/ALLItemsView.vue';
 import ShopAnalysis from '@/views/shop/ShopAnalysisView.vue';
 import {ElIcon, ElMessage} from 'element-plus';
-import {collectStore, getStoreInfo, removeCollectStore} from "@/api/store";
+import {collectStore, getBuyers, getStoreInfo, removeCollectStore} from "@/api/store";
 import {useRoute} from "vue-router";
 import {getFollowedStore} from "@/api/userinfo";
 
@@ -195,16 +195,16 @@ function removeCollectBtn() {
 const storeInfo = reactive({
   storeId: "",
   shopName: "",
-  favoriteUserCount: 17,
+  favoriteUserCount: 0,
   score: 1,
   address: "山西",
 })
 
 const getFollowedStoreForPage = () => {
-  getFollowedStore({
+  getBuyers({
     pageNo: 1,
     pageSize: 1,
-    storeName: storeInfo.shopName
+    storeId: route.query.storeid
   })
       .then(resp => {
         storeInfo.favoriteUserCount = resp.data.total;
