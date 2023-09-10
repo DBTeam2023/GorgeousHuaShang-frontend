@@ -14,10 +14,10 @@
           <ElInput placeholder="请输入店铺描述" :prefix-icon="House" v-model="des" size="large" style="margin-top: 10px;"></ElInput>
           <ElInput placeholder="请输入店铺地址" :prefix-icon="House" v-model="address" size="large"  style="margin-top: 10px;"></ElInput>
         </ElFormItem>
-        <el-radio-group v-model="radio1" class="ml-4">
-          <el-radio label="1" size="large">管理员</el-radio>
-          <el-radio label="0" size="large">非管理员</el-radio>
-        </el-radio-group>
+<!--        <el-radio-group v-model="radio1" class="ml-4">-->
+<!--          <el-radio label="1" size="large">管理员</el-radio>-->
+<!--          <el-radio label="0" size="large">非管理员</el-radio>-->
+<!--        </el-radio-group>-->
         <ElFormItem>
             <ElButton type="primary" class="register-btn" size="large" @click="submit(registerParam)">新建</ElButton>
         </ElFormItem>
@@ -37,7 +37,7 @@ const address = ref("默认地址")
 
 const registerParam = reactive({
   storeName: "",
-  isManager: radio1
+  isManager: 1
 });
 // setInterval(() => {
 //   console.log(registerParam)

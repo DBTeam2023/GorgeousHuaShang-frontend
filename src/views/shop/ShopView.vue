@@ -128,10 +128,12 @@ let collect = ref(false);
 onMounted(() => {
   getFollowedStore({
     pageNo: 1,
-    pageSize: 1,
-    storeName: storeInfo.shopName
+    pageSize: 10,
+    storeName: storeInfo.shopName,
   })
       .then(resp => {
+        console.log(storeInfo.shopName)
+        console.log(resp.data.records)
         if (resp.data.records.length > 0) {
           collect.value = true
         } else {
@@ -187,6 +189,7 @@ function removeCollectBtn() {
         collect.value = false;
       })
       .catch(resp => {
+        console.log(route.query.storeid)
         ElMessage({
           message: '取消收藏失败',
           type: 'warning',
