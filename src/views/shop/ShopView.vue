@@ -125,23 +125,6 @@ let collect = ref(false);
 
 // 由于没办法获得当前用户是否收藏过，所以调用api手动测试
 
-onMounted(() => {
-  getFollowedStore({
-    pageNo: 1,
-    pageSize: 10,
-    storeName: storeInfo.shopName,
-  })
-      .then(resp => {
-        console.log(storeInfo.shopName)
-        console.log(resp.data.records)
-        if (resp.data.records.length > 0) {
-          collect.value = true
-        } else {
-          collect.value = false
-        }
-      })
-})
-
 function collectBtn() {
   if (localStorage.getItem("role") === "seller") {
     ElMessage({
@@ -234,7 +217,20 @@ const getStoreInfoById = () => {
         storeInfo.address = resp.data.address;
         storeInfo.storeId = resp.data.storeId;
         storeInfo.description = resp.data.description;
-        console.log(resp)
+        getFollowedStore({
+          pageNo: 1,
+          pageSize: 10,
+          storeName: storeInfo.shopName,
+        })
+            .then(resp => {
+              console.log(storeInfo.shopName)
+              console.log(resp.data.records)
+              if (resp.data.records.length > 0) {
+                collect.value = true
+              } else {
+                collect.value = false
+              }
+            })
       })
       .catch(resp => {
         ElMessage.error('商店信息获取异常');
