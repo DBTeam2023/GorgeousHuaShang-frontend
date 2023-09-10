@@ -40,73 +40,73 @@
         <el-icon><Tools /></el-icon>
         <h5 class="mb-2" style="margin-left: 10px;">店铺管理选项</h5>
       </div> -->
-      <el-header class="header" >
+        <el-header class="header" >
           <!--用户头像-->
           <el-row class="avatar-row">
-              <el-avatar :size="100" src='https://picsum.photos/id/1018/200/200' />
+            <el-avatar :size="100" src='https://picsum.photos/id/1018/200/200' />
           </el-row>
           <!--用户姓名-->
           <el-row class="name-row">{{ storeInfo.shopName }}</el-row>
-      </el-header>
+        </el-header>
         <el-menu default-active="1"  active-text-color="#ffd04b"
-                  background-color="#545c64"
-                  class="el-menu-vertical-demo"
-                  text-color="#fff"
-                  style="height: 60%;border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;"
-                  >
+                 background-color="#545c64"
+                 class="el-menu-vertical-demo"
+                 text-color="#fff"
+                 style="height: 60%;border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;"
+        >
           <el-menu-item index="1" @click="selectMenu('ShopInfo')">
-              <el-icon><Grid /></el-icon>
-              全部宝贝
+            <el-icon><Grid /></el-icon>
+            全部宝贝
           </el-menu-item>
-<!--          <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">-->
-<!--              <el-icon><Comment /></el-icon>-->
-<!--              店铺动态-->
-<!--          </el-menu-item>-->
-<!--          <el-menu-item index="3" @click="selectMenu('ShopAnalysis')">-->
-<!--              <el-icon><Menu /></el-icon>-->
-<!--              宝贝分类-->
-<!--          </el-menu-item>-->
+          <!--          <el-menu-item index="2" @click="selectMenu('ShopAnalysis')">-->
+          <!--              <el-icon><Comment /></el-icon>-->
+          <!--              店铺动态-->
+          <!--          </el-menu-item>-->
+          <!--          <el-menu-item index="3" @click="selectMenu('ShopAnalysis')">-->
+          <!--              <el-icon><Menu /></el-icon>-->
+          <!--              宝贝分类-->
+          <!--          </el-menu-item>-->
           <el-menu-item index="4" @click="selectMenu('OrderManage')">
-              <el-icon><Avatar /></el-icon>
-              联系客服
+            <el-icon><Avatar /></el-icon>
+            联系客服
           </el-menu-item>
         </el-menu>
 
-<!--      todo shoucang  -->
+        <!--      todo shoucang  -->
         <el-button v-if="!collect" type="info" plain style="width: 100%; margin-top: 20px" @click="collectBtn">收藏</el-button>
         <el-button v-if="collect" type="info" plain style="width: 100%; margin-top: 20px" @click="removeCollectBtn">取消收藏</el-button>
       </el-col>
-  <el-col :span="20">
-    <template v-if="selectedMenu === 'ShopInfo'">
-      <ALLItems></ALLItems>
-    </template>
-    <template v-else-if="selectedMenu === 'OrderManage'">
-       <img src="../../assets/homePage/kefu.png" style="width: 50%;margin-left: 25%;">
-    </template>
-    <template v-if="selectedMenu === 'ProductIncrease'">
-      <ProductIncrease></ProductIncrease>
-    </template>
-    <template v-else-if="selectedMenu === 'ProductManagement'">
-      <ProductManagement></ProductManagement>
-    </template>
-    <template v-else-if="selectedMenu === 'ShopAnalysis'">
-      <ShopAnalysis></ShopAnalysis>
-    </template>
-  </el-col>
+      <el-col :span="20">
+        <template v-if="selectedMenu === 'ShopInfo'">
+          <ALLItems></ALLItems>
+        </template>
+        <template v-else-if="selectedMenu === 'OrderManage'">
+          <img src="../../assets/homePage/kefu.png" style="width: 50%;margin-left: 25%;">
+        </template>
+        <template v-if="selectedMenu === 'ProductIncrease'">
+          <ProductIncrease></ProductIncrease>
+        </template>
+        <template v-else-if="selectedMenu === 'ProductManagement'">
+          <ProductManagement></ProductManagement>
+        </template>
+        <template v-else-if="selectedMenu === 'ShopAnalysis'">
+          <ShopAnalysis></ShopAnalysis>
+        </template>
+      </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup>
 import {
-House,
-Star,
-Grid,
-User,
-Comment,
-Location,
-Menu,
-Avatar,
+  House,
+  Star,
+  Grid,
+  User,
+  Comment,
+  Location,
+  Menu,
+  Avatar,
 } from '@element-plus/icons-vue'
 import {onMounted, reactive, ref, watch} from 'vue'
 // import Chat from '@/views/shop_subs/Chat2SellerView.vue'
@@ -126,15 +126,17 @@ let collect = ref(false);
 // 由于没办法获得当前用户是否收藏过，所以调用api手动测试
 
 onMounted(() => {
-  // 由于没办法获得当前用户是否收藏过，所以调用api手动测试
-  collectStore({
-    storeId: route.query.storeid
+  getFollowedStore({
+    pageNo: 1,
+    pageSize: 1,
+    storeName: storeInfo.shopName
   })
       .then(resp => {
-        collect.value = false;
-      })
-      .catch(resp => {
-        collect.value = true;
+        if (resp.data.records.length > 0) {
+          collect.value = true
+        } else {
+          collect.value = false
+        }
       })
 })
 
@@ -239,7 +241,7 @@ const getStoreInfoById = () => {
 const selectedMenu = ref('ShopInfo');
 
 function selectMenu(menu) {
-    selectedMenu.value = menu;
+  selectedMenu.value = menu;
 }
 
 onMounted(() => {
@@ -250,14 +252,14 @@ onMounted(() => {
 
 <style scoped>
 .info {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-text-align: center;
-padding: 20px;
-background-color: #f5f5f5;
-border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
 }
 .shop-header {
   display: flex;
@@ -283,15 +285,15 @@ border-radius: 20px;
 }
 
 .shop-stat {
-display: flex;
-align-items: center;
-margin-left: 30px;
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
 }
 
 .shop-stat-info {
-display: flex;
-flex-direction: column;
-margin-left: 5px; /* 调整适当的数值来增加左侧空隙 */
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px; /* 调整适当的数值来增加左侧空隙 */
 }
 
 .shop-stat-value {
@@ -317,22 +319,22 @@ margin-left: 5px; /* 调整适当的数值来增加左侧空隙 */
   cursor: default;
 }
 .header {
-      /* background-color: #fff; */
-      /* width: 300px; */
-      background-color: #393f44;
-      padding-top:20px;
-      height:200px;
-      /* border-right: 1px solid #d7d4d4;
-      border-left: 1px solid #d7d4d4;
-      border-bottom: 1px solid #d7d4d4; */
-      display: flex;
-      flex-direction:column;
-      align-items: center;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-  }
+  /* background-color: #fff; */
+  /* width: 300px; */
+  background-color: #393f44;
+  padding-top:20px;
+  height:200px;
+  /* border-right: 1px solid #d7d4d4;
+  border-left: 1px solid #d7d4d4;
+  border-bottom: 1px solid #d7d4d4; */
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
 .header .name-row{
-      align-self: center;
-      color:#fff
-  }
+  align-self: center;
+  color:#fff
+}
 </style>

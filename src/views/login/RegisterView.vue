@@ -61,6 +61,7 @@ import { doRegister } from "@/api/login";
 import { ElMessage } from "element-plus";
 import store from "@/store";
 import router from "@/router";
+import {getUserInfo} from "@/api/userinfo";
 
 const goToHomePage = () => {
   router.push('/homepage/');
@@ -92,6 +93,7 @@ const register = () => {
         message: '登录成功',
         type: 'success',
       })
+
       console.log(resp);
       router.push("/login/");
     })
