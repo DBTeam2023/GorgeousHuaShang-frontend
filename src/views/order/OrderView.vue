@@ -88,6 +88,11 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const isload = ref(false);
 
+const actualOrder = ref({
+    actualAmount:0,
+    discount:0,
+  })
+
 // 菜单栏选项
 const activeIndex = ref('all');
 

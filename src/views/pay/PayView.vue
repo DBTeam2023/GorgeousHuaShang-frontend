@@ -304,16 +304,16 @@
         })
         .catch(err =>{
             console.log(err);
-            // if(err.response.data.msg === "This seller is not a manager.")
-            //     jumpToOrder('卖家不是管理员,支付失败！');
-            // else if(err.response.data.msg === "This wallet does not exist.")
-            //     jumpToOrder('您的钱包不存在，支付失败！')
-            // else if(err.response.data.msg === "The wallet is frozen.")
-            //     jumpToOrder('您的钱包已被冻结，支付失败！')
-            // else if(err.response.data.msg === "Your balance is not enough.")
-            //     jumpToOrder('钱包余额不足，支付失败！')
-            // else
-            //     jumpToOrder('支付失败，请重试！');
+            if(err.response.data.msg === "This seller is not a manager.")
+                jumpToOrder('卖家不是管理员,支付失败！');
+            else if(err.response.data.msg === "This wallet does not exist.")
+                jumpToOrder('您的钱包不存在，支付失败！')
+            else if(err.response.data.msg === "The wallet is frozen.")
+                jumpToOrder('您的钱包已被冻结，支付失败！')
+            else if(err.response.data.msg === "Your balance is not enough.")
+                jumpToOrder('钱包余额不足，支付失败！')
+            else
+                jumpToOrder('支付失败，请重试！');
         })
     };
 
